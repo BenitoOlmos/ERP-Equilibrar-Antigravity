@@ -1,0 +1,117 @@
+import { Router } from 'express';
+import { PrismaClient } from '@prisma/client';
+import multer from 'multer';
+
+const router = Router();
+const prisma = new PrismaClient();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+router.get('/export', async (req, res) => {
+  try {
+    const backupData = {
+      users: await prisma.user.findMany(),
+      profiles: await prisma.profile.findMany(),
+      appointments: await prisma.appointment.findMany(),
+      payments: await prisma.payment.findMany(),
+      services: await prisma.agendaService.findMany(),
+      programs: await prisma.program.findMany(),
+      programServices: await prisma.programService.findMany(),
+      userCompletedWeeks: await prisma.userCompletedWeek.findMany(),
+      rfaiServices: await prisma.rFAIService.findMany(),
+      weekContents: await prisma.weekContent.findMany(),
+      questions: await prisma.question.findMany(),
+      evaluations: await prisma.weeklyEvaluation.findMany(),
+      answers: await prisma.weeklyEvaluationAnswer.findMany(),
+      audioLogs: await prisma.audioLog.findMany(),
+      activityProgress: await prisma.activityProgress.findMany(),
+      bitacoraLogs: await prisma.bitacoraLog.findMany(),
+      messages: await prisma.message.findMany(),
+      diagnostics: await prisma.diagnosticResult.findMany()
+    };
+    
+    res.setHeader('Content-disposition', 'attachment; filename=Respaldo_ERP_Unificado_' + new Date().toISOString().split('T')[0] + '.json');
+    res.setHeader('Content-type', 'application/json');
+    res.write(JSON.stringify(backupData, null, 2));
+    res.end();
+  } catch (error: any) {
+    console.error('Export error:', error);
+    res.status(500).json({ error: 'Fallo al exportar el respaldo' });
+  }
+});
+
+router.post('/import', upload.single('database'), async (req, res) => {
+  try {
+    if (!req.file) throw new Error("No se envió archivo");
+    const rawData = req.file.buffer.toString('utf8');
+    const data = JSON.parse(rawData);
+
+    if (!data || !data.users) {
+      throw new Error('Formato JSON no válido.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // 1. CLEAR EXSISTING DATA 
+      await tx.message.deleteMany();
+      await tx.bitacoraLog.deleteMany();
+      await tx.activityProgress.deleteMany();
+      await tx.audioLog.deleteMany();
+      await tx.payment.deleteMany();
+      await tx.appointment.deleteMany();
+      await tx.weeklyEvaluationAnswer.deleteMany();
+      await tx.weeklyEvaluation.deleteMany();
+      await tx.question.deleteMany();
+      await tx.weekContent.deleteMany();
+      await tx.rFAIService.deleteMany();
+      await tx.userCompletedWeek.deleteMany();
+      try { await tx.diagnosticResult.deleteMany(); } catch (e) {}
+      
+      await tx.programService.deleteMany();
+      await tx.program.deleteMany();
+      await tx.agendaService.deleteMany();
+      await tx.profile.deleteMany();
+      await tx.user.deleteMany();
+
+      console.log("Restaurando datos profundos...");
+      
+      // 2. SEED USERS & PROFILES
+      if (data.users && data.users.length) await tx.user.createMany({ data: data.users });
+      if (data.profiles && data.profiles.length) await tx.profile.createMany({ data: data.profiles });
+      
+      // 3. AGENDA CONFIG
+      if (data.services && data.services.length) await tx.agendaService.createMany({ data: data.services });
+      if (data.programs && data.programs.length) await tx.program.createMany({ data: data.programs });
+      if (data.programServices && data.programServices.length) await tx.programService.createMany({ data: data.programServices });
+      
+      // 4. CORE APPTS & PAYMENTS
+      if (data.appointments && data.appointments.length) await tx.appointment.createMany({ data: data.appointments });
+      if (data.payments && data.payments.length) await tx.payment.createMany({ data: data.payments });
+
+      // 5. RFAI MODULE CONFIG
+      if (data.rfaiServices && data.rfaiServices.length) await tx.rFAIService.createMany({ data: data.rfaiServices });
+      else if (data.services && data.services.length && data.services[0].profile) {
+        await tx.rFAIService.createMany({ data: data.services.filter((s: any) => s.profile) });
+      }
+      
+      if (data.weekContents && data.weekContents.length) await tx.weekContent.createMany({ data: data.weekContents });
+      if (data.questions && data.questions.length) await tx.question.createMany({ data: data.questions });
+      if (data.evaluations && data.evaluations.length) await tx.weeklyEvaluation.createMany({ data: data.evaluations });
+      if (data.answers && data.answers.length) await tx.weeklyEvaluationAnswer.createMany({ data: data.answers });
+      
+      // 6. RFAI MODULE LOGS
+      if (data.audioLogs && data.audioLogs.length) await tx.audioLog.createMany({ data: data.audioLogs });
+      if (data.activityProgress && data.activityProgress.length) await tx.activityProgress.createMany({ data: data.activityProgress });
+      if (data.bitacoraLogs && data.bitacoraLogs.length) await tx.bitacoraLog.createMany({ data: data.bitacoraLogs });
+      if (data.userCompletedWeeks && data.userCompletedWeeks.length) await tx.userCompletedWeek.createMany({ data: data.userCompletedWeeks });
+      if (data.messages && data.messages.length) await tx.message.createMany({ data: data.messages });
+      if (data.diagnostics && data.diagnostics.length) await tx.diagnosticResult.createMany({ data: data.diagnostics });
+    });
+    
+    res.json({ success: true, message: 'Base de datos restaurada de forma impecable.' });
+  } catch (e: any) {
+    console.error(e);
+    res.status(500).json({ error: e.message || 'Error al restaurar.' });
+  }
+});
+
+export default router;

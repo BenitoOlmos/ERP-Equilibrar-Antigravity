@@ -1,0 +1,452 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String  @id @default(uuid())
+  name         String? // Combines firstName/lastName from Profile, or User name from rfai
+  email        String  @unique
+  passwordHash String? // Could be called passwordHash or password, I will unify to passwordHash
+  role         String  @default("CLIENT") // Enums: ADMIN, COORDINATOR, SPECIALIST, CLIENT, PATIENT
+  isActive     Boolean @default(true)
+  phone        String?
+  meetLink     String? // For specialists/coordinators
+  notes        String?
+  currentWeek  Int? // From rfai
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile? // From agenda
+
+  // Agenda Relations
+  appointmentsAsClient     Appointment[] @relation("ClientAppointments")
+  appointmentsAsSpecialist Appointment[] @relation("SpecialistAppointments")
+  agendaServices           AgendaService[] @relation("ServiceSpecialist")
+  payments                 Payment[]
+
+  // RFAI Relations
+  completedWeeks   UserCompletedWeek[]
+  evaluations      WeeklyEvaluation[]
+  audioLogs        AudioLog[]
+  activityProgress ActivityProgress[]
+  bitacoraLogs     BitacoraLog[]
+
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+
+  // Cursos Relations
+  progress UserProgress[]
+  events   Event[]
+
+  // CRM Relations
+  diagnostic DiagnosticResult?
+
+  @@index([role])
+  @@index([email])
+}
+
+// =======================
+// AGENDA MODELS
+// =======================
+
+model Profile {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName  String
+  lastName   String
+  documentId String? // RUT / ID number
+  address    String?
+  city       String?
+
+  // For clients (Insurance)
+  healthSystem           String?
+  complementaryInsurance String?
+
+  // For clients (Ficha Clinica Extensa)
+  commune              String?
+  birthDate            String?
+  emergencyPhone       String?
+  emergencyContactName String?
+  observations         String?
+  medicalRecordLink    String?
+
+  // For specialists
+  specialty String?
+  bio       String?
+  color     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AgendaService {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  duration    Int // Duration in minutes
+  price       Float
+  isActive    Boolean @default(true)
+
+  branchId    String? // Sede
+  branch      Branch? @relation(fields: [branchId], references: [id])
+
+  specialistId String? // Especialista
+  specialist   User?   @relation("ServiceSpecialist", fields: [specialistId], references: [id])
+
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  programs     ProgramService[]
+  rfaiPrograms RFAIProgramService[]
+  courses      CourseService[]
+}
+
+model Program {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  isActive    Boolean @default(true)
+
+  services ProgramService[]
+  modules  Module[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProgramService {
+  programId  String
+  serviceId  String
+  weekNumber Int    @default(1)
+  count      Int    @default(1)
+
+  program Program       @relation(fields: [programId], references: [id], onDelete: Cascade)
+  service AgendaService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([programId, serviceId, weekNumber])
+}
+
+// We unify Appointment to have fields from both, or keep them optional based on the source flow
+model Appointment {
+  id String @id @default(uuid())
+
+  // Agenda fields
+  clientId     String?
+  client       User?          @relation("ClientAppointments", fields: [clientId], references: [id], onDelete: Cascade)
+  specialistId String?
+  specialist   User?          @relation("SpecialistAppointments", fields: [specialistId], references: [id], onDelete: Cascade)
+  serviceId    String? // For Agenda Service
+  service      AgendaService? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  // Unified Date and Time
+  date    DateTime // Used by both
+  timeStr String? // Original "time" from RFAI (e.g. "14:00")
+
+  sessionType String  @default("IN_PERSON") // ONLINE, IN_PERSON
+  meetLink    String?
+  status      String  @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED, NO_SHOW
+  notes       String?
+
+  payment Payment?
+
+  // RFAI specific fields
+  patientName String? // If not linked to a user
+  rfaiType    String? // Original "type" from RFAI
+  weekNumber  Int? // From RFAI
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+  @@index([specialistId])
+  @@index([clientId])
+}
+
+model Payment {
+  id            String       @id @default(uuid())
+  amount        Float
+  concept       String? // Optional concept for manual sales
+  status        String // Ej: PENDING, COMPLETED, REFUNDED
+  paymentMethod String? // Ej: CASH, TRANSFER, DEBIT, CREDIT, GATEWAY
+  appointmentId String?      @unique
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+// =======================
+// RFAI MODELS
+// =======================
+
+model UserCompletedWeek {
+  id         String @id @default(uuid())
+  userId     String
+  weekNumber Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+}
+
+model RFAIService {
+  id      String @id @default(uuid())
+  profile String @unique
+  title    String
+  price    Float   @default(0)
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  evaluations WeeklyEvaluation[]
+  services    RFAIProgramService[]
+  modules     Module[]
+}
+
+model WeeklyEvaluation {
+  id                    String   @id @default(uuid())
+  userId                String
+  serviceId             String
+  weekNumber            Int
+  timestamp             DateTime
+  audioListenTime       Int?
+  exerciseExecutionTime Int?
+  reflectionReadCount   Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service RFAIService              @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  answers WeeklyEvaluationAnswer[]
+}
+
+model WeeklyEvaluationAnswer {
+  id                 String  @id @default(uuid())
+  weeklyEvaluationId String
+  questionText       String?
+  value              String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  weeklyEvaluation WeeklyEvaluation @relation(fields: [weeklyEvaluationId], references: [id], onDelete: Cascade)
+}
+
+model AudioLog {
+  id              String   @id @default(uuid())
+  userId          String
+  weekNumber      Int
+  audioName       String
+  durationSeconds Int
+  timestamp       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityProgress {
+  id              String @id @default(uuid())
+  userId          String
+  weekNumber      Int
+  reflectionReads Int    @default(0)
+  exercisePlays   Int    @default(0)
+  completedDays   Int[]  @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+}
+
+model BitacoraLog {
+  id         String   @id @default(uuid())
+  userId     String
+  weekNumber Int
+  content    String
+  timestamp  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model DiagnosticResult {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date           DateTime
+  af             Int
+  am             Int
+  ae             Int
+  r              Int
+  ita            Int
+  re             Int
+  idsE           Int
+  interpretation String
+  profile        String
+  status         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// =======================
+// CURSOS MODELS
+// =======================
+
+model Course {
+  id          String          @id @default(uuid())
+  title       String
+  description String
+  price       Float           @default(0)
+  isActive    Boolean         @default(true)
+  modules     Module[]
+  progress    UserProgress[]
+  services    CourseService[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Module {
+  id            String       @id @default(uuid())
+  courseId      String?
+  course        Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  programId     String?
+  program       Program?     @relation(fields: [programId], references: [id], onDelete: Cascade)
+  rfaiServiceId String?
+  rfaiService   RFAIService? @relation(fields: [rfaiServiceId], references: [id], onDelete: Cascade)
+  title         String
+  type          String // VIDEO, AUDIO, TEXT, PDF, IMAGE, QUESTIONNAIRE
+  duration      Int? // in seconds
+  contentUrl    String?
+  description   String?
+  questions     Json? // Store questions for bitacora/evaluation
+  order         Int
+  weekNumber    Int          @default(1)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model UserProgress {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId         String
+  course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  completedModules String[] // Array of module IDs
+  audioTracking    Json? // Store audio progress
+  bitacoras        Json? // Store bitacora answers
+  evaluations      Json? // Store evaluation scores and answers
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([userId, courseId])
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType String
+  data      Json?
+  timestamp DateTime @default(now())
+}
+
+// =======================
+// PHASE 4: Relational Matrices
+// =======================
+
+model RFAIProgramService {
+  rfaiServiceId   String
+  agendaServiceId String
+  weekNumber      Int    @default(1)
+  count           Int    @default(1)
+
+  rfaiService   RFAIService   @relation(fields: [rfaiServiceId], references: [id], onDelete: Cascade)
+  agendaService AgendaService @relation(fields: [agendaServiceId], references: [id], onDelete: Cascade)
+
+  @@id([rfaiServiceId, agendaServiceId, weekNumber])
+}
+
+model CourseService {
+  courseId        String
+  agendaServiceId String
+  weekNumber      Int    @default(1)
+  count           Int    @default(1)
+
+  course        Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  agendaService AgendaService @relation(fields: [agendaServiceId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, agendaServiceId, weekNumber])
+}
+
+// =======================
+// INVENTORY MODELS
+// =======================
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  payments Payment[]
+}
+
+// =======================
+// SYSTEM CONFIGURATION
+// =======================
+
+model Branch {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   @default("PHYSICAL") // "PHYSICAL" | "VIRTUAL"
+  address     String?
+  contactName String?
+  phone       String?
+  meetLink    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  services AgendaService[]
+}

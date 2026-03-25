@@ -1,0 +1,46 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { 
+  Resumen, Agenda, Servicios, Programas, Tratamientos, 
+  Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard,
+  CRM, Ventas, Productos, Sucursales
+} from './pages';
+
+function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Route */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Protected Area (Employees) */}
+          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route index element={<Navigate to="/resumen" replace />} />
+            <Route path="resumen" element={<Resumen />} />
+            <Route path="agenda" element={<Agenda />} />
+            <Route path="servicios" element={<Servicios />} />
+            <Route path="programas" element={<Programas />} />
+            <Route path="tratamientos" element={<Tratamientos />} />
+            <Route path="cursos" element={<Cursos />} />
+            <Route path="productos" element={<Productos />} />
+            <Route path="usuarios" element={<Usuarios />} />
+            <Route path="sucursales" element={<Sucursales />} />
+            <Route path="pagos" element={<Pagos />} />
+            <Route path="test-rfai" element={<TestRFAI />} />
+            <Route path="db" element={<DB />} />
+            <Route path="ajustes" element={<Ajustes />} />
+            <Route path="crm" element={<CRM />} />
+            <Route path="ventas" element={<Ventas />} />
+            <Route path="mi-cuenta" element={<ClientDashboard />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+export default App;

@@ -1,0 +1,181 @@
+/* Contenedor Principal */
+.reproductor-hipnosis {
+    background: linear-gradient(145deg, #ffffff, #f0f9f9);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 180, 180, 0.1);
+    max-width: 450px;
+    margin: 20px auto;
+    text-align: center;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    border: 1px solid #e0f2f2;
+}
+
+/* Estilo del Logo */
+.reproductor-logo {
+    max-width: 120px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Títulos */
+.reproductor-hipnosis h2 {
+    color: #2c7a7a;
+    font-size: 22px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-family: 'Segoe UI', serif;
+}
+
+.reproductor-hipnosis p {
+    color: #66a5a5;
+    font-size: 14px;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Personalización del Audio */
+.reproductor-hipnosis audio {
+    width: 100%;
+    height: 45px;
+    outline: none;
+    border-radius: 30px;
+}
+
+/* Decoración inferior */
+.reproductor-footer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #99bcbc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.reproductor-footer::before,
+.reproductor-footer::after {
+    content: "";
+    height: 1px;
+    width: 30px;
+    background-color: #d1eaea;
+}
+
+.pulse-icon {
+    width: 10px;
+    height: 10px;
+    background-color: #72c6c6;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(114, 198, 198, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(114, 198, 198, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(114, 198, 198, 0);
+    }
+}
+
+/* Estilos de la Guía Minimalista */
+.guia-contenedor {
+    max-width: 600px;
+    margin: 40px auto;
+    font-family: 'Segoe UI', sans-serif;
+    color: #444;
+    line-height: 1.8;
+}
+
+.guia-toggle {
+    cursor: pointer;
+    text-align: center;
+    padding: 15px;
+    border-bottom: 1px solid #e0f2f2;
+    transition: all 0.3s ease;
+    color: #2c7a7a;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.guia-toggle:hover {
+    letter-spacing: 2px;
+    color: #72c6c6;
+}
+
+.guia-contenido {
+    display: none;
+    padding: 40px 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 0 0 20px 20px;
+    text-align: justify;
+}
+
+.guia-contenido h3 {
+    color: #2c7a7a;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.guia-contenido h4 {
+    color: #66a5a5;
+    font-size: 16px;
+    margin-top: 30px;
+}
+
+.guia-seccion {
+    margin-bottom: 25px;
+    font-size: 15px;
+    color: #555;
+}
+
+.recomendaciones-lista {
+    list-style: none;
+    padding-left: 0;
+}
+
+.recomendaciones-lista li {
+    margin-bottom: 12px;
+    padding-left: 25px;
+    position: relative;
+}
+
+.recomendaciones-lista li::before {
+    content: "•";
+    color: #72c6c6;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.guia-abierta {
+    display: block !important;
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
