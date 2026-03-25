@@ -62,11 +62,13 @@ router.post('/import', upload.single('database'), async (req, res) => {
 
       console.log("Restaurando datos profundos...");
       
-      // 2. SEED USERS & PROFILES
       if (data.users && data.users.length) {
           const mappedUsers = data.users.map((u: any) => {
-              const { password, ...rest } = u;
+              const { password, profile, ...rest } = u;
               if (password) rest.passwordHash = password;
+              if (profile && typeof profile === 'string') {
+                  rest.notes = rest.notes ? `${rest.notes} | Perfil Clínico: ${profile}` : `Perfil Clínico: ${profile}`;
+              }
               return rest;
           });
           await tx.user.createMany({ data: mappedUsers });
