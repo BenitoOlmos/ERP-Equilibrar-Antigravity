@@ -95,7 +95,12 @@ export default function Sidebar() {
   const renderedGroups = navGroups.map(group => {
     const filteredItems = group.items.filter(item => {
       if (!user || user.role === 'ADMIN') return true;
-      if (user.role === 'COORDINATOR') return ['/agenda', '/usuarios', '/tratamientos', '/pagos'].includes(item.path || '');
+      if (user.role === 'COORDINATOR') return [
+        '/agenda', '/crm', 
+        '/servicios', '/programas', '/tratamientos', '/cursos', '/productos', 
+        '/ventas', '/pagos', 
+        '/usuarios', '/sucursales', '/test-rfai'
+      ].includes(item.path || '');
       if (user.role === 'SPECIALIST') return ['/agenda', '/usuarios', '/test-rfai'].includes(item.path || '');
       return false; // Clients shouldn't be here
     });
