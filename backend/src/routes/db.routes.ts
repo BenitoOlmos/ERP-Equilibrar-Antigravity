@@ -12,6 +12,10 @@ router.get('/export', async (req, res) => {
     const backupData = {
       users: await prisma.user.findMany(),
       profiles: await prisma.profile.findMany(),
+      branches: await prisma.branch.findMany(),
+      products: await prisma.product.findMany(),
+      courses: await prisma.course.findMany(),
+      modules: await prisma.module.findMany(),
       appointments: await prisma.appointment.findMany(),
       payments: await prisma.payment.findMany(),
       services: await prisma.agendaService.findMany(),
