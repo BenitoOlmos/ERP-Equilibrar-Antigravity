@@ -57,6 +57,10 @@ router.post('/import', upload.single('database'), async (req, res) => {
       await tx.programService.deleteMany();
       await tx.program.deleteMany();
       await tx.agendaService.deleteMany();
+      try { await tx.module.deleteMany(); } catch {}
+      try { await tx.course.deleteMany(); } catch {}
+      try { await tx.product.deleteMany(); } catch {}
+      try { await tx.branch.deleteMany(); } catch {}
       await tx.profile.deleteMany();
       await tx.user.deleteMany();
 
@@ -74,6 +78,10 @@ router.post('/import', upload.single('database'), async (req, res) => {
           await tx.user.createMany({ data: mappedUsers });
       }
       if (data.profiles && data.profiles.length) await tx.profile.createMany({ data: data.profiles });
+      if (data.branches && data.branches.length) await tx.branch.createMany({ data: data.branches });
+      if (data.products && data.products.length) await tx.product.createMany({ data: data.products });
+      if (data.courses && data.courses.length) await tx.course.createMany({ data: data.courses });
+      if (data.modules && data.modules.length) await tx.module.createMany({ data: data.modules });
       
       // 3. AGENDA CONFIG
       if (data.services && data.services.length) await tx.agendaService.createMany({ data: data.services });

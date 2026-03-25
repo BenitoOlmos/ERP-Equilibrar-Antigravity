@@ -3631,6 +3631,196 @@
       "updatedAt": "2026-03-25T02:10:49.271Z"
     }
   ],
+  "branches": [
+    {
+      "id": "65f858d5-bb1e-4b72-b4cc-218523b05427",
+      "name": "Sucursal Virtual Claudio Reyes Vera",
+      "type": "VIRTUAL",
+      "address": "",
+      "contactName": "",
+      "phone": "",
+      "meetLink": "https://meet.google.com/rgv-deae-fmf",
+      "isActive": true,
+      "createdAt": "2026-03-24T23:34:48.382Z",
+      "updatedAt": "2026-03-24T23:34:48.382Z"
+    },
+    {
+      "id": "cc2e728d-a47f-4875-a836-b8c9f427e2cc",
+      "name": "Providencia",
+      "type": "PHYSICAL",
+      "address": "Av Providencia",
+      "contactName": "",
+      "phone": "",
+      "meetLink": "",
+      "isActive": true,
+      "createdAt": "2026-03-25T01:47:34.744Z",
+      "updatedAt": "2026-03-25T01:47:34.744Z"
+    },
+    {
+      "id": "9e1c52dc-5298-4036-9445-e75c803edce7",
+      "name": "Sucursal Virtual Carlos Carrascos",
+      "type": "VIRTUAL",
+      "address": "",
+      "contactName": "",
+      "phone": "",
+      "meetLink": "https://meet.google.com/rgv-",
+      "isActive": true,
+      "createdAt": "2026-03-25T01:49:33.605Z",
+      "updatedAt": "2026-03-25T01:49:33.605Z"
+    },
+    {
+      "id": "99cd119e-9de0-4bad-a08e-9cb0970bc0f0",
+      "name": "Sucursal Virtual Valentín Keller",
+      "type": "VIRTUAL",
+      "address": "",
+      "contactName": "",
+      "phone": "",
+      "meetLink": "https://meet.google.com/rgv-",
+      "isActive": true,
+      "createdAt": "2026-03-25T01:50:00.902Z",
+      "updatedAt": "2026-03-25T01:50:00.902Z"
+    },
+    {
+      "id": "4f554866-3f46-4b9d-8514-0c46ce4020bd",
+      "name": "Sucursal Virtual Alan Lama",
+      "type": "VIRTUAL",
+      "address": "",
+      "contactName": "",
+      "phone": "",
+      "meetLink": "https://meet.google.com/rgv-",
+      "isActive": true,
+      "createdAt": "2026-03-25T01:48:54.420Z",
+      "updatedAt": "2026-03-25T01:50:24.509Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "05646833-fbd7-473e-80df-281e58252aab",
+      "name": "Producto 1",
+      "description": "bbb",
+      "price": 10000,
+      "stock": 10,
+      "isActive": true,
+      "createdAt": "2026-03-24T16:58:11.318Z",
+      "updatedAt": "2026-03-24T16:58:11.318Z"
+    }
+  ],
+  "courses": [
+    {
+      "id": "e1eb29b1-131e-46ab-9e15-5dfdc5e4864c",
+      "title": "Curso de Liderazgo",
+      "description": "",
+      "price": 290000,
+      "isActive": true,
+      "createdAt": "2026-03-24T12:07:47.664Z",
+      "updatedAt": "2026-03-24T23:23:40.386Z"
+    }
+  ],
+  "modules": [
+    {
+      "id": "fd29c85c-833f-4a88-9f85-8a06899159ce",
+      "courseId": "e1eb29b1-131e-46ab-9e15-5dfdc5e4864c",
+      "programId": null,
+      "rfaiServiceId": null,
+      "title": "",
+      "type": "VIDEO",
+      "duration": null,
+      "contentUrl": "",
+      "description": "",
+      "questions": null,
+      "order": 1,
+      "weekNumber": 1,
+      "createdAt": "2026-03-24T23:23:40.386Z",
+      "updatedAt": "2026-03-24T23:23:40.386Z"
+    },
+    {
+      "id": "02e90478-b79a-48b0-963a-64a9aa9eea35",
+      "courseId": "e1eb29b1-131e-46ab-9e15-5dfdc5e4864c",
+      "programId": null,
+      "rfaiServiceId": null,
+      "title": "",
+      "type": "AUDIO",
+      "duration": null,
+      "contentUrl": "",
+      "description": "",
+      "questions": null,
+      "order": 2,
+      "weekNumber": 1,
+      "createdAt": "2026-03-24T23:23:40.386Z",
+      "updatedAt": "2026-03-24T23:23:40.386Z"
+    },
+    {
+      "id": "4c4bc07b-8221-40de-b4a0-b59387cef664",
+      "courseId": "e1eb29b1-131e-46ab-9e15-5dfdc5e4864c",
+      "programId": null,
+      "rfaiServiceId": null,
+      "title": "",
+      "type": "PDF",
+      "duration": null,
+      "contentUrl": "",
+      "description": "",
+      "questions": null,
+      "order": 3,
+      "weekNumber": 1,
+      "createdAt": "2026-03-24T23:23:40.386Z",
+      "updatedAt": "2026-03-24T23:23:40.386Z"
+    },
+    {
+      "id": "e6bf3727-30b1-40ad-aa7e-521deca171db",
+      "courseId": "e1eb29b1-131e-46ab-9e15-5dfdc5e4864c",
+      "programId": null,
+      "rfaiServiceId": null,
+      "title": "",
+      "type": "TEXT",
+      "duration": null,
+      "contentUrl": "",
+      "description": "",
+      "questions": null,
+      "order": 4,
+      "weekNumber": 1,
+      "createdAt": "2026-03-24T23:23:40.386Z",
+      "updatedAt": "2026-03-24T23:23:40.386Z"
+    },
+    {
+      "id": "a1405125-7d2f-4f98-9b09-ee355515ce88",
+      "courseId": "e1eb29b1-131e-46ab-9e15-5dfdc5e4864c",
+      "programId": null,
+      "rfaiServiceId": null,
+      "title": "",
+      "type": "REFLECTION",
+      "duration": null,
+      "contentUrl": "",
+      "description": "",
+      "questions": null,
+      "order": 5,
+      "weekNumber": 1,
+      "createdAt": "2026-03-24T23:23:40.386Z",
+      "updatedAt": "2026-03-24T23:23:40.386Z"
+    },
+    {
+      "id": "7c43cdbb-2b0f-4992-a8c5-a9f8644209f9",
+      "courseId": "e1eb29b1-131e-46ab-9e15-5dfdc5e4864c",
+      "programId": null,
+      "rfaiServiceId": null,
+      "title": "",
+      "type": "QUESTIONNAIRE",
+      "duration": null,
+      "contentUrl": "",
+      "description": "",
+      "questions": [
+        {
+          "max": 10,
+          "min": 1,
+          "text": "",
+          "type": "SCALE"
+        }
+      ],
+      "order": 6,
+      "weekNumber": 1,
+      "createdAt": "2026-03-24T23:23:40.386Z",
+      "updatedAt": "2026-03-24T23:23:40.386Z"
+    }
+  ],
   "appointments": [
     {
       "id": "d3606ac3-fc50-4f95-9caf-c0c7b5f96e72",
