@@ -63,7 +63,14 @@ router.post('/import', upload.single('database'), async (req, res) => {
       console.log("Restaurando datos profundos...");
       
       // 2. SEED USERS & PROFILES
-      if (data.users && data.users.length) await tx.user.createMany({ data: data.users });
+      if (data.users && data.users.length) {
+          const mappedUsers = data.users.map((u: any) => {
+              const { password, ...rest } = u;
+              if (password) rest.passwordHash = password;
+              return rest;
+          });
+          await tx.user.createMany({ data: mappedUsers });
+      }
       if (data.profiles && data.profiles.length) await tx.profile.createMany({ data: data.profiles });
       
       // 3. AGENDA CONFIG
