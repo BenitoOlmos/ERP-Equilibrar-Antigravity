@@ -754,7 +754,7 @@ const Home: React.FC = () => {
 
          <div className="home-topbar">
             <header className="home-container home-header">
-               <a href="#top" className="home-brand" aria-label="Centro Clínico Equilibrar">
+               <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); }} className="home-brand" aria-label="Centro Clínico Equilibrar">
                   <img src={logoImg} alt="Logo Centro Clínico Equilibrar" />
                   <div className="home-brand-copy">
                      <strong>Centro Clínico Equilibrar</strong>
