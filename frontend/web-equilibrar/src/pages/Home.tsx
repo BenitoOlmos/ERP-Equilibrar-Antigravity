@@ -770,7 +770,11 @@ const Home: React.FC = () => {
                   <a href="#contacto" onClick={(e) => handleScrollTo(e, 'contacto')}>Contacto</a>
                </nav>
 
-               <div className="home-header-actions">
+               <div className="home-header-actions" style={{ display: 'flex', gap: '10px' }}>
+                  <a className="home-btn" style={{ backgroundColor: 'var(--bg-soft)', color: 'var(--primary-dark)', border: '1px solid var(--line)', padding: '0 16px', fontSize: '0.92rem' }} href="https://login.clinicaequilibrar.cl/" target="_blank" rel="noopener noreferrer">
+                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                     Intranet
+                  </a>
                   <a className="home-btn home-btn-primary" href="#/test-rfai">Hacer test</a>
                </div>
             </header>
