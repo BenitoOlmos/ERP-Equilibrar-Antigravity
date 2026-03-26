@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ChevronDown, Calendar as CalendarIcon, List, Clock, MoreVertical, Plus, CalendarDays, CalendarRange, ShieldAlert } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const CalendarWidget = ({ month, year, selectedDay, selectedDate, onDaySelect, onMonthChange }: any) => {
    const monthIndex = selectedDate.getMonth();
@@ -35,6 +36,9 @@ const CalendarWidget = ({ month, year, selectedDay, selectedDate, onDaySelect, o
 };
 
 export function Agenda() {
+  const { user } = useAuth();
+  const isSpecialist = user?.role === 'SPECIALIST';
+  
   const [loading, setLoading] = useState(true);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [professionals, setProfessionals] = useState<any[]>([]);
@@ -44,6 +48,8 @@ export function Agenda() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month' | 'list'>('week');
   const [agendaFilterSpec, setAgendaFilterSpec] = useState('ALL');
+  const effectiveFilter = isSpecialist ? user.id : agendaFilterSpec;
+  
   const [now] = useState(new Date());
 
   // Block Modal
@@ -229,22 +235,24 @@ export function Agenda() {
         </div>
 
         <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Filtro Profesional</label>
-            <div className="relative">
-              <select 
-                value={agendaFilterSpec}
-                onChange={(e) => setAgendaFilterSpec(e.target.value)}
-                className="w-full bg-white border border-slate-200 shadow-sm rounded-xl px-4 py-2.5 text-xs font-bold appearance-none outline-none focus:ring-2 focus:ring-[#00A89C]/20 cursor-pointer text-slate-700"
-              >
-                <option value="ALL">Vista Global (Todos)</option>
-                {professionals.map(p => (
-                   <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            </div>
-          </div>
+          {!isSpecialist && (
+             <div className="space-y-2">
+               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Filtro Profesional</label>
+               <div className="relative">
+                 <select 
+                   value={agendaFilterSpec}
+                   onChange={(e) => setAgendaFilterSpec(e.target.value)}
+                   className="w-full bg-white border border-slate-200 shadow-sm rounded-xl px-4 py-2.5 text-xs font-bold appearance-none outline-none focus:ring-2 focus:ring-[#00A89C]/20 cursor-pointer text-slate-700"
+                 >
+                   <option value="ALL">Vista Global (Todos)</option>
+                   {professionals.map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                   ))}
+                 </select>
+                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+               </div>
+             </div>
+          )}
 
           <div className="flex flex-col gap-2 mt-4">
              <button onClick={() => {
@@ -252,7 +260,7 @@ export function Agenda() {
                 setAppointmentData({
                    date: selectedDate.toISOString().split('T')[0],
                    time: '08:00',
-                   specialistId: agendaFilterSpec === 'ALL' ? '' : agendaFilterSpec,
+                   specialistId: effectiveFilter === 'ALL' ? '' : effectiveFilter,
                    clientId: '',
                    serviceId: '',
                    sessionType: 'IN_PERSON'
@@ -263,7 +271,10 @@ export function Agenda() {
                <Plus className="w-5 h-5 mr-2" />
                Nueva Consulta
              </button>
-             <button onClick={() => setShowBlockModal(true)} className="w-full py-3 px-4 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-xl text-xs font-bold flex items-center justify-center transition-all border border-slate-200 hover:border-red-200">
+             <button onClick={() => {
+                setBlockData(prev => ({...prev, specialistId: isSpecialist ? user.id : ''}));
+                setShowBlockModal(true);
+             }} className="w-full py-3 px-4 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-xl text-xs font-bold flex items-center justify-center transition-all border border-slate-200 hover:border-red-200">
                <ShieldAlert className="w-4 h-4 mr-2" />
                Bloquear Horario
              </button>
@@ -313,7 +324,7 @@ export function Agenda() {
                     
                     const cellApps = isCurrentMonth ? gridAppointments.filter(app => 
                        app.rawDate.toDateString() === dateForCell.toDateString() && 
-                       (agendaFilterSpec === 'ALL' || app.profId === agendaFilterSpec)
+                       (effectiveFilter === 'ALL' || app.profId === effectiveFilter)
                     ) : [];
 
                     return (
@@ -381,7 +392,7 @@ export function Agenda() {
                              <div key={i} className="flex-1 min-w-[120px] sm:min-w-[150px] border-r border-slate-200/50 relative hover:bg-slate-100/30 transition-colors">
                                 {gridAppointments
                                    .filter(app => app.rawDate.toDateString() === d.toDateString())
-                                   .filter(app => agendaFilterSpec === 'ALL' || app.profId === agendaFilterSpec)
+                                   .filter(app => effectiveFilter === 'ALL' || app.profId === effectiveFilter)
                                    .map(app => (
                                       <div
                                          key={app.id}
@@ -450,7 +461,7 @@ export function Agenda() {
                  
                  {gridAppointments
                     .filter(app => app.rawDate.toDateString() === selectedDate.toDateString())
-                    .filter(app => agendaFilterSpec === 'ALL' || app.profId === agendaFilterSpec)
+                    .filter(app => effectiveFilter === 'ALL' || app.profId === effectiveFilter)
                     .sort((a,b) => a.rawDate.getTime() - b.rawDate.getTime())
                     .map((app, i) => (
                        <div key={i} className={`flex items-center p-5 rounded-2xl border bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all ${app.isBlocked ? 'border-slate-800 border-l-[6px] bg-slate-50' : (app.color.replace('bg-', 'border-l-[6px] border-').replace('text-', ''))}`}>
@@ -484,7 +495,7 @@ export function Agenda() {
                                              setAppointmentData({
                                                 date: app.rawDate.toISOString().split('T')[0],
                                                 time: app.rawDate.toTimeString().slice(0,5),
-                                                specialistId: '',
+                                                specialistId: isSpecialist ? user.id : '',
                                                 clientId: app.clientId || '',
                                                 serviceId: app.serviceId || '',
                                                 sessionType: app.sessionType || 'IN_PERSON'
@@ -503,7 +514,7 @@ export function Agenda() {
                     
                     {gridAppointments
                        .filter(app => app.rawDate.toDateString() === selectedDate.toDateString())
-                       .filter(app => agendaFilterSpec === 'ALL' || app.profId === agendaFilterSpec)
+                       .filter(app => effectiveFilter === 'ALL' || app.profId === effectiveFilter)
                        .length === 0 && (
                        <div className="flex flex-col items-center justify-center text-slate-400 py-32 font-medium bg-slate-50 rounded-3xl border border-dashed border-slate-200">
                           <CalendarIcon className="w-12 h-12 text-slate-300 mb-4" />
@@ -529,10 +540,16 @@ export function Agenda() {
                <form onSubmit={handleBlockSubmit} className="space-y-4">
                   <div>
                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Especialista a Bloquear</label>
-                     <select required value={blockData.specialistId} onChange={e => setBlockData({...blockData, specialistId: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-semibold focus:outline-none focus:border-red-500">
-                        <option value="" disabled>Seleccione en la lista...</option>
-                        {professionals.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                     </select>
+                     {isSpecialist ? (
+                        <div className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 font-semibold text-slate-700 opacity-70">
+                           {user?.name}
+                        </div>
+                     ) : (
+                        <select required value={blockData.specialistId} onChange={e => setBlockData({...blockData, specialistId: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-semibold focus:outline-none focus:border-red-500">
+                           <option value="" disabled>Seleccione en la lista...</option>
+                           {professionals.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        </select>
+                     )}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                      <div>
