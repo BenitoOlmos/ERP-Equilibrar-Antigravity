@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { 
   Users, Activity, DollarSign, Calendar, Target, Shield, Stethoscope, 
   UserCircle 
@@ -19,8 +21,13 @@ interface Stats {
 }
 
 export function Resumen() {
+  const { user } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+
+  if (user?.role === 'CLIENT' || user?.role === 'USER') {
+     return <Navigate to="/mi-cuenta" replace />;
+  }
 
   useEffect(() => {
     axios.get('/api/master/resumen')

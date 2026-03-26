@@ -30,6 +30,7 @@ const navGroups = [
     icon: PieChart,
     items: [
       { path: '/', label: 'Resumen', icon: LayoutDashboard },
+      { path: '/mi-cuenta', label: 'Mi Portal Clínico', icon: Target },
     ]
   },
   {
@@ -102,7 +103,8 @@ export default function Sidebar() {
         '/usuarios', '/sucursales', '/test-rfai'
       ].includes(item.path || '');
       if (user.role === 'SPECIALIST') return ['/agenda', '/usuarios', '/test-rfai'].includes(item.path || '');
-      return false; // Clients shouldn't be here
+      if (user.role === 'CLIENT' || user.role === 'USER') return ['/mi-cuenta'].includes(item.path || '');
+      return false;
     });
     return { ...group, items: filteredItems };
   }).filter(group => group.items.length > 0);
