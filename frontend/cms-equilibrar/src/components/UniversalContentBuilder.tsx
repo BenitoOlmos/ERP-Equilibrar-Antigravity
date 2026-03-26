@@ -1,5 +1,14 @@
 import { Plus, Trash2, Video, Headphones, AlignLeft, FileText, Image as ImageIcon, CheckSquare, ChevronDown, ChevronUp, GripVertical, BookOpen } from 'lucide-react';
 
+const AUDIO_FILES = [
+  "Hipnosis RFAI Desbordado FINAL.mp3",
+  "Hipnosis RFAI Inhibido FINAL.mp3",
+  "Hipnosis RFAI Reactivo FINAL.mp3",
+  "Hipnosis RFAI Sobre adaptado FINAL.mp3",
+  "Hipnosis RFAI hiper regulado FINAL.mp3",
+  "hipnosis RFAI transversal FINAL.mp3"
+];
+
 export interface ContentModule {
   title: string;
   type: string;
@@ -149,13 +158,26 @@ export function UniversalContentBuilder({ modules, onChange }: Props) {
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                        {m.type === 'AUDIO' ? 'Archivo Base de Datos / Enlace M3U' : 'Enlace del Recurso (URL)'}
                     </label>
-                    <input 
-                      type="text" 
-                      value={m.contentUrl || ''} 
-                      onChange={e => updateModule(i, 'contentUrl', e.target.value)}
-                      placeholder={m.type === 'VIDEO' ? 'Ej. https://youtube.com/watch?v=...' : m.type === 'IMAGE' ? 'https://...' : ''} 
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2 text-sm font-mono focus:outline-none focus:border-slate-400 focus:bg-white transition-all" 
-                    />
+                    {m.type === 'AUDIO' ? (
+                      <select 
+                         value={m.contentUrl || ''} 
+                         onChange={e => updateModule(i, 'contentUrl', e.target.value)}
+                         className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-slate-400 focus:bg-white transition-all cursor-pointer"
+                      >
+                         <option value="">-- Selecciona un audio nativo --</option>
+                         {AUDIO_FILES.map(file => (
+                            <option key={file} value={file}>{file}</option>
+                         ))}
+                      </select>
+                    ) : (
+                      <input 
+                        type="text" 
+                        value={m.contentUrl || ''} 
+                        onChange={e => updateModule(i, 'contentUrl', e.target.value)}
+                        placeholder={m.type === 'VIDEO' ? 'Ej. https://youtube.com/watch?v=...' : m.type === 'IMAGE' ? 'https://...' : ''} 
+                        className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2 text-sm font-mono focus:outline-none focus:border-slate-400 focus:bg-white transition-all" 
+                      />
+                    )}
                   </div>
                 )}
 

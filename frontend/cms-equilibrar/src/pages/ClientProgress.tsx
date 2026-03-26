@@ -278,7 +278,7 @@ export default function ClientProgress() {
                                                                              <Headphones className="w-6 h-6" />
                                                                          </div>
                                                                          <audio controls className="w-full h-12 outline-none">
-                                                                            <source src={mod.contentUrl} />
+                                                                            <source src={mod.contentUrl.startsWith('http') ? mod.contentUrl : `/audios/${mod.contentUrl}`} />
                                                                             Tu navegador no soporta el elemento de audio.
                                                                          </audio>
                                                                      </div>
