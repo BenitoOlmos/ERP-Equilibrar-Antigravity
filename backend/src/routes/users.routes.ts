@@ -41,6 +41,7 @@ router.put('/:id', async (req, res) => {
     
     let updateData: any = {
       email, role, phone,
+      ...(firstName && lastName ? { name: `${firstName} ${lastName}` } : {}),
       profile: {
         upsert: {
           create: { firstName, lastName, documentId, address, city, specialty, color, healthSystem, complementaryInsurance, commune, birthDate, emergencyPhone, emergencyContactName, observations, medicalRecordLink },
