@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { PlayCircle, ShieldCheck, ArrowRight, ArrowUpRight, Activity, BookOpen, Headphones, User, Settings, LogOut, X, CheckCircle, Calendar, ChevronUp, ChevronDown, FileText, PenLine, Video, Lock } from 'lucide-react';
+import { PlayCircle, ShieldCheck, ArrowRight, ArrowUpRight, Activity, BookOpen, Headphones, User, Settings, LogOut, X, CheckCircle, Calendar, ChevronRight, FileText, PenLine, Video, Lock } from 'lucide-react';
 
 const getRFAIVideo = (profileStr: string): string | null => {
     if (!profileStr) return null;
@@ -25,8 +26,9 @@ const defaultAvatars = [
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Sophia&backgroundColor=fde047' // Girl
 ];
 
-export function ClientDashboard() {
+export default function ClientDashboard() {
    const { user, logout } = useAuth();
+   const navigate = useNavigate();
    const [loading, setLoading] = useState(true);
    const [userTest, setUserTest] = useState<any>(null);
    const [catalog, setCatalog] = useState<any[]>([]);
@@ -268,149 +270,47 @@ export function ClientDashboard() {
                </div>
             )}
 
-            {/* STATE 3: PROGRAM PURCHASED (MI PROGRESO) */}
+            {/* STATE 3: PROGRAM PURCHASED (MI PROGRESO) - LOBBY MENU */}
             {activePrograms.length > 0 && (
-                <div className="w-full">
-                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 mt-4 pt-10 border-t border-slate-200">
+                <div className="w-full mt-10">
+                  <div className="flex items-end justify-between mb-8 pb-4 border-b border-slate-200">
                     <div>
-                      <h2 className="text-4xl font-black text-slate-900 mb-2 leading-none tracking-tight">Mi <span className="text-[#00A89C]">Progreso</span></h2>
-                      <div className="flex items-center gap-2 text-slate-600 font-medium mt-3">
-                        <div className="w-6 h-6 rounded-full bg-cyan-100 flex items-center justify-center text-[#00A89C]">
-                          <Calendar className="w-3.5 h-3.5"/>
-                        </div>
-                        <span className="font-bold text-slate-700">Programa: {activePrograms[0].title}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white rounded-full border border-slate-200 px-6 py-4 flex items-center gap-5 shadow-sm w-full md:w-auto md:min-w-[280px]">
-                      <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-[#00A89C] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min((currentWeek / 4) * 100, 100)}%` }}></div>
-                      </div>
-                      <div className="flex flex-col items-end shrink-0">
-                        <span className="text-[#00A89C] font-black text-lg leading-none">{Math.round((currentWeek / 4) * 100)}%</span>
-                        <span className="text-[#00A89C] text-xs font-bold uppercase tracking-widest mt-1">Completado</span>
-                      </div>
+                      <h2 className="text-3xl font-black text-slate-900 tracking-tight">Mis Servicios <span className="text-[#00A89C]">Activos</span></h2>
+                      <p className="text-slate-500 font-medium text-lg mt-1">Cursos y Programas de tratamiento Clínico que has adquirido.</p>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                      {[1, 2, 3, 4].map(wNum => {
-                          const isLocked = wNum > currentWeek;
-                          const isOpen = openWeek === wNum;
-                          
-                          if (isLocked) {
-                              return (
-                                  <div key={wNum} className="bg-slate-50/70 rounded-3xl border border-slate-100 p-6 flex items-center justify-between opacity-80 backdrop-blur-sm">
-                                      <div className="flex items-center gap-5">
-                                          <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 shadow-sm">
-                                             <Lock className="w-6 h-6" />
-                                          </div>
-                                          <div>
-                                              <h3 className="text-xl font-bold text-slate-400">Semana {wNum}</h3>
-                                              <p className="text-sm text-slate-400 font-medium">Próximamente disponible en plataforma</p>
-                                          </div>
-                                      </div>
-                                      <span className="text-[10px] font-black text-slate-400 bg-white border border-slate-100 px-4 py-2 rounded-full tracking-widest">BLOQUEADO</span>
-                                  </div>
-                              );
-                          }
-                          
-                          return (
-                              <div key={wNum} className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-200 mb-4 overflow-hidden relative transition-all duration-300">
-                                 <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#00A89C]"></div>
-                                 <div className="p-6 lg:p-8">
-                                    <div className="flex justify-between items-start cursor-pointer select-none" onClick={() => setOpenWeek(isOpen ? 0 : wNum)}>
-                                        <div className="pr-8">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <span className={`text-[10px] font-black px-3 py-1.5 rounded-md tracking-widest uppercase ${wNum === currentWeek ? 'bg-cyan-50 text-[#00A89C] border border-[#00A89C]/20' : 'bg-slate-100 text-slate-500'}`}>
-                                                    {wNum === currentWeek ? 'Semana En Curso' : 'Completada y Lista'}
-                                                </span>
-                                            </div>
-                                            <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">Rutina Semanal {wNum}</h3>
-                                            <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-3xl">Despliega el contenido para consumir los protocolos de reestructuración obligatorios y acceder a tus bitácoras de avance.</p>
-                                            
-                                            {/* Meet Link if Next Appointment exists and applies to this week */}
-                                            {wNum === currentWeek && nextAppointment && (
-                                                <div className="mt-6 bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 max-w-3xl relative overflow-hidden group">
-                                                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all"></div>
-                                                    <div className="relative z-10">
-                                                        <h4 className="font-black text-indigo-900 text-base mb-1">Videoconferencia Clínica</h4>
-                                                        <p className="text-sm font-semibold text-indigo-600/80">
-                                                            {new Date(nextAppointment.date).toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
-                                                        </p>
-                                                    </div>
-                                                    <a href={nextAppointment.meetLink || "https://meet.google.com/rgv-deae-fmf"} target="_blank" rel="noopener noreferrer" className="relative z-10 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-black rounded-xl transition-all hover:scale-105 shadow-[0_8px_20px_rgba(79,70,229,0.25)] flex items-center gap-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                                                        Conectar a Google Meet <ArrowUpRight className="w-4 h-4 ml-1" />
-                                                    </a>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <button className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors flex-shrink-0">
-                                            {isOpen ? <ChevronUp className="w-6 h-6"/> : <ChevronDown className="w-6 h-6"/>}
-                                        </button>
-                                    </div>
-                                    
-                                    {isOpen && (
-                                        <div className="space-y-4 animate-fade-in mt-8 pt-8 border-t border-slate-100">
-                                            {/* Modules Static Render for Architecture Proof */}
-                                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
-                                                <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors">
-                                                    <div className="flex items-center gap-5">
-                                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-red-50 text-red-500 group-hover:scale-105 transition-transform ring-1 ring-red-100">
-                                                            <Video className="w-6 h-6" />
-                                                        </div>
-                                                        <div>
-                                                            <h4 className="font-bold text-slate-800 text-lg group-hover:text-[#00A89C] transition-colors">Video Analítico de Reflexión</h4>
-                                                            <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest flex items-center gap-1"><CheckCircle className="w-3 h-3 text-emerald-500" /> Material AudioVisual</span>
-                                                        </div>
-                                                    </div>
-                                                    <ChevronDown className="w-5 h-5 text-slate-300" />
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group relative">
-                                                <div className="absolute top-0 left-0 w-1.5 h-full bg-[#00A89C]"></div>
-                                                <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors pl-6">
-                                                    <div className="flex items-center gap-5">
-                                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:scale-105 transition-transform ring-1 ring-emerald-100">
-                                                            <FileText className="w-6 h-6" />
-                                                        </div>
-                                                        <div>
-                                                            <h4 className="font-bold text-slate-800 text-lg group-hover:text-[#00A89C] transition-colors">Bitácora Fisiológica</h4>
-                                                            <span className="text-[10px] font-black uppercase tracking-widest mt-1 text-[#00A89C] bg-[#00A89C]/10 px-2 py-0.5 rounded-md inline-block">
-                                                                Registro de Avance Activo
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <ArrowRight className="w-5 h-5 text-[#00A89C]" />
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
-                                                <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors">
-                                                    <div className="flex items-center gap-5">
-                                                        <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-purple-50 text-purple-600 group-hover:scale-105 transition-transform ring-1 ring-purple-100">
-                                                            <Headphones className="w-6 h-6" />
-                                                        </div>
-                                                        <div>
-                                                            <h4 className="font-bold text-slate-800 text-lg group-hover:text-purple-600 transition-colors">Protocolo de Hipnosis</h4>
-                                                            <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest">Audio de Reprogramación</span>
-                                                        </div>
-                                                    </div>
-                                                    <ChevronDown className="w-5 h-5 text-slate-300" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                 </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {activePrograms.map(prog => (
+                          <div 
+                              key={prog.id} 
+                              onClick={() => navigate(`/mi-cuenta/programa/${prog.id}`)}
+                              className="bg-white border hover:border-[#00A89C]/50 rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_40px_rgba(0,168,156,0.1)] transition-all duration-300 group cursor-pointer flex flex-col relative overflow-hidden"
+                          >
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-[#00A89C]/5 rounded-bl-full group-hover:scale-150 transition-transform"></div>
+                              <div className="w-14 h-14 rounded-2xl bg-[#00A89C]/10 text-[#00A89C] flex items-center justify-center mb-6 ring-1 ring-[#00A89C]/20 group-hover:bg-[#00A89C] group-hover:text-white transition-colors">
+                                  <Activity className="w-7 h-7" />
                               </div>
-                          );
-                      })}
+                              <h3 className="text-2xl font-black text-slate-800 leading-tight mb-2 group-hover:text-[#00A89C] transition-colors pr-4">{prog.title}</h3>
+                              <p className="text-slate-500 font-medium mb-8 leading-relaxed flex-1">Programa clínico con bitácoras de avance y ejercicios de reestructuración neurológica.</p>
+                              
+                              <div className="flex items-center justify-between mt-auto">
+                                  <div className="flex items-center text-xs font-bold uppercase tracking-widest text-[#00A89C] bg-[#00A89C]/10 px-3 py-1.5 rounded-lg">
+                                      {currentWeek}ª Semana
+                                  </div>
+                                  <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#00A89C] group-hover:text-white transition-all shadow-sm">
+                                      <ChevronRight className="w-5 h-5 ml-0.5" />
+                                  </div>
+                              </div>
+                          </div>
+                      ))}
                   </div>
                 </div>
             )}
             
-            <hr className="border-slate-100 my-16" />
+            {(activePrograms.length > 0) && (
+                <hr className="border-slate-100 my-16" />
+            )}
 
             {/* DIRECT SPOTIFY PODCAST EMBED SECTION */}
             <div className="bg-white rounded-[2rem] overflow-hidden border border-slate-200 shadow-[0_8px_40px_rgba(0,0,0,0.06)]">

@@ -5,7 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { 
   Resumen, Agenda, Servicios, Programas, Tratamientos, 
-  Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard,
+  Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard, ClientProgress,
   CRM, Ventas, Productos, Sucursales
 } from './pages';
 
@@ -36,6 +36,7 @@ function App() {
             <Route path="crm" element={<CRM />} />
             <Route path="ventas" element={<Ventas />} />
             <Route path="mi-cuenta" element={<ClientDashboard />} />
+            <Route path="mi-cuenta/programa/:id" element={<ClientProgress />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,0 +1,225 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight } from 'lucide-react';
+
+export default function ClientProgress() {
+   const { id } = useParams(); // Program ID
+   const navigate = useNavigate();
+   const { user } = useAuth();
+   
+   const [program, setProgram] = useState<any>(null);
+   const [currentWeek, setCurrentWeek] = useState(1);
+   const [openWeek, setOpenWeek] = useState(1);
+   const [nextAppointment, setNextAppointment] = useState<any>(null);
+   const [loading, setLoading] = useState(true);
+
+   useEffect(() => {
+      if (!user) {
+         navigate('/login');
+         return;
+      }
+      fetchProgramData();
+      // eslint-disable-next-line
+   }, [user, id]);
+
+   const fetchProgramData = async () => {
+      try {
+         const pRes = await axios.get(`/api/data/users/${user?.id}/programs`);
+         if (pRes.data && pRes.data.programs?.length > 0) {
+            // Find the program that matches the ID in URL
+            const matched = pRes.data.programs.find((p: any) => p.id === id);
+            if (matched) {
+               setProgram(matched);
+               setCurrentWeek(pRes.data.currentWeek || 1);
+               setOpenWeek(pRes.data.currentWeek || 1);
+               
+               // Next Appointment related to user
+               if (pRes.data.nextAppointments?.length > 0) {
+                   setNextAppointment(pRes.data.nextAppointments[0]);
+               }
+            } else {
+               // Fallback if ID doesn't match
+               navigate('/mi-cuenta');
+            }
+         } else {
+             navigate('/mi-cuenta');
+         }
+      } catch (ex) {
+         console.error(ex);
+         navigate('/mi-cuenta');
+      } finally {
+         setLoading(false);
+      }
+   };
+
+   if (loading || !program) {
+       return (
+           <div className="min-h-screen bg-[#F4F9F9] flex items-center justify-center">
+               <div className="w-12 h-12 border-4 border-[#00A89C] border-t-transparent rounded-full animate-spin"></div>
+           </div>
+       );
+   }
+
+   return (
+      <div className="min-h-screen bg-[#F4F9F9] font-sans text-slate-800 pb-24">
+         {/* Simple Header */}
+         <header className="bg-white shadow-sm border-b border-slate-100 sticky top-0 z-20">
+            <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+               <button onClick={() => navigate('/mi-cuenta')} className="flex items-center text-slate-500 hover:text-[#00A89C] font-semibold transition-colors">
+                  <ChevronLeft className="w-5 h-5 mr-1" /> Volver a Mi Cuenta
+               </button>
+               <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-[#F4F9F9] flex items-center justify-center p-1">
+                     <img alt="Logo" className="w-full h-full object-contain" src="/assets/logo-CYF-QZPl.png" onError={(e: any) => e.target.style.display='none'}/>
+                  </div>
+                  <span className="text-sm font-bold text-[#0097B2] tracking-wide">EQUILIBRAR</span>
+               </div>
+            </div>
+         </header>
+
+         {/* MAIN PROGRESS CONTENT */}
+         <main className="max-w-5xl mx-auto px-4 py-8 animate-fade-in">
+            <div className="w-full">
+               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 mt-4 pt-10 border-t border-slate-200">
+                 <div>
+                   <h2 className="text-4xl font-black text-slate-900 mb-2 leading-none tracking-tight">Mi <span className="text-[#00A89C]">Progreso</span></h2>
+                   <div className="flex items-center gap-2 text-slate-600 font-medium mt-3">
+                     <div className="w-6 h-6 rounded-full bg-cyan-100 flex items-center justify-center text-[#00A89C]">
+                       <Calendar className="w-3.5 h-3.5"/>
+                     </div>
+                     <span className="font-bold text-slate-700">Programa: {program.title}</span>
+                   </div>
+                 </div>
+                 
+                 <div className="bg-white rounded-full border border-slate-200 px-6 py-4 flex items-center gap-5 shadow-sm w-full md:w-auto md:min-w-[280px]">
+                   <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
+                     <div className="h-full bg-[#00A89C] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min((currentWeek / 4) * 100, 100)}%` }}></div>
+                   </div>
+                   <div className="flex flex-col items-end shrink-0">
+                     <span className="text-[#00A89C] font-black text-lg leading-none">{Math.round((currentWeek / 4) * 100)}%</span>
+                     <span className="text-[#00A89C] text-xs font-bold uppercase tracking-widest mt-1">Completado</span>
+                   </div>
+                 </div>
+               </div>
+
+               <div className="space-y-4">
+                   {[1, 2, 3, 4].map(wNum => {
+                       const isLocked = wNum > currentWeek;
+                       const isOpen = openWeek === wNum;
+                       
+                       if (isLocked) {
+                           return (
+                               <div key={wNum} className="bg-slate-50/70 rounded-3xl border border-slate-100 p-6 flex items-center justify-between opacity-80 backdrop-blur-sm">
+                                   <div className="flex items-center gap-5">
+                                       <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 shadow-sm">
+                                          <Lock className="w-6 h-6" />
+                                       </div>
+                                       <div>
+                                           <h3 className="text-xl font-bold text-slate-400">Semana {wNum}</h3>
+                                           <p className="text-sm text-slate-400 font-medium">Próximamente disponible en plataforma</p>
+                                       </div>
+                                   </div>
+                                   <span className="text-[10px] font-black text-slate-400 bg-white border border-slate-100 px-4 py-2 rounded-full tracking-widest">BLOQUEADO</span>
+                               </div>
+                           );
+                       }
+                       
+                       return (
+                           <div key={wNum} className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-200 mb-4 overflow-hidden relative transition-all duration-300">
+                              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#00A89C]"></div>
+                              <div className="p-6 lg:p-8">
+                                 <div className="flex justify-between items-start cursor-pointer select-none" onClick={() => setOpenWeek(isOpen ? 0 : wNum)}>
+                                     <div className="pr-8">
+                                         <div className="flex items-center gap-3 mb-4">
+                                             <span className={`text-[10px] font-black px-3 py-1.5 rounded-md tracking-widest uppercase ${wNum === currentWeek ? 'bg-cyan-50 text-[#00A89C] border border-[#00A89C]/20' : 'bg-slate-100 text-slate-500'}`}>
+                                                 {wNum === currentWeek ? 'Semana En Curso' : 'Completada y Lista'}
+                                             </span>
+                                         </div>
+                                         <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">Rutina Semanal {wNum}</h3>
+                                         <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-3xl">Despliega el contenido para consumir los protocolos de reestructuración obligatorios y acceder a tus bitácoras de avance.</p>
+                                         
+                                         {/* Meet Link if Next Appointment exists and applies to this week */}
+                                         {wNum === currentWeek && nextAppointment && (
+                                             <div className="mt-6 bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 max-w-3xl relative overflow-hidden group">
+                                                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all"></div>
+                                                 <div className="relative z-10">
+                                                     <h4 className="font-black text-indigo-900 text-base mb-1">Videoconferencia Clínica</h4>
+                                                     <p className="text-sm font-semibold text-indigo-600/80">
+                                                         {new Date(nextAppointment.date).toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                                                     </p>
+                                                 </div>
+                                                 <a href={nextAppointment.meetLink || "https://meet.google.com/rgv-deae-fmf"} target="_blank" rel="noopener noreferrer" className="relative z-10 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-black rounded-xl transition-all hover:scale-105 shadow-[0_8px_20px_rgba(79,70,229,0.25)] flex items-center gap-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                                                     Conectar a Google Meet <ArrowUpRight className="w-4 h-4 ml-1" />
+                                                 </a>
+                                             </div>
+                                         )}
+                                     </div>
+                                     <button className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors flex-shrink-0">
+                                         {isOpen ? <ChevronUp className="w-6 h-6"/> : <ChevronDown className="w-6 h-6"/>}
+                                     </button>
+                                 </div>
+                                 
+                                 {isOpen && (
+                                     <div className="space-y-4 animate-fade-in mt-8 pt-8 border-t border-slate-100">
+                                         {/* Modules Static Render for Architecture Proof */}
+                                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
+                                             <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors">
+                                                 <div className="flex items-center gap-5">
+                                                     <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-red-50 text-red-500 group-hover:scale-105 transition-transform ring-1 ring-red-100">
+                                                         <Video className="w-6 h-6" />
+                                                     </div>
+                                                     <div>
+                                                         <h4 className="font-bold text-slate-800 text-lg group-hover:text-[#00A89C] transition-colors">Video Analítico de Reflexión</h4>
+                                                         <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest flex items-center gap-1"><CheckCircle className="w-3 h-3 text-emerald-500" /> Material AudioVisual</span>
+                                                     </div>
+                                                 </div>
+                                                 <ChevronDown className="w-5 h-5 text-slate-300" />
+                                             </div>
+                                         </div>
+                                         
+                                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group relative">
+                                             <div className="absolute top-0 left-0 w-1.5 h-full bg-[#00A89C]"></div>
+                                             <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors pl-6">
+                                                 <div className="flex items-center gap-5">
+                                                     <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:scale-105 transition-transform ring-1 ring-emerald-100">
+                                                         <FileText className="w-6 h-6" />
+                                                     </div>
+                                                     <div>
+                                                         <h4 className="font-bold text-slate-800 text-lg group-hover:text-[#00A89C] transition-colors">Bitácora Fisiológica</h4>
+                                                         <span className="text-[10px] font-black uppercase tracking-widest mt-1 text-[#00A89C] bg-[#00A89C]/10 px-2 py-0.5 rounded-md inline-block">
+                                                             Registro de Avance Activo
+                                                         </span>
+                                                     </div>
+                                                 </div>
+                                                 <ArrowRight className="w-5 h-5 text-[#00A89C]" />
+                                             </div>
+                                         </div>
+                                         
+                                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
+                                             <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors">
+                                                 <div className="flex items-center gap-5">
+                                                     <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-purple-50 text-purple-600 group-hover:scale-105 transition-transform ring-1 ring-purple-100">
+                                                         <Headphones className="w-6 h-6" />
+                                                     </div>
+                                                     <div>
+                                                         <h4 className="font-bold text-slate-800 text-lg group-hover:text-purple-600 transition-colors">Protocolo de Hipnosis</h4>
+                                                         <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest">Audio de Reprogramación</span>
+                                                     </div>
+                                                 </div>
+                                                 <ChevronDown className="w-5 h-5 text-slate-300" />
+                                             </div>
+                                         </div>
+                                     </div>
+                                 )}
+                              </div>
+                           </div>
+                       );
+                   })}
+               </div>
+            </div>
+         </main>
+      </div>
+   );
+}
