@@ -185,7 +185,7 @@ export default function Ventas() {
        amount, concept, status, paymentMethod, userId, productId: productId || null,
        ...(requiresScheduling && {
           appointmentDetails: {
-             date: appointmentDate,
+             date: `${appointmentDate}T${appointmentTime}:00`,
              timeStr: appointmentTime,
              specialistId: specialistId,
              serviceId: attachedServiceId
@@ -338,12 +338,13 @@ export default function Ventas() {
       {showModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowModal(false)}></div>
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden animate-fade-in animate-slide-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg relative z-10 flex flex-col max-h-[90vh] animate-fade-in animate-slide-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0 rounded-t-3xl">
               <h2 className="text-xl font-black text-slate-800">{editingId ? 'Editar Venta' : 'Nueva Venta Directa'}</h2>
-              <button onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-200 rounded-full text-slate-500 transition-colors"><X className="w-5 h-5" /></button>
+              <button type="button" onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-200 rounded-full text-slate-500 transition-colors"><X className="w-5 h-5" /></button>
             </div>
-            <form onSubmit={handleSave} className="p-6 space-y-5">
+            <div className="overflow-y-auto p-6 flex-1 rounded-b-3xl script-scrollbar">
+              <form onSubmit={handleSave} className="space-y-5">
               
               <div className="relative">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Cliente Inscrito</label>
@@ -496,7 +497,8 @@ export default function Ventas() {
                   Guardar Transacción
                 </button>
               </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       )}
