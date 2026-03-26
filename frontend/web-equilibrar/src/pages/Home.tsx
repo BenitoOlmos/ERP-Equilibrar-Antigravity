@@ -46,6 +46,20 @@ const Home: React.FC = () => {
           padding-top: 90px;
         }
 
+        .home-btn-entrar {
+          background-color: var(--bg-soft);
+          color: var(--primary-dark);
+          border: 1px solid var(--line);
+          padding: 0 16px;
+          font-size: 0.92rem;
+        }
+
+        .home-header-actions {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+        }
+
         .home-wrapper * {
           box-sizing:border-box;
           margin:0;
@@ -722,10 +736,24 @@ const Home: React.FC = () => {
           }
 
           .home-hero-actions,
-          .home-cta-actions,
-          .home-header-actions {
+          .home-cta-actions {
             flex-direction:column;
             align-items:stretch;
+          }
+
+          .home-header-actions {
+            flex-direction:row !important;
+            gap:6px !important;
+          }
+
+          .home-header-actions .home-btn {
+            height:36px;
+            padding:0 12px;
+            font-size:0.82rem;
+          }
+
+          .home-btn-entrar-txt {
+            display:none;
           }
 
           .home-btn {
@@ -770,11 +798,11 @@ const Home: React.FC = () => {
                   <a href="#contacto" onClick={(e) => handleScrollTo(e, 'contacto')}>Contacto</a>
                </nav>
 
-               <div className="home-header-actions" style={{ display: 'flex', gap: '10px' }}>
+               <div className="home-header-actions">
                   <a className="home-btn home-btn-primary" href="#/test-rfai">Hacer test</a>
-                  <a className="home-btn" style={{ backgroundColor: 'var(--bg-soft)', color: 'var(--primary-dark)', border: '1px solid var(--line)', padding: '0 16px', fontSize: '0.92rem' }} href="https://login.clinicaequilibrar.cl/" target="_blank" rel="noopener noreferrer">
+                  <a className="home-btn home-btn-entrar" href="https://login.clinicaequilibrar.cl/" target="_blank" rel="noopener noreferrer">
                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                     Entrar
+                     <span className="home-btn-entrar-txt" style={{ marginLeft: '6px' }}>Entrar</span>
                   </a>
                </div>
             </header>
