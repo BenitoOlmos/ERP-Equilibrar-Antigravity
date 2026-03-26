@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen, Download, PenLine, MessageCircle, Send, CircleCheck } from 'lucide-react';
+import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen, Download, PenLine, MessageCircle, Send, CircleCheck, Play, Pause, Repeat } from 'lucide-react';
 
 const getModuleStyle = (type: string) => {
     const t = type?.toUpperCase() || 'UNKNOWN';
@@ -16,6 +16,111 @@ const getModuleStyle = (type: string) => {
     
     // Default
     return { icon: FileText, color: 'text-slate-500', bg: 'bg-slate-50', ring: 'ring-slate-100', subtext: 'Recurso Clínico', isAction: false };
+};
+
+const CustomAudioPlayer = ({ src, title }: { src: string, title?: string }) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isLooping, setIsLooping] = useState(false);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    
+    const setAudioData = () => {
+      setDuration(audio.duration);
+      setCurrentTime(audio.currentTime);
+    }
+    
+    const setAudioTime = () => setCurrentTime(audio.currentTime);
+    const setAudioEnd = () => setIsPlaying(false);
+
+    audio.addEventListener('loadeddata', setAudioData);
+    // Many browsers fire loadedmetadata before loadeddata for audio duration
+    audio.addEventListener('loadedmetadata', setAudioData);
+    audio.addEventListener('timeupdate', setAudioTime);
+    audio.addEventListener('ended', setAudioEnd);
+
+    return () => {
+      audio.removeEventListener('loadeddata', setAudioData);
+      audio.removeEventListener('loadedmetadata', setAudioData);
+      audio.removeEventListener('timeupdate', setAudioTime);
+      audio.removeEventListener('ended', setAudioEnd);
+    }
+  }, [src]);
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleLoop = () => {
+    if (audioRef.current) {
+      audioRef.current.loop = !isLooping;
+      setIsLooping(!isLooping);
+    }
+  };
+
+  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = Number(e.target.value);
+      setCurrentTime(Number(e.target.value));
+    }
+  };
+
+  const formatTime = (time: number) => {
+    if (time && !isNaN(time)) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+    return '00:00';
+  };
+
+  const progressPercentage = duration ? (currentTime / duration) * 100 : 0;
+
+  return (
+    <div className="bg-[#F4F9F9] rounded-2xl p-5 border border-cyan-100 shadow-sm transition-all hover:shadow-md w-full">
+      <audio ref={audioRef} src={src} preload="metadata" className="hidden" loop={isLooping}></audio>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm transition-colors bg-cyan-100 text-[#0097B2]">
+            <Headphones className="w-7 h-7" />
+          </div>
+          <div className="flex-grow">
+            <h4 className="font-bold text-slate-800 text-base">{title || "Audio Guía Semanal"}</h4>
+            <p className="text-xs font-medium text-slate-500">RFAI Equilibrar</p>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+             <button onClick={(e) => { e.stopPropagation(); toggleLoop(); }} className={`p-2 rounded-full transition-colors hover:bg-slate-200 ${isLooping ? 'text-[#0097B2] bg-cyan-50' : 'text-slate-400'}`} title={isLooping ? "Repetir activado" : "Repetir desactivado"}>
+                <Repeat className="w-5 h-5" />
+             </button>
+             <button onClick={(e) => { e.stopPropagation(); togglePlay(); }} className="w-12 h-12 rounded-full bg-[#0097B2] text-white flex items-center justify-center shadow-md hover:bg-cyan-600 transition-colors hover:scale-105 active:scale-95">
+                {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-1" />}
+             </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-bold text-[#0097B2] w-10 text-right tabular-nums">{formatTime(currentTime)}</span>
+          <div className="relative flex-grow h-3">
+             <input min="0" max={duration || 100} step="0.1" value={currentTime} onChange={handleProgressChange} onMouseDown={(e) => e.stopPropagation()} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" type="range" />
+             <div className="absolute inset-0 top-1/2 -mt-1 h-2 bg-slate-200 rounded-full overflow-hidden pointer-events-none">
+                <div className="h-full bg-[#0097B2] transition-all ease-out" style={{ width: `${progressPercentage}%` }}></div>
+             </div>
+          </div>
+          <span className="text-xs font-medium text-slate-400 w-10 tabular-nums">{formatTime(duration)}</span>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default function ClientProgress() {
@@ -298,15 +403,10 @@ export default function ClientProgress() {
                                                                  )}
                                                                  
                                                                  {mod.type === 'AUDIO' && mod.contentUrl && (
-                                                                     <div className="w-full bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
-                                                                         <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center mb-4">
-                                                                             <Headphones className="w-6 h-6" />
-                                                                         </div>
-                                                                         <audio controls className="w-full h-12 outline-none">
-                                                                            <source src={mod.contentUrl.startsWith('http') ? mod.contentUrl : `/audios/${mod.contentUrl}`} />
-                                                                            Tu navegador no soporta el elemento de audio.
-                                                                         </audio>
-                                                                     </div>
+                                                                     <CustomAudioPlayer 
+                                                                         src={mod.contentUrl.startsWith('http') ? mod.contentUrl : `/audios/${mod.contentUrl}`} 
+                                                                         title={mod.title} 
+                                                                     />
                                                                  )}
                                                                  
                                                                  {mod.type === 'PDF' && mod.contentUrl && (
