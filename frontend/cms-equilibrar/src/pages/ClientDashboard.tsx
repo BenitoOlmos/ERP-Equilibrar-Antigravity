@@ -4,12 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import { PlayCircle, ShieldCheck, ArrowRight, ArrowUpRight, Activity, BookOpen, Headphones, User, Settings, LogOut, X, CheckCircle } from 'lucide-react';
 
 const RFAIData: Record<string, string> = {
-    "Desbordado": "https://www.youtube.com/embed/SU_K-Qt4tf8",
-    "Hiper Regulado": "https://www.youtube.com/embed/X7v43d7U4io",
-    "Hiper Reactivo": "https://www.youtube.com/embed/Ke5JnAlBe7Y",
-    "Inhibido": "https://www.youtube.com/embed/liHSg0FOT9g",
-    "Sobre Adaptado": "https://www.youtube.com/embed/8rIIp-15huw",
-    "Indeterminado": "https://www.youtube.com/embed/Ke5JnAlBe7Y"
+    "desbordado": "https://www.youtube.com/embed/SU_K-Qt4tf8",
+    "hiper regulado": "https://www.youtube.com/embed/X7v43d7U4io",
+    "hiper reactivo": "https://www.youtube.com/embed/Ke5JnAlBe7Y",
+    "inhibido": "https://www.youtube.com/embed/liHSg0FOT9g",
+    "sobre adaptado": "https://www.youtube.com/embed/8rIIp-15huw",
+    "indeterminado": "https://www.youtube.com/embed/Ke5JnAlBe7Y"
 };
 
 const defaultAvatars = [
@@ -17,7 +17,8 @@ const defaultAvatars = [
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka&backgroundColor=bbf7d0', // Woman
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Jack&backgroundColor=fecaca', // Man
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Lily&backgroundColor=bfdbfe', // Woman 
-  'https://api.dicebear.com/7.x/adventurer/svg?seed=Oliver&backgroundColor=e9d5ff' // Man/Boy
+  'https://api.dicebear.com/7.x/adventurer/svg?seed=Oliver&backgroundColor=e9d5ff', // Boy
+  'https://api.dicebear.com/7.x/adventurer/svg?seed=Sophia&backgroundColor=fde047' // Girl
 ];
 
 export function ClientDashboard() {
@@ -197,19 +198,19 @@ export function ClientDashboard() {
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                   <div className="bg-white rounded-[2rem] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden relative group">
                      <div className="aspect-video bg-slate-900 rounded-[1.5rem] w-full overflow-hidden relative z-10">
-                        {RFAIData[userTest.profile] ? (
+                        {userTest.profile && RFAIData[userTest.profile.trim().toLowerCase()] ? (
                            <iframe 
                               className="w-full h-full absolute inset-0"
-                              src={RFAIData[userTest.profile]} 
+                              src={RFAIData[userTest.profile.trim().toLowerCase()]} 
                               title="Explicación Perfil RFAI" 
                               frameBorder="0" 
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                               allowFullScreen
                            ></iframe>
                         ) : (
-                           <div className="w-full h-full flex flex-col items-center justify-center text-slate-500">
+                           <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 bg-slate-800">
                               <PlayCircle className="w-16 h-16 opacity-30 mb-2" />
-                              <p className="font-bold text-sm">Video en Preparación</p>
+                              <p className="font-bold text-sm">Video Analítico en Preparación</p>
                            </div>
                         )}
                      </div>

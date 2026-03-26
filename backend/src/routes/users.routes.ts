@@ -12,6 +12,18 @@ router.get('/', async (req, res) => {
   });
   res.json(users);
 });
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      include: { profile: true }
+    });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
 router.post('/', async (req, res) => {
   try {
