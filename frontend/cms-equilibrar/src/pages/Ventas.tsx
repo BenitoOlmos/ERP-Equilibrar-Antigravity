@@ -78,9 +78,24 @@ export default function Ventas() {
     setShowClientDrop(false);
     setConcept(sale.concept || '');
     setProductId(sale.productId || '');
-    setUserId(sale.user?.id || '');
+    setUserId(sale.userId || sale.user?.id || '');
     setStatus(sale.status);
     setPaymentMethod(sale.paymentMethod || 'TRANSFER');
+    
+    if (sale.appointment) {
+       setRequiresScheduling(true);
+       setAppointmentDate(new Date(sale.appointment.date).toISOString().split('T')[0]);
+       setAppointmentTime(new Date(sale.appointment.date).toTimeString().slice(0,5));
+       setSpecialistId(sale.appointment.specialistId || '');
+       setAttachedServiceId(sale.appointment.serviceId || '');
+    } else {
+       setRequiresScheduling(false);
+       setAppointmentDate('');
+       setAppointmentTime('');
+       setSpecialistId('');
+       setAttachedServiceId('');
+    }
+
     setShowModal(true);
   };
 

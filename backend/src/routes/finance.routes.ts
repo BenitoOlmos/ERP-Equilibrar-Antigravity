@@ -137,13 +137,28 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, amount, paymentMethod, concept } = req.body;
+    const { status, amount, paymentMethod, concept, appointmentDetails } = req.body;
     const data: any = {};
     if (status) data.status = status;
     if (amount !== undefined) data.amount = Number(amount);
     if (paymentMethod !== undefined) data.paymentMethod = paymentMethod;
     if (concept !== undefined) data.concept = concept;
     
+    // Fetch directly to check existing relations
+    const existing = await prisma.payment.findUnique({ where: { id }});
+    
+    if (existing?.appointmentId && appointmentDetails && appointmentDetails.date && appointmentDetails.specialistId) {
+       await prisma.appointment.update({
+          where: { id: existing.appointmentId },
+          data: {
+             date: new Date(appointmentDetails.date),
+             timeStr: appointmentDetails.timeStr || null,
+             specialistId: appointmentDetails.specialistId,
+             serviceId: appointmentDetails.serviceId || undefined
+          }
+       });
+    }
+
     const payment = await prisma.payment.update({
        where: { id }, data,
        include: { user: { include: { profile: true } }, appointment: { include: { service: true } } }
@@ -160,8 +175,14 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const payment = await prisma.payment.findUnique({ where: { id }});
     await prisma.payment.deleteMany({ where: { concept: { contains: `(Ref: ${id})` } } });
     await prisma.payment.delete({ where: { id } });
+    
+    if (payment?.appointmentId) {
+      // Usamos deleteMany por la cascada silenciosa para que no crashee si no lo encuentra o viceversa
+      await prisma.appointment.delete({ where: { id: payment.appointmentId } }).catch(() => {});
+    }
     res.json({ success: true });
   } catch(e) {
     console.error(e);

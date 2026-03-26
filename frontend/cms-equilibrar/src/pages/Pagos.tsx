@@ -52,7 +52,8 @@ export function Pagos() {
                    <tr key={payment.id} className="border-b border-slate-50 hover:bg-slate-50/50">
                       <td className="p-4 pl-6 text-xs font-bold text-slate-500 uppercase tracking-widest">{payment.id.substring(0,8)}</td>
                       <td className="p-4 text-sm font-bold text-slate-800">
-                         {payment.appointment?.service?.name || payment.appointment?.rfaiType || 'Pago por Servicio'}
+                         {payment.concept || payment.appointment?.service?.name || payment.appointment?.rfaiType || 'Pago por Servicio'}
+                         {payment.appointment && <span className="ml-2 px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded text-[9px] uppercase tracking-widest">Cita Atada</span>}
                          <div className="text-[10px] font-bold text-slate-400 mt-0.5">{new Date(payment.createdAt).toLocaleDateString()}</div>
                       </td>
                       <td className="p-4">

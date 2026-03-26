@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
     const app = await prisma.appointment.create({
       data: {
         clientId, specialistId, serviceId, date: new Date(date), sessionType, status,
-        payment: { create: { userId: clientId, amount: valService?.price || 0, status: 'PENDING' } }
+        payment: { create: { userId: clientId, amount: valService?.price || 0, status: 'PENDING', paymentMethod: 'TRANSFER', concept: `Consulta: ${valService?.name || 'Clínica'}` } }
       },
       include: { client: {include: {profile:true}}, specialist: {include: {profile:true}}, service: true }
     });
@@ -55,10 +55,13 @@ router.put('/:id', async (req, res) => {
       include: { client: {include: {profile:true}}, specialist: {include: {profile:true}}, service: true, payment: true }
     });
     
-    if (valService && app.payment?.status === 'PENDING') {
+    if (valService && app.payment) {
       await prisma.payment.update({
         where: { id: app.payment.id },
-        data: { amount: valService.price }
+        data: { 
+           ...(app.payment.status === 'PENDING' && { amount: valService.price }),
+           concept: `Consulta: ${valService.name}` 
+        }
       });
     }
 
