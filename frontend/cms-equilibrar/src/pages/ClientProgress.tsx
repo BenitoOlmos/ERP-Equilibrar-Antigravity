@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen } from 'lucide-react';
+import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen, Download } from 'lucide-react';
 
 const getModuleStyle = (type: string) => {
     const t = type?.toUpperCase() || 'UNKNOWN';
@@ -26,6 +26,7 @@ export default function ClientProgress() {
    const [program, setProgram] = useState<any>(null);
    const [currentWeek, setCurrentWeek] = useState(1);
    const [openWeek, setOpenWeek] = useState(1);
+   const [expandedMod, setExpandedMod] = useState<string | null>(null);
    const [nextAppointment, setNextAppointment] = useState<any>(null);
    const [loading, setLoading] = useState(true);
 
@@ -181,12 +182,13 @@ export default function ClientProgress() {
                                              program.modules.filter((m: any) => m.weekNumber === wNum).map((mod: any) => {
                                                  const conf = getModuleStyle(mod.type);
                                                  const IconComponent = conf.icon;
+                                                 const isExpanded = expandedMod === mod.id;
                                                  
                                                  return (
-                                                     <div key={mod.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group relative">
+                                                     <div key={mod.id} className={`bg-white rounded-2xl border ${isExpanded ? 'border-[#00A89C] shadow-md' : 'border-slate-200 shadow-sm'} overflow-hidden group relative transition-all duration-300`}>
                                                          {conf.isAction && <div className={`absolute top-0 left-0 w-1.5 h-full bg-current ${conf.color.replace('text-', 'bg-')}`}></div>}
                                                          
-                                                         <div className={`p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors ${conf.isAction ? 'pl-6' : ''}`}>
+                                                         <div onClick={() => setExpandedMod(isExpanded ? null : mod.id)} className={`p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors ${conf.isAction ? 'pl-6' : ''}`}>
                                                              <div className="flex items-center gap-5">
                                                                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 ring-1 ${conf.bg} ${conf.color} ${conf.ring}`}>
                                                                      <IconComponent className="w-6 h-6" />
@@ -200,17 +202,78 @@ export default function ClientProgress() {
                                                                          </span>
                                                                      ) : (
                                                                          <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest flex items-center gap-1">
-                                                                             {mod.duration ? `${Math.round(mod.duration / 60)} min • ` : ''}{conf.subtext}
+                                                                             {mod.duration ? `${Math.round(mod.duration)} min • ` : ''}{conf.subtext}
                                                                          </span>
                                                                      )}
                                                                  </div>
                                                              </div>
-                                                             {conf.isAction ? (
-                                                                 <ArrowRight className={`w-5 h-5 ${conf.color}`} />
+                                                             {isExpanded ? (
+                                                                 <ChevronUp className="w-5 h-5 text-slate-400" />
                                                              ) : (
-                                                                 <ChevronDown className="w-5 h-5 text-slate-300" />
+                                                                 <ChevronDown className="w-5 h-5 text-slate-300 group-hover:text-slate-500" />
                                                              )}
                                                          </div>
+                                                         
+                                                         {/* EXPANDED CONTENT AREA */}
+                                                         {isExpanded && (
+                                                             <div className="bg-slate-50 border-t border-slate-100 p-6 animate-fade-in space-y-6">
+                                                                 {/* Descripción / Instrucciones */}
+                                                                 {mod.description && (
+                                                                     <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                                                                         <h5 className="text-[10px] font-black uppercase tracking-widest text-[#00A89C] mb-2 flex items-center"><FileText className="w-3.5 h-3.5 mr-1" /> Instrucciones Clínicas</h5>
+                                                                         <p className="text-sm font-medium text-slate-600 leading-relaxed whitespace-pre-wrap">{mod.description}</p>
+                                                                     </div>
+                                                                 )}
+                                                                 
+                                                                 {/* Embeds Reales */}
+                                                                 {mod.type === 'VIDEO' && mod.contentUrl && (
+                                                                     <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-black">
+                                                                         <iframe 
+                                                                            src={mod.contentUrl.includes('watch?v=') ? mod.contentUrl.replace('watch?v=', 'embed/').split('&')[0] : mod.contentUrl} 
+                                                                            className="w-full h-full" 
+                                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                                            allowFullScreen 
+                                                                            title={mod.title}
+                                                                         ></iframe>
+                                                                     </div>
+                                                                 )}
+                                                                 
+                                                                 {mod.type === 'AUDIO' && mod.contentUrl && (
+                                                                     <div className="w-full bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
+                                                                         <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center mb-4">
+                                                                             <Headphones className="w-6 h-6" />
+                                                                         </div>
+                                                                         <audio controls className="w-full h-12 outline-none">
+                                                                            <source src={mod.contentUrl} />
+                                                                            Tu navegador no soporta el elemento de audio.
+                                                                         </audio>
+                                                                     </div>
+                                                                 )}
+                                                                 
+                                                                 {mod.type === 'PDF' && mod.contentUrl && (
+                                                                     <div className="flex justify-center">
+                                                                         <a href={mod.contentUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-black rounded-xl transition-all hover:scale-105 shadow-[0_8px_20px_rgba(37,99,235,0.25)]">
+                                                                            <Download className="w-5 h-5 mr-2" /> Descargar Guía Práctica en PDF
+                                                                         </a>
+                                                                     </div>
+                                                                 )}
+                                                                 
+                                                                 {(mod.type === 'BITACORA' || mod.type === 'QUESTIONNAIRE') && (
+                                                                     <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center flex flex-col items-center justify-center space-y-4">
+                                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center ${conf.bg} ${conf.color}`}>
+                                                                             <IconComponent className="w-8 h-8" />
+                                                                         </div>
+                                                                         <div>
+                                                                             <h4 className="font-black text-slate-800 text-lg">Sección Interactiva Activa</h4>
+                                                                             <p className="text-sm text-slate-500 font-medium mt-1 max-w-sm mx-auto">La integración de respuestas de esta {mod.type === 'BITACORA' ? 'bitácora' : 'evaluación'} se guardará directamente en tu progreso clínico para ser revisado por tu especialista.</p>
+                                                                         </div>
+                                                                         <button className={`px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-black rounded-xl transition-transform active:scale-95 shadow-lg flex items-center`}>
+                                                                             Comenzar Ejercicio <ArrowRight className="w-4 h-4 ml-2" />
+                                                                         </button>
+                                                                     </div>
+                                                                 )}
+                                                             </div>
+                                                         )}
                                                      </div>
                                                  );
                                              })
