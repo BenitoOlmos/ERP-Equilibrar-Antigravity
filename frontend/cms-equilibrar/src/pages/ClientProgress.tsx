@@ -222,25 +222,50 @@ export default function ClientProgress() {
                                                      <div key={mod.id} className={`bg-white rounded-2xl border ${isExpanded ? 'border-[#00A89C] shadow-md' : 'border-slate-200 shadow-sm'} overflow-hidden group relative transition-all duration-300`}>
                                                          {conf.isAction && <div className={`absolute top-0 left-0 w-1.5 h-full bg-current ${conf.color.replace('text-', 'bg-')}`}></div>}
                                                          
-                                                         <div onClick={() => setExpandedMod(isExpanded ? null : mod.id)} className={`p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors ${conf.isAction ? 'pl-6' : ''}`}>
-                                                             <div className="flex items-center gap-5">
-                                                                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 ring-1 ${conf.bg} ${conf.color} ${conf.ring}`}>
-                                                                     <IconComponent className="w-6 h-6" />
-                                                                 </div>
-                                                                 <div>
-                                                                     <h4 className={`font-bold text-slate-800 text-lg transition-colors group-hover:${conf.color}`}>{mod.title}</h4>
-                                                                     
-                                                                     {conf.isAction ? (
-                                                                         <span className={`text-[10px] font-black uppercase tracking-widest mt-1 px-2 py-0.5 rounded-md inline-block ${conf.color} ${conf.bg}`}>
-                                                                             {conf.subtext}
-                                                                         </span>
-                                                                     ) : (
-                                                                         <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest flex items-center gap-1">
-                                                                             {mod.duration ? `${Math.round(mod.duration)} min • ` : ''}{conf.subtext}
-                                                                         </span>
-                                                                     )}
-                                                                 </div>
-                                                             </div>
+                                                         <div onClick={() => setExpandedMod(isExpanded ? null : mod.id)} className={`p-5 flex justify-between items-center cursor-pointer transition-colors ${(mod.type === 'BITACORA' || mod.type === 'JOURNAL') ? 'bg-emerald-50/50 hover:bg-emerald-50 dark:bg-emerald-900/20' : mod.type === 'QUESTIONNAIRE' ? 'bg-purple-50/50 hover:bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-slate-50'} ${conf.isAction && mod.type !== 'BITACORA' && mod.type !== 'JOURNAL' && mod.type !== 'QUESTIONNAIRE' ? 'pl-6' : ''}`}>
+                                                             {(mod.type === 'BITACORA' || mod.type === 'JOURNAL') ? (
+                                                                <div className="flex items-center gap-4">
+                                                                  <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors bg-emerald-100 text-emerald-600">
+                                                                    <FileText className="w-6 h-6" />
+                                                                  </div>
+                                                                  <div>
+                                                                    <h4 className="font-bold text-slate-800 text-lg">Bitácora Personal del Proceso</h4>
+                                                                    <span className="text-xs font-medium flex items-center gap-1 mt-1 text-emerald-600">
+                                                                      <CircleCheck className="w-3.5 h-3.5" /> Bitácora Activa
+                                                                    </span>
+                                                                  </div>
+                                                                </div>
+                                                             ) : mod.type === 'QUESTIONNAIRE' ? (
+                                                                <div className="flex items-center gap-4">
+                                                                  <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors bg-purple-100 text-purple-600">
+                                                                    <PenLine className="w-6 h-6" />
+                                                                  </div>
+                                                                  <div>
+                                                                    <h4 className="font-bold text-slate-800 text-lg">Registro Emocional</h4>
+                                                                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1">Cuestionario Semanal</span>
+                                                                  </div>
+                                                                </div>
+                                                             ) : (
+                                                                <div className="flex items-center gap-5">
+                                                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 ring-1 ${conf.bg} ${conf.color} ${conf.ring}`}>
+                                                                        <IconComponent className="w-6 h-6" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <h4 className={`font-bold text-slate-800 text-lg transition-colors group-hover:${conf.color}`}>{mod.title}</h4>
+                                                                        
+                                                                        {conf.isAction ? (
+                                                                            <span className={`text-[10px] font-black uppercase tracking-widest mt-1 px-2 py-0.5 rounded-md inline-block ${conf.color} ${conf.bg}`}>
+                                                                                {conf.subtext}
+                                                                            </span>
+                                                                        ) : (
+                                                                            <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest flex items-center gap-1">
+                                                                                {mod.duration ? `${Math.round(mod.duration)} min • ` : ''}{conf.subtext}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                             )}
+                                                             
                                                              {isExpanded ? (
                                                                  <ChevronUp className="w-5 h-5 text-slate-400" />
                                                              ) : (
@@ -294,20 +319,7 @@ export default function ClientProgress() {
                                                                  
                                                                  {(mod.type === 'BITACORA' || mod.type === 'JOURNAL') && (
                                                                      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative dark:bg-slate-800 dark:border-slate-700">
-                                                                       <div className="p-5 flex justify-between items-center transition-colors bg-emerald-50/50 dark:bg-emerald-900/20">
-                                                                         <div className="flex items-center gap-4">
-                                                                           <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors bg-emerald-100 text-emerald-600">
-                                                                             <FileText className="w-6 h-6" />
-                                                                           </div>
-                                                                           <div>
-                                                                             <h4 className="font-bold text-slate-800 text-lg">Bitácora Personal del Proceso</h4>
-                                                                             <span className="text-xs font-medium flex items-center gap-1 mt-1 text-emerald-600">
-                                                                               <CircleCheck className="w-3.5 h-3.5" /> Bitácora Activa
-                                                                             </span>
-                                                                           </div>
-                                                                         </div>
-                                                                       </div>
-                                                                       <div className="border-t border-slate-100 bg-gradient-to-br from-emerald-50/30 to-white dark:from-emerald-900/10 dark:to-slate-800">
+                                                                       <div className="bg-gradient-to-br from-emerald-50/30 to-white dark:from-emerald-900/10 dark:to-slate-800">
                                                                          <div className="p-6 md:p-8">
                                                                            <div className="mb-0 border-b border-slate-100 pb-6 dark:border-slate-700">
                                                                              <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -354,18 +366,7 @@ export default function ClientProgress() {
 
                                                                  {mod.type === 'QUESTIONNAIRE' && (
                                                                      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative dark:bg-slate-800 dark:border-slate-700">
-                                                                       <div className="p-5 flex justify-between items-center transition-colors bg-purple-50/50 dark:bg-purple-900/20">
-                                                                         <div className="flex items-center gap-4">
-                                                                           <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors bg-purple-100 text-purple-600">
-                                                                             <PenLine className="w-6 h-6" />
-                                                                           </div>
-                                                                           <div>
-                                                                             <h4 className="font-bold text-slate-800 text-lg">Registro Emocional</h4>
-                                                                             <span className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1">Cuestionario Semanal</span>
-                                                                           </div>
-                                                                         </div>
-                                                                       </div>
-                                                                       <div className="border-t border-slate-100 bg-gradient-to-br from-purple-50/30 to-white">
+                                                                       <div className="bg-gradient-to-br from-purple-50/30 to-white">
                                                                          <div className="p-6 md:p-8">
                                                                            <div className="text-center mb-8">
                                                                              <span className="bg-cyan-50 text-[#0097B2] text-xs font-bold px-3 py-1 rounded-full tracking-wide inline-block mb-4">SEMANA {wNum}</span>
