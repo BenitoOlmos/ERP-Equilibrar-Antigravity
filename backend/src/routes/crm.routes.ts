@@ -15,7 +15,7 @@ router.get('/leads', async (req, res) => {
             },
             include: {
                 profile: true,
-                diagnostic: true,
+                diagnostics: { orderBy: { date: 'desc' } },
                 payments: true,
                 appointmentsAsClient: {
                     orderBy: { date: 'desc' },
@@ -24,7 +24,17 @@ router.get('/leads', async (req, res) => {
             },
             orderBy: { createdAt: 'desc' }
         });
-        res.json(leads);
+        
+        // Mapeamos 'diagnostics' a 'diagnostic' para que la vista /crm React antigua no crashee
+        const mappedLeads = leads.map(l => {
+            const { diagnostics, ...rest } = l as any;
+            return {
+                ...rest,
+                diagnostic: diagnostics && diagnostics.length > 0 ? diagnostics[0] : null
+            };
+        });
+        
+        res.json(mappedLeads);
     } catch (error) {
         console.error('Error fetching CRM leads:', error);
         res.status(500).json({ message: 'Failed to fetch CRM leads' });
@@ -51,7 +61,11 @@ router.put('/leads/:id/notes', async (req, res) => {
 router.get('/diagnostics', async (req, res) => {
     try {
         const diagnostics = await prisma.diagnosticResult.findMany({
-            include: { user: true },
+            include: { 
+                 user: { 
+                     include: { profile: true } 
+                 } 
+            },
             orderBy: { date: 'desc' }
         });
         res.json(diagnostics);
@@ -63,11 +77,13 @@ router.get('/diagnostics', async (req, res) => {
 
 router.post('/diagnostics', async (req, res) => {
     try {
-        const { name, email, phone, AF, AM, AE, R, ITA, Re, IDSE, interpretacion, perfil } = req.body;
+        const { name, firstName, lastName, email, phone, AF, AM, AE, R, ITA, Re, IDSE, interpretacion, perfil } = req.body;
         
-        if (!email || !name) {
+        if (!email || (!name && !firstName)) {
             return res.status(400).json({ message: 'Email and name are required' });
         }
+
+        const fullName = name || `${firstName} ${lastName}`;
 
         // 1. Resolve Prospect User profile
         let user = await prisma.user.findUnique({ where: { email } });
@@ -75,36 +91,35 @@ router.post('/diagnostics', async (req, res) => {
             user = await prisma.user.create({
                 data: {
                     email,
-                    name,
+                    name: fullName,
                     phone: phone || null,
                     role: 'USER', // Web Prospect
                     isActive: true
                 }
             });
-        } else if (phone && !user.phone) {
+        } else {
+            // Refrescamos nombre y teléfono si el usuario ya existía pero estaban vacíos
             await prisma.user.update({
                 where: { id: user.id },
-                data: { phone }
+                data: { 
+                    phone: phone || user.phone,
+                    name: user.name || fullName
+                }
             });
         }
 
-        // 2. Upsert Diagnostic Snapshot
-        const diagnostic = await prisma.diagnosticResult.upsert({
-            where: { userId: user.id },
-            update: {
-                date: new Date(),
-                af: parseInt(AF),
-                am: parseInt(AM),
-                ae: parseInt(AE),
-                r: parseInt(R),
-                ita: parseInt(ITA),
-                re: parseInt(Re),
-                idsE: parseInt(IDSE),
-                interpretation: interpretacion,
-                profile: perfil,
-                status: 'INICIA_RFAI'
-            },
-            create: {
+        // 1.5 Sincronizar Ficha Clínica CRM (Profile)
+        if (firstName && lastName) {
+            await prisma.profile.upsert({
+                where: { userId: user.id },
+                update: { firstName, lastName },
+                create: { userId: user.id, firstName, lastName }
+            });
+        }
+
+        // 2. Insert Diagnostic Snapshot (Append al historial)
+        const diagnostic = await prisma.diagnosticResult.create({
+            data: {
                 userId: user.id,
                 date: new Date(),
                 af: parseInt(AF),

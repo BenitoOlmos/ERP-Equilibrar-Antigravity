@@ -45,7 +45,7 @@ model User {
   events   Event[]
 
   // CRM Relations
-  diagnostic DiagnosticResult?
+  diagnostics DiagnosticResult[]
 
   @@index([role])
   @@index([email])
