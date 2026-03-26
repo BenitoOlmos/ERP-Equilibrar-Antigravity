@@ -30,6 +30,10 @@ export default function ClientProgress() {
    const [nextAppointment, setNextAppointment] = useState<any>(null);
    const [loading, setLoading] = useState(true);
 
+   const [bitacoraLogs, setBitacoraLogs] = useState<any[]>([]);
+   const [newLogText, setNewLogText] = useState("");
+   const [isSavingLog, setIsSavingLog] = useState(false);
+
    useEffect(() => {
       if (!user) {
          navigate('/login');
@@ -38,6 +42,36 @@ export default function ClientProgress() {
       fetchProgramData();
       // eslint-disable-next-line
    }, [user, id]);
+
+   const loadBitacoraLogs = async (weekNum: number) => {
+      if (!user?.id) return;
+      try {
+         const res = await axios.get(`/api/data/users/${user.id}/bitacora/${weekNum}`);
+         setBitacoraLogs(res.data);
+      } catch (e) {
+         console.error("Error loading logs", e);
+      }
+   };
+
+   useEffect(() => {
+      if (user?.id && openWeek) {
+         loadBitacoraLogs(openWeek);
+      }
+   }, [user, openWeek]);
+
+   const handleSendBitacora = async () => {
+      if (!newLogText.trim() || !user?.id) return;
+      setIsSavingLog(true);
+      try {
+          await axios.post(`/api/data/users/${user.id}/bitacora/${openWeek}`, { content: newLogText });
+          setNewLogText("");
+          loadBitacoraLogs(openWeek);
+      } catch (e) {
+          console.error("Failed to save log", e);
+      } finally {
+          setIsSavingLog(false);
+      }
+   };
 
    const fetchProgramData = async () => {
       try {
@@ -280,24 +314,35 @@ export default function ClientProgress() {
                                                                                <MessageCircle className="w-5 h-5 text-[#0097B2]" /> Transcribe tus Registros Personales
                                                                              </h4>
                                                                              
-                                                                             {/* Fake History */}
+                                                                             {/* Real History */}
                                                                              <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto px-2 custom-scrollbar">
-                                                                               <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                                                                                 <p className="text-sm text-slate-700 whitespace-pre-wrap">Hola acá puedo escribir</p>
-                                                                                 <div className="text-[10px] text-slate-400 mt-2 text-right">23 de marzo de 2026, 21:38</div>
-                                                                               </div>
-                                                                               <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                                                                                 <p className="text-sm text-slate-700 whitespace-pre-wrap">Reflexión 1</p>
-                                                                                 <div className="text-[10px] text-slate-400 mt-2 text-right">18 de marzo de 2026, 15:11</div>
-                                                                               </div>
+                                                                               {bitacoraLogs.length === 0 ? (
+                                                                                  <div className="text-center py-4 text-xs font-bold text-slate-400">Sin registros en esta semana. Escribe tu primera reflexión.</div>
+                                                                               ) : (
+                                                                                 bitacoraLogs.map((log: any, idx: number) => (
+                                                                                    <div key={idx} className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                                                                                      <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{log.content}</p>
+                                                                                      <div className="text-[10px] text-slate-400 mt-2 text-right">
+                                                                                        {new Date(log.timestamp).toLocaleString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                                                      </div>
+                                                                                    </div>
+                                                                                 ))
+                                                                               )}
                                                                              </div>
                                                                              
                                                                              <div className="flex gap-3">
                                                                                <textarea 
                                                                                   placeholder="Escribe tu reflexión o registro personal aquí..." 
                                                                                   className="w-full h-14 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0097B2] resize-none"
+                                                                                  value={newLogText}
+                                                                                  onChange={(e) => setNewLogText(e.target.value)}
+                                                                                  disabled={isSavingLog}
                                                                                ></textarea>
-                                                                               <button className="px-4 rounded-xl flex items-center justify-center shadow-sm transition-colors bg-[#0097B2]/10 hover:bg-[#0097B2]/20 text-[#0097B2]">
+                                                                               <button 
+                                                                                  disabled={!newLogText.trim() || isSavingLog}
+                                                                                  onClick={handleSendBitacora} 
+                                                                                  className={`px-4 rounded-xl flex items-center justify-center shadow-sm transition-colors ${!newLogText.trim() || isSavingLog ? 'bg-slate-200 text-slate-400' : 'bg-[#0097B2]/10 hover:bg-[#0097B2]/20 text-[#0097B2] cursor-pointer'}`}
+                                                                               >
                                                                                  <Send className="w-5 h-5" />
                                                                                </button>
                                                                              </div>

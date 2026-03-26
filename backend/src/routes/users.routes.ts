@@ -166,6 +166,38 @@ router.get('/:id/programs', async (req, res) => {
     console.error('Error fetching user programs:', error);
     res.status(500).json({ error: 'Database error' });
   }
+});// GET /api/data/users/:id/bitacora/:weekNumber - Fetch bitacora history
+router.get('/:id/bitacora/:weekNumber', async (req, res) => {
+   try {
+       const { id, weekNumber } = req.params;
+       const logs = await prisma.bitacoraLog.findMany({
+          where: { userId: id, weekNumber: parseInt(weekNumber) },
+          orderBy: { timestamp: 'asc' }
+       });
+       res.json(logs);
+   } catch (error) {
+       console.error('Error fetching bitacora:', error);
+       res.status(500).json({ error: 'Database error' });
+   }
+});
+
+// POST /api/data/users/:id/bitacora/:weekNumber - Post new bitacora 
+router.post('/:id/bitacora/:weekNumber', async (req, res) => {
+   try {
+       const { id, weekNumber } = req.params;
+       const { content } = req.body;
+       const log = await prisma.bitacoraLog.create({
+          data: {
+             userId: id,
+             weekNumber: parseInt(weekNumber),
+             content
+          }
+       });
+       res.json(log);
+   } catch (error) {
+       console.error('Error saving bitacora:', error);
+       res.status(500).json({ error: 'Database error' });
+   }
 });
 
 export default router;
