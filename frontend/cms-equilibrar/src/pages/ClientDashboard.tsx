@@ -33,7 +33,7 @@ export function ClientDashboard() {
    
    // Form states
    const [currentAvatar, setCurrentAvatar] = useState(defaultAvatars[0]);
-   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '' });
+   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '' });
    const [saving, setSaving] = useState(false);
 
    useEffect(() => {
@@ -61,6 +61,7 @@ export function ClientDashboard() {
                   firstName: uName,
                   lastName: uLastName,
                   email: profileRes.data.email || user.email || '',
+                  phone: profileRes.data.phone || '',
                   password: ''
                });
             }
@@ -95,6 +96,7 @@ export function ClientDashboard() {
             email: formData.email,
             firstName: formData.firstName,
             lastName: formData.lastName,
+            phone: formData.phone,
             password: formData.password
          });
          alert('Tus datos han sido actualizados en la base de datos permanentemente. Reiniciaremos tu sesión para aplicar.');
@@ -355,9 +357,15 @@ export function ClientDashboard() {
                         </div>
                      </div>
 
-                     <div>
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Correo Electrónico Válido</label>
-                        <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00A89C]/30 transition-shadow text-slate-700" />
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Correo Electrónico</label>
+                           <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00A89C]/30 transition-shadow text-slate-700" />
+                        </div>
+                        <div>
+                           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Teléfono Móvil</label>
+                           <input type="tel" placeholder="+56..." value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00A89C]/30 transition-shadow placeholder:text-slate-300 text-slate-700" />
+                        </div>
                      </div>
 
                      <div className="pb-4">
