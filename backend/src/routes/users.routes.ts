@@ -86,4 +86,86 @@ router.delete('/:id', async (req, res) => {
   } catch(e: any) { console.error(e); res.status(500).json({error: 'Failed to delete user'}); }
 });
 
+// GET /api/data/users/:id/programs - Fetch purchased programs via Payments
+router.get('/:id/programs', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // 1. Get all actual completed purchases (non-internal)
+    const payments = await prisma.payment.findMany({
+      where: {
+        userId: id,
+        status: 'COMPLETED',
+        paymentMethod: { not: 'INTERNAL' }
+      }
+    });
+
+    const activeConcepts = Array.from(new Set(payments.map(p => p.concept).filter(Boolean)));
+    
+    // 2. Map concepts to actual Programs, Courses, or RFAIServices
+    let matchedPrograms: any[] = [];
+    
+    for (const concept of activeConcepts) {
+        if (!concept) continue;
+        
+        let found = false;
+        
+        // Try Program
+        const prog = await prisma.program.findFirst({
+           where: { name: concept },
+           include: { modules: { orderBy: [{ weekNumber: 'asc' }, { order: 'asc' }] } }
+        });
+        if (prog) {
+           matchedPrograms.push({ type: 'PROGRAM', id: prog.id, title: prog.name, modules: prog.modules });
+           found = true;
+        }
+
+        if (!found) {
+           // Try RFAIService
+           const rfai = await prisma.rFAIService.findFirst({
+              where: { title: concept },
+              include: { modules: { orderBy: [{ weekNumber: 'asc' }, { order: 'asc' }] } }
+           });
+           if (rfai) {
+              matchedPrograms.push({ type: 'RFAI', id: rfai.id, title: rfai.title, modules: rfai.modules });
+              found = true;
+           }
+        }
+
+        if (!found) {
+           // Try Course
+           const c = await prisma.course.findFirst({
+              where: { title: concept },
+              include: { modules: { orderBy: [{ weekNumber: 'asc' }, { order: 'asc' }] } }
+           });
+           if (c) {
+              matchedPrograms.push({ type: 'COURSE', id: c.id, title: c.title, modules: c.modules });
+           }
+        }
+    }
+
+    // 3. Fetch future appointments for this user to inject "Videoconferencias"
+    const nextAppointments = await prisma.appointment.findMany({
+        where: {
+           clientId: id,
+           date: { gte: new Date() },
+           status: { notIn: ['CANCELLED', 'NO_SHOW'] }
+        },
+        orderBy: { date: 'asc' },
+        include: { service: true }
+    });
+
+    res.json({
+        programs: matchedPrograms,
+        currentWeek: user.currentWeek || 1,
+        nextAppointments
+    });
+  } catch (error) {
+    console.error('Error fetching user programs:', error);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
 export default router;

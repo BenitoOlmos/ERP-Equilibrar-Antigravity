@@ -37,8 +37,6 @@ router.get('/backup', async (req, res) => {
       users: await prisma.user.findMany(),
       userCompletedWeeks: await prisma.userCompletedWeek.findMany(),
       services: await prisma.agendaService.findMany(),
-      weekContents: await prisma.weekContent.findMany(),
-      questions: await prisma.question.findMany(),
       evaluations: await prisma.weeklyEvaluation.findMany(),
       answers: await prisma.weeklyEvaluationAnswer.findMany(),
       appointments: await prisma.appointment.findMany(),
@@ -74,10 +72,6 @@ router.post('/restore', async (req, res) => {
       await tx.appointment.deleteMany();
       await tx.weeklyEvaluationAnswer.deleteMany();
       await tx.weeklyEvaluation.deleteMany();
-      await tx.question.deleteMany();
-      
-      await tx.programContent.deleteMany();
-      await tx.weekContent.deleteMany();
       
       await tx.rFAIProgramService.deleteMany();
       await tx.programService.deleteMany();
