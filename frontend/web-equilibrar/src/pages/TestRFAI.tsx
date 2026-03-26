@@ -333,7 +333,7 @@ const TestRFAI: React.FC = () => {
                     resumen_dimensional: calculatedResults.resumenDimensional
                 })
             });
-            const encodedData = btoa(JSON.stringify(calculatedResults));
+            const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(calculatedResults))));
             navigate(`/resultado?data=${encodedData}`);
             window.scrollTo(0, 0);
         } catch (err) {

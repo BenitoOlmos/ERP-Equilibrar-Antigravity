@@ -33,9 +33,15 @@ const ResultRFAI: React.FC = () => {
 
         if (dataParam) {
             try {
-                // Decode Base64 safely
-                const jsonString = atob(dataParam);
-                const parsedResults = JSON.parse(jsonString) as ResultsType;
+                // Fix for old tokens missing '+' and UTF-8 decoder
+                const sanitizedParam = dataParam.replace(/ /g, '+');
+                let decodedStr = '';
+                try {
+                    decodedStr = decodeURIComponent(escape(atob(sanitizedParam)));
+                } catch(e) {
+                    decodedStr = atob(sanitizedParam);
+                }
+                const parsedResults = JSON.parse(decodedStr) as ResultsType;
                 setResults(parsedResults);
             } catch (error) {
                 console.error("Invalid URL parameters format");
