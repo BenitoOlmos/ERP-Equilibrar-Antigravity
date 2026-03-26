@@ -3,13 +3,17 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { PlayCircle, ShieldCheck, ArrowRight, ArrowUpRight, Activity, BookOpen, Headphones, User, Settings, LogOut, X, CheckCircle } from 'lucide-react';
 
-const RFAIData: Record<string, string> = {
-    "desbordado": "https://www.youtube.com/embed/SU_K-Qt4tf8",
-    "hiper regulado": "https://www.youtube.com/embed/X7v43d7U4io",
-    "hiper reactivo": "https://www.youtube.com/embed/Ke5JnAlBe7Y",
-    "inhibido": "https://www.youtube.com/embed/liHSg0FOT9g",
-    "sobre adaptado": "https://www.youtube.com/embed/8rIIp-15huw",
-    "indeterminado": "https://www.youtube.com/embed/Ke5JnAlBe7Y"
+const getRFAIVideo = (profileStr: string): string | null => {
+    if (!profileStr) return null;
+    const s = profileStr.toLowerCase();
+    if (s.includes("desregulado") || s.includes("desbordado")) return "https://www.youtube.com/embed/SU_K-Qt4tf8";
+    if (s.includes("reactivo") && s.includes("hiper")) return "https://www.youtube.com/embed/Ke5JnAlBe7Y";
+    if (s.includes("reactivo")) return "https://www.youtube.com/embed/Ke5JnAlBe7Y"; // Fallback Reactivo
+    if (s.includes("regulado") && s.includes("hiper")) return "https://www.youtube.com/embed/X7v43d7U4io";
+    if (s.includes("regulado")) return "https://www.youtube.com/embed/X7v43d7U4io"; // Fallback Regulado
+    if (s.includes("inhibido")) return "https://www.youtube.com/embed/liHSg0FOT9g";
+    if (s.includes("adaptado") || s.includes("sobre adaptado") || s.includes("sobreadaptado")) return "https://www.youtube.com/embed/8rIIp-15huw";
+    return "https://www.youtube.com/embed/Ke5JnAlBe7Y"; // Default
 };
 
 const defaultAvatars = [
@@ -200,10 +204,10 @@ export function ClientDashboard() {
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                   <div className="bg-white rounded-[2rem] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden relative group">
                      <div className="aspect-video bg-slate-900 rounded-[1.5rem] w-full overflow-hidden relative z-10">
-                        {userTest.profile && RFAIData[userTest.profile.trim().toLowerCase()] ? (
+                        {userTest.profile && getRFAIVideo(userTest.profile) ? (
                            <iframe 
                               className="w-full h-full absolute inset-0"
-                              src={RFAIData[userTest.profile.trim().toLowerCase()]} 
+                              src={getRFAIVideo(userTest.profile) as string} 
                               title="Explicación Perfil RFAI" 
                               frameBorder="0" 
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
