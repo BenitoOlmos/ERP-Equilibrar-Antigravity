@@ -2,7 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen } from 'lucide-react';
+
+const getModuleStyle = (type: string) => {
+    const t = type?.toUpperCase() || 'UNKNOWN';
+    if (t === 'VIDEO') return { icon: Video, color: 'text-rose-500', bg: 'bg-rose-50', ring: 'ring-rose-100', subtext: 'Cápsula Audiovisual', isAction: false };
+    if (t === 'AUDIO') return { icon: Headphones, color: 'text-indigo-500', bg: 'bg-indigo-50', ring: 'ring-indigo-100', subtext: 'Reprogramación Auditiva', isAction: false };
+    if (t === 'PDF') return { icon: FileText, color: 'text-blue-500', bg: 'bg-blue-50', ring: 'ring-blue-100', subtext: 'Documento Descargable', isAction: true };
+    if (t === 'TEXT' || t === 'REFLEXION') return { icon: AlignLeft, color: 'text-amber-500', bg: 'bg-amber-50', ring: 'ring-amber-100', subtext: 'Lectura de Reflexión', isAction: false };
+    if (t === 'QUESTIONNAIRE' || t === 'CUESTIONARIO') return { icon: CheckSquare, color: 'text-emerald-500', bg: 'bg-emerald-50', ring: 'ring-emerald-100', subtext: 'Evaluación Activa', isAction: true };
+    if (t === 'IMAGE') return { icon: ImageIcon, color: 'text-purple-500', bg: 'bg-purple-50', ring: 'ring-purple-100', subtext: 'Material Visual', isAction: false };
+    if (t === 'BITACORA') return { icon: BookOpen, color: 'text-fuchsia-500', bg: 'bg-fuchsia-50', ring: 'ring-fuchsia-100', subtext: 'Bitácora de Avance', isAction: true };
+    
+    // Default
+    return { icon: FileText, color: 'text-slate-500', bg: 'bg-slate-50', ring: 'ring-slate-100', subtext: 'Recurso Clínico', isAction: false };
+};
 
 export default function ClientProgress() {
    const { id } = useParams(); // Program ID
@@ -163,54 +177,48 @@ export default function ClientProgress() {
                                  
                                  {isOpen && (
                                      <div className="space-y-4 animate-fade-in mt-8 pt-8 border-t border-slate-100">
-                                         {/* Modules Static Render for Architecture Proof */}
-                                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
-                                             <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors">
-                                                 <div className="flex items-center gap-5">
-                                                     <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-red-50 text-red-500 group-hover:scale-105 transition-transform ring-1 ring-red-100">
-                                                         <Video className="w-6 h-6" />
+                                         {program.modules?.filter((m: any) => m.weekNumber === wNum).length > 0 ? (
+                                             program.modules.filter((m: any) => m.weekNumber === wNum).map((mod: any) => {
+                                                 const conf = getModuleStyle(mod.type);
+                                                 const IconComponent = conf.icon;
+                                                 
+                                                 return (
+                                                     <div key={mod.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group relative">
+                                                         {conf.isAction && <div className={`absolute top-0 left-0 w-1.5 h-full bg-current ${conf.color.replace('text-', 'bg-')}`}></div>}
+                                                         
+                                                         <div className={`p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors ${conf.isAction ? 'pl-6' : ''}`}>
+                                                             <div className="flex items-center gap-5">
+                                                                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 ring-1 ${conf.bg} ${conf.color} ${conf.ring}`}>
+                                                                     <IconComponent className="w-6 h-6" />
+                                                                 </div>
+                                                                 <div>
+                                                                     <h4 className={`font-bold text-slate-800 text-lg transition-colors group-hover:${conf.color}`}>{mod.title}</h4>
+                                                                     
+                                                                     {conf.isAction ? (
+                                                                         <span className={`text-[10px] font-black uppercase tracking-widest mt-1 px-2 py-0.5 rounded-md inline-block ${conf.color} ${conf.bg}`}>
+                                                                             {conf.subtext}
+                                                                         </span>
+                                                                     ) : (
+                                                                         <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest flex items-center gap-1">
+                                                                             {mod.duration ? `${Math.round(mod.duration / 60)} min • ` : ''}{conf.subtext}
+                                                                         </span>
+                                                                     )}
+                                                                 </div>
+                                                             </div>
+                                                             {conf.isAction ? (
+                                                                 <ArrowRight className={`w-5 h-5 ${conf.color}`} />
+                                                             ) : (
+                                                                 <ChevronDown className="w-5 h-5 text-slate-300" />
+                                                             )}
+                                                         </div>
                                                      </div>
-                                                     <div>
-                                                         <h4 className="font-bold text-slate-800 text-lg group-hover:text-[#00A89C] transition-colors">Video Analítico de Reflexión</h4>
-                                                         <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest flex items-center gap-1"><CheckCircle className="w-3 h-3 text-emerald-500" /> Material AudioVisual</span>
-                                                     </div>
-                                                 </div>
-                                                 <ChevronDown className="w-5 h-5 text-slate-300" />
+                                                 );
+                                             })
+                                         ) : (
+                                             <div className="text-center py-8 bg-slate-50 rounded-2xl border border-slate-100">
+                                                 <p className="text-slate-400 font-medium">Contenidos en preparación por el equipo clínico.</p>
                                              </div>
-                                         </div>
-                                         
-                                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group relative">
-                                             <div className="absolute top-0 left-0 w-1.5 h-full bg-[#00A89C]"></div>
-                                             <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors pl-6">
-                                                 <div className="flex items-center gap-5">
-                                                     <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:scale-105 transition-transform ring-1 ring-emerald-100">
-                                                         <FileText className="w-6 h-6" />
-                                                     </div>
-                                                     <div>
-                                                         <h4 className="font-bold text-slate-800 text-lg group-hover:text-[#00A89C] transition-colors">Bitácora Fisiológica</h4>
-                                                         <span className="text-[10px] font-black uppercase tracking-widest mt-1 text-[#00A89C] bg-[#00A89C]/10 px-2 py-0.5 rounded-md inline-block">
-                                                             Registro de Avance Activo
-                                                         </span>
-                                                     </div>
-                                                 </div>
-                                                 <ArrowRight className="w-5 h-5 text-[#00A89C]" />
-                                             </div>
-                                         </div>
-                                         
-                                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
-                                             <div className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors">
-                                                 <div className="flex items-center gap-5">
-                                                     <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-purple-50 text-purple-600 group-hover:scale-105 transition-transform ring-1 ring-purple-100">
-                                                         <Headphones className="w-6 h-6" />
-                                                     </div>
-                                                     <div>
-                                                         <h4 className="font-bold text-slate-800 text-lg group-hover:text-purple-600 transition-colors">Protocolo de Hipnosis</h4>
-                                                         <span className="text-xs text-slate-500 font-medium mt-1 uppercase tracking-widest">Audio de Reprogramación</span>
-                                                     </div>
-                                                 </div>
-                                                 <ChevronDown className="w-5 h-5 text-slate-300" />
-                                             </div>
-                                         </div>
+                                         )}
                                      </div>
                                  )}
                               </div>
