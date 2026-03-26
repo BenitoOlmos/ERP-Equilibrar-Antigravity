@@ -63,7 +63,7 @@ router.get('/diagnostics', async (req, res) => {
 
 router.post('/diagnostics', async (req, res) => {
     try {
-        const { name, email, AF, AM, AE, R, ITA, Re, IDSE, interpretacion, perfil } = req.body;
+        const { name, email, phone, AF, AM, AE, R, ITA, Re, IDSE, interpretacion, perfil } = req.body;
         
         if (!email || !name) {
             return res.status(400).json({ message: 'Email and name are required' });
@@ -76,9 +76,15 @@ router.post('/diagnostics', async (req, res) => {
                 data: {
                     email,
                     name,
+                    phone: phone || null,
                     role: 'USER', // Web Prospect
                     isActive: true
                 }
+            });
+        } else if (phone && !user.phone) {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { phone }
             });
         }
 

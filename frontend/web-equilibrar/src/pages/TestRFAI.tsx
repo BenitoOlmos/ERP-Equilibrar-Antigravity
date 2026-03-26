@@ -81,7 +81,7 @@ interface ResultsType {
 
 const TestRFAI: React.FC = () => {
     const [step, setStep] = useState(0); // 0: UserInfo, 1: AF, 2: AM, 3: AE, 4: R
-    const [userInfo, setUserInfo] = useState({ name: '', email: '' });
+    const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', phone: '' });
     const [answers, setAnswers] = useState<number[]>(Array(28).fill(-1));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showResults, setShowResults] = useState(false);
@@ -109,8 +109,8 @@ const TestRFAI: React.FC = () => {
     const validateStep = (currentStep: number) => {
         if (currentStep === 0) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!userInfo.name.trim() || !userInfo.email.trim()) {
-                setError("Por favor, completa nombre y correo para continuar.");
+            if (!userInfo.firstName.trim() || !userInfo.lastName.trim() || !userInfo.email.trim() || !userInfo.phone.trim()) {
+                setError("Por favor, completa de forma íntegra tus datos de contacto para continuar.");
                 return false;
             }
             if (!emailRegex.test(userInfo.email)) {
@@ -296,7 +296,8 @@ const TestRFAI: React.FC = () => {
         // Creamos un objeto URLSearchParams para enviar como formulario clásico (x-www-form-urlencoded)
         // Esto es mucho más seguro para evitar que el navegador o bloqueadores eliminen campos en el modo 'no-cors'
         const formData = new URLSearchParams();
-        formData.append("name", userInfo.name);
+        const fullName = `${userInfo.firstName.trim()} ${userInfo.lastName.trim()}`;
+        formData.append("name", fullName);
         formData.append("email", userInfo.email);
         formData.append("AF", calculatedResults.AF.toString());
         formData.append("AM", calculatedResults.AM.toString());
@@ -317,8 +318,9 @@ const TestRFAI: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: userInfo.name,
-                    email: userInfo.email,
+                    name: fullName,
+                    email: userInfo.email.trim(),
+                    phone: userInfo.phone.trim(),
                     AF: calculatedResults.AF,
                     AM: calculatedResults.AM,
                     AE: calculatedResults.AE,
@@ -752,9 +754,20 @@ const TestRFAI: React.FC = () => {
 
                             <div className="card-step0" id="form-inicio">
                                 <form onSubmit={(e) => { e.preventDefault(); nextStep(); }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                        <div className="field" style={{ marginBottom: '10px' }}>
+                                            <label>Nombres</label>
+                                            <input type="text" name="firstName" value={userInfo.firstName} onChange={handleUserInfoChange} required placeholder="Ej. Juan" />
+                                        </div>
+                                        <div className="field" style={{ marginBottom: '10px' }}>
+                                            <label>Apellidos</label>
+                                            <input type="text" name="lastName" value={userInfo.lastName} onChange={handleUserInfoChange} required placeholder="Ej. Pérez" />
+                                        </div>
+                                    </div>
+
                                     <div className="field">
-                                        <label>Nombre completo</label>
-                                        <input type="text" name="name" value={userInfo.name} onChange={handleUserInfoChange} required placeholder="Ej. Juan Pérez" />
+                                        <label>Teléfono (WhatsApp)</label>
+                                        <input type="tel" name="phone" value={userInfo.phone} onChange={handleUserInfoChange} required placeholder="+56 9 1234 5678" />
                                     </div>
 
                                     <div className="field">
