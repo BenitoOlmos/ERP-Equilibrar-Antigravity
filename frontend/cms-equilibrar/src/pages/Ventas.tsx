@@ -84,8 +84,11 @@ export default function Ventas() {
     
     if (sale.appointment) {
        setRequiresScheduling(true);
-       setAppointmentDate(new Date(sale.appointment.date).toISOString().split('T')[0]);
-       setAppointmentTime(new Date(sale.appointment.date).toTimeString().slice(0,5));
+       const d = new Date(sale.appointment.date);
+       // To get local yyyy-mm-dd
+       const localDateStr = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+       setAppointmentDate(localDateStr);
+       setAppointmentTime(d.toTimeString().slice(0,5));
        setSpecialistId(sale.appointment.specialistId || '');
        setAttachedServiceId(sale.appointment.serviceId || '');
     } else {
@@ -180,12 +183,15 @@ export default function Ventas() {
     if (requiresScheduling && (!appointmentDate || !appointmentTime || !specialistId)) {
        return alert('El ítem seleccionado incluye atención clínica. Debes asignar Fecha, Hora y Especialista.');
     }
+    
+    // Crear el timestamp respetando la zona horaria del navegador
+    const dt = requiresScheduling ? new Date(`${appointmentDate}T${appointmentTime}:00`) : new Date();
 
     const payload = { 
        amount, concept, status, paymentMethod, userId, productId: productId || null,
        ...(requiresScheduling && {
           appointmentDetails: {
-             date: `${appointmentDate}T${appointmentTime}:00`,
+             date: dt.toISOString(),
              timeStr: appointmentTime,
              specialistId: specialistId,
              serviceId: attachedServiceId
