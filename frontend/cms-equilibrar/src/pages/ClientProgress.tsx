@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen, Download } from 'lucide-react';
+import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen, Download, PenLine, MessageCircle, Send, CircleCheck } from 'lucide-react';
 
 const getModuleStyle = (type: string) => {
     const t = type?.toUpperCase() || 'UNKNOWN';
@@ -258,18 +258,107 @@ export default function ClientProgress() {
                                                                      </div>
                                                                  )}
                                                                  
-                                                                 {(mod.type === 'BITACORA' || mod.type === 'QUESTIONNAIRE') && (
-                                                                     <div className="bg-white p-6 rounded-2xl border border-slate-200 text-center flex flex-col items-center justify-center space-y-4">
-                                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center ${conf.bg} ${conf.color}`}>
-                                                                             <IconComponent className="w-8 h-8" />
+                                                                 {(mod.type === 'BITACORA' || mod.type === 'JOURNAL') && (
+                                                                     <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative dark:bg-slate-800 dark:border-slate-700">
+                                                                       <div className="p-5 flex justify-between items-center transition-colors bg-emerald-50/50 dark:bg-emerald-900/20">
+                                                                         <div className="flex items-center gap-4">
+                                                                           <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors bg-emerald-100 text-emerald-600">
+                                                                             <FileText className="w-6 h-6" />
+                                                                           </div>
+                                                                           <div>
+                                                                             <h4 className="font-bold text-slate-800 text-lg">Bitácora Personal del Proceso</h4>
+                                                                             <span className="text-xs font-medium flex items-center gap-1 mt-1 text-emerald-600">
+                                                                               <CircleCheck className="w-3.5 h-3.5" /> Bitácora Activa
+                                                                             </span>
+                                                                           </div>
                                                                          </div>
-                                                                         <div>
-                                                                             <h4 className="font-black text-slate-800 text-lg">Sección Interactiva Activa</h4>
-                                                                             <p className="text-sm text-slate-500 font-medium mt-1 max-w-sm mx-auto">La integración de respuestas de esta {mod.type === 'BITACORA' ? 'bitácora' : 'evaluación'} se guardará directamente en tu progreso clínico para ser revisado por tu especialista.</p>
+                                                                       </div>
+                                                                       <div className="border-t border-slate-100 bg-gradient-to-br from-emerald-50/30 to-white dark:from-emerald-900/10 dark:to-slate-800">
+                                                                         <div className="p-6 md:p-8">
+                                                                           <div className="mb-0 border-b border-slate-100 pb-6 dark:border-slate-700">
+                                                                             <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                                                               <MessageCircle className="w-5 h-5 text-[#0097B2]" /> Transcribe tus Registros Personales
+                                                                             </h4>
+                                                                             
+                                                                             {/* Fake History */}
+                                                                             <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto px-2 custom-scrollbar">
+                                                                               <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                                                                                 <p className="text-sm text-slate-700 whitespace-pre-wrap">Hola acá puedo escribir</p>
+                                                                                 <div className="text-[10px] text-slate-400 mt-2 text-right">23 de marzo de 2026, 21:38</div>
+                                                                               </div>
+                                                                               <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                                                                                 <p className="text-sm text-slate-700 whitespace-pre-wrap">Reflexión 1</p>
+                                                                                 <div className="text-[10px] text-slate-400 mt-2 text-right">18 de marzo de 2026, 15:11</div>
+                                                                               </div>
+                                                                             </div>
+                                                                             
+                                                                             <div className="flex gap-3">
+                                                                               <textarea 
+                                                                                  placeholder="Escribe tu reflexión o registro personal aquí..." 
+                                                                                  className="w-full h-14 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0097B2] resize-none"
+                                                                               ></textarea>
+                                                                               <button className="px-4 rounded-xl flex items-center justify-center shadow-sm transition-colors bg-[#0097B2]/10 hover:bg-[#0097B2]/20 text-[#0097B2]">
+                                                                                 <Send className="w-5 h-5" />
+                                                                               </button>
+                                                                             </div>
+                                                                           </div>
                                                                          </div>
-                                                                         <button className={`px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-black rounded-xl transition-transform active:scale-95 shadow-lg flex items-center`}>
-                                                                             Comenzar Ejercicio <ArrowRight className="w-4 h-4 ml-2" />
-                                                                         </button>
+                                                                       </div>
+                                                                     </div>
+                                                                 )}
+
+                                                                 {mod.type === 'QUESTIONNAIRE' && (
+                                                                     <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative dark:bg-slate-800 dark:border-slate-700">
+                                                                       <div className="p-5 flex justify-between items-center transition-colors bg-purple-50/50 dark:bg-purple-900/20">
+                                                                         <div className="flex items-center gap-4">
+                                                                           <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors bg-purple-100 text-purple-600">
+                                                                             <PenLine className="w-6 h-6" />
+                                                                           </div>
+                                                                           <div>
+                                                                             <h4 className="font-bold text-slate-800 text-lg">Registro Emocional</h4>
+                                                                             <span className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1">Cuestionario Semanal</span>
+                                                                           </div>
+                                                                         </div>
+                                                                       </div>
+                                                                       <div className="border-t border-slate-100 bg-gradient-to-br from-purple-50/30 to-white">
+                                                                         <div className="p-6 md:p-8">
+                                                                           <div className="text-center mb-8">
+                                                                             <span className="bg-cyan-50 text-[#0097B2] text-xs font-bold px-3 py-1 rounded-full tracking-wide inline-block mb-4">SEMANA {wNum}</span>
+                                                                             <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">Autoevaluación</h3>
+                                                                             <p className="text-slate-500 dark:text-slate-400 text-sm">Evalúa tu estado actual del 0 al 10.</p>
+                                                                           </div>
+                                                                           <div className="space-y-8 max-w-2xl mx-auto">
+                                                                             
+                                                                             {(mod.questions && mod.questions.length > 0) ? mod.questions.map((q: any, i: number) => (
+                                                                               <div key={i} className="space-y-4">
+                                                                                 <div className="flex justify-between items-start gap-4">
+                                                                                   <label className="text-sm font-medium text-slate-700 leading-snug">{i + 1}. {q.text}</label>
+                                                                                   <span className="text-xl font-bold text-[#0097B2] w-8 text-right flex-shrink-0">5</span>
+                                                                                 </div>
+                                                                                 <div className="relative pt-2 pb-2">
+                                                                                   <input min="0" max="10" step="1" className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0097B2]" type="range" defaultValue="5" />
+                                                                                   <div className="flex justify-between text-xs text-slate-400 mt-3 font-medium px-1">
+                                                                                     <span>Bajo (0)</span>
+                                                                                     <span>Alto (10)</span>
+                                                                                   </div>
+                                                                                 </div>
+                                                                               </div>
+                                                                             )) : (
+                                                                               <div className="text-center text-slate-400 text-sm font-medium py-4">
+                                                                                  No hay preguntas configuradas para este módulo.
+                                                                               </div>
+                                                                             )}
+                                                                             
+                                                                             {mod.questions && mod.questions.length > 0 && (
+                                                                               <div className="pt-8 flex justify-center">
+                                                                                 <button className="flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold transition-all shadow-sm w-full md:w-auto bg-[#0097B2] text-white hover:bg-cyan-600 shadow-cyan-200">
+                                                                                   <Send className="w-5 h-5" /> Enviar Registro Semanal
+                                                                                 </button>
+                                                                               </div>
+                                                                             )}
+                                                                           </div>
+                                                                         </div>
+                                                                       </div>
                                                                      </div>
                                                                  )}
                                                              </div>

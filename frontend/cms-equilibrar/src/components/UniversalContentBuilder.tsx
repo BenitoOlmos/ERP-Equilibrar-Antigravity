@@ -69,13 +69,13 @@ export function UniversalContentBuilder({ modules, onChange }: Props) {
   };
 
   const options = [
-    { type: 'VIDEO', label: 'Video MD', icon: Video, color: 'text-rose-500', bg: 'bg-rose-50' },
+    { type: 'VIDEO', label: 'Video Youtube', icon: Video, color: 'text-rose-500', bg: 'bg-rose-50' },
+    { type: 'JOURNAL', label: 'Bitácora', icon: BookOpen, color: 'text-fuchsia-500', bg: 'bg-fuchsia-50' },
     { type: 'AUDIO', label: 'Audio BD', icon: Headphones, color: 'text-indigo-500', bg: 'bg-indigo-50' },
-    { type: 'REFLECTION', label: 'Reflexión', icon: AlignLeft, color: 'text-amber-500', bg: 'bg-amber-50' },
     { type: 'QUESTIONNAIRE', label: 'Cuestionario', icon: CheckSquare, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { type: 'REFLECTION', label: 'Reflexión', icon: AlignLeft, color: 'text-amber-500', bg: 'bg-amber-50' },
     { type: 'PDF', label: 'Guía PDF', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { type: 'IMAGE', label: 'Imagen', icon: ImageIcon, color: 'text-purple-500', bg: 'bg-purple-50' },
-    { type: 'JOURNAL', label: 'Bitácora', icon: BookOpen, color: 'text-fuchsia-500', bg: 'bg-fuchsia-50' }
+    { type: 'IMAGE', label: 'Imagen', icon: ImageIcon, color: 'text-purple-500', bg: 'bg-purple-50' }
   ];
 
   return (
