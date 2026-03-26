@@ -75,6 +75,20 @@ router.get('/diagnostics', async (req, res) => {
     }
 });
 
+router.get('/diagnostics/user/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const diagnostics = await prisma.diagnosticResult.findMany({
+            where: { userId },
+            orderBy: { date: 'desc' }
+        });
+        res.json(diagnostics);
+    } catch (error) {
+        console.error('Error fetching user diagnostic:', error);
+        res.status(500).json({ message: 'Failed to fetch user diagnostic' });
+    }
+});
+
 router.post('/diagnostics', async (req, res) => {
     try {
         const { name, firstName, lastName, email, phone, AF, AM, AE, R, ITA, Re, IDSE, interpretacion, perfil } = req.body;
