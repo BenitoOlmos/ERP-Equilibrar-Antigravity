@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { PlayCircle, ShieldCheck, ArrowRight, ArrowUpRight, Activity, CalendarCheck, BookOpen, Star, Headphones, ExternalLink } from 'lucide-react';
+import { PlayCircle, ShieldCheck, ArrowRight, ArrowUpRight, Activity, CalendarCheck, BookOpen, Star, Headphones, ExternalLink, User, Settings, LogOut, X, CheckCircle } from 'lucide-react';
 
 const RFAIData: Record<string, string> = {
     "Desbordado": "https://www.youtube.com/embed/SU_K-Qt4tf8",
@@ -12,23 +12,46 @@ const RFAIData: Record<string, string> = {
     "Indeterminado": "https://www.youtube.com/embed/Ke5JnAlBe7Y"
 };
 
+const defaultAvatars = [
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=e2e8f0',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Aneka&backgroundColor=bbf7d0',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Sarah&backgroundColor=fecaca',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Oliver&backgroundColor=bfdbfe',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Luna&backgroundColor=e9d5ff'
+];
+
 export function ClientDashboard() {
-   const { user } = useAuth();
+   const { user, logout } = useAuth();
    const [loading, setLoading] = useState(true);
    const [userTest, setUserTest] = useState<any>(null);
    const [catalog, setCatalog] = useState<any[]>([]);
 
+   // Topbar states
+   const [isMenuOpen, setIsMenuOpen] = useState(false);
+   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+   
+   // Form states
+   const [currentAvatar, setCurrentAvatar] = useState(defaultAvatars[0]);
+   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '' });
+   const [saving, setSaving] = useState(false);
+
    useEffect(() => {
+      if (user?.id) {
+         const savedAvatar = localStorage.getItem(`avatar_${user.id}`);
+         if (savedAvatar) setCurrentAvatar(savedAvatar);
+         
+         const names = user.name?.split(' ') || [''];
+         setFormData(prev => ({ ...prev, firstName: names[0] || '', lastName: names.slice(1).join(' ') || '', email: user.email || '' }));
+      }
+
       const fetchData = async () => {
          try {
-            // Fetch Diagnostics for this specific User
             if (user?.id) {
                const diagRes = await axios.get(`/api/crm/diagnostics/user/${user.id}`);
                if (diagRes.data && diagRes.data.length > 0) {
                   setUserTest(diagRes.data[0]);
                }
             }
-            // Fetch some Services/Programs for Upsell
             const srvRes = await axios.get('/api/data/services');
             if (srvRes.data) {
                setCatalog(srvRes.data.filter((s:any) => s.isActive).slice(0, 3));
@@ -42,171 +65,300 @@ export function ClientDashboard() {
       fetchData();
    }, [user]);
 
+   const handleLogout = () => {
+      logout();
+      window.location.href = '/login';
+   };
+
+   const selectAvatar = (url: string) => {
+      setCurrentAvatar(url);
+      if (user?.id) localStorage.setItem(`avatar_${user.id}`, url);
+   };
+
+   const handleSaveSettings = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setSaving(true);
+      try {
+         await axios.put(`/api/data/users/${user?.id}`, {
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            password: formData.password
+         });
+         alert('Tus datos han sido actualizados permanentemente.');
+         setIsSettingsOpen(false);
+      } catch (e: any) {
+         alert('Error guardando ajustes: ' + (e.response?.data?.error || e.message));
+      } finally {
+         setSaving(false);
+      }
+   };
+
    const wpNumber = "56930179724";
 
    if (loading) return <div className="flex h-full min-h-[400px] items-center justify-center"><div className="w-12 h-12 border-4 border-[#00A89C]/20 border-t-[#00A89C] rounded-full animate-spin" /></div>;
 
    return (
-      <div className="max-w-5xl mx-auto animate-fade-in p-4 lg:p-8 space-y-12 pb-24">
-         {/* WELCOME HERO */}
-         <header className="text-center max-w-2xl mx-auto mt-6">
-            <div className="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 border border-emerald-100">
-               <ShieldCheck className="w-4 h-4" />
-               <span>Portal Clínico Privado</span>
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-black text-slate-800 tracking-tight leading-tight">
-               Bienvenido, <span className="text-[#00A89C]">{user?.name?.split(' ')[0]}</span>.
-            </h1>
-            <p className="text-slate-500 mt-4 font-medium text-lg leading-relaxed">
-               Este es tu refugio de transformación. Todo lo que necesitas para regular tu sistema nervioso y avanzar en tu tratamiento está aquí.
-            </p>
-         </header>
+      <div className="w-full relative bg-slate-50 min-h-screen pb-24">
+         {/* CLIENT NAVIGATION BAR */}
+         <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 z-40 h-20 px-6 lg:px-12 flex items-center justify-between shadow-sm animate-slide-up">
+             <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-[#00A89C] rounded-xl shadow-lg shadow-[#00A89C]/30 flex items-center justify-center text-white font-black text-xl">
+                   E
+                </div>
+                <div className="hidden sm:block">
+                   <h1 className="text-lg font-black tracking-tight text-slate-800 leading-none">ERP <span className="text-[#00A89C]">Equilibrar</span></h1>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Portal Terapéutico</p>
+                </div>
+             </div>
+             
+             <div className="relative">
+                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex items-center space-x-3 focus:outline-none hover:opacity-80 transition-opacity">
+                   <div className="hidden sm:flex flex-col text-right">
+                      <span className="text-sm font-bold text-slate-700">{formData.firstName}</span>
+                      <span className="text-[10px] font-black uppercase text-[#00A89C]">Paciente</span>
+                   </div>
+                   <img src={currentAvatar} alt="Avatar" className="w-12 h-12 rounded-full border-2 border-slate-100 shadow-md bg-white object-cover" />
+                </button>
 
-         {/* STATE 1: NO TEST RFAI */}
-         {!userTest && (
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2rem] p-8 lg:p-12 shadow-2xl relative overflow-hidden border border-slate-700">
-               <div className="absolute top-0 right-0 w-96 h-96 bg-[#00A89C] opacity-20 blur-[100px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2"></div>
-               <div className="relative z-10 max-w-xl">
-                  <div className="inline-flex items-center justify-center w-14 h-14 bg-red-500/20 text-red-400 rounded-2xl mb-6">
-                     <Activity className="w-8 h-8" />
-                  </div>
-                  <h2 className="text-3xl font-black text-white leading-tight mb-4">
-                     Estás volando a ciegas. <br/>Descubre la causa raíz de tu estrés.
-                  </h2>
-                  <p className="text-slate-300 text-lg mb-8">
-                     Para poder recomendarte el tratamiento adecuado o los programas correctos, necesitamos leer tu sistema nervioso. Nuestro modelo RFAI revelará por qué sientes lo que sientes en <strong>menos de 3 minutos</strong>.
-                  </p>
-                  <a href="https://www.clinicaequilibrar.cl/#/test-rfai" target="_blank" rel="noreferrer" className="inline-flex items-center px-8 py-4 bg-[#00A89C] hover:bg-emerald-500 text-white rounded-xl font-black text-lg transition-transform hover:-translate-y-1 shadow-[0_10px_30px_rgba(0,168,156,0.3)]">
-                     Realizar Mi Diagnóstico Gratis <ArrowRight className="ml-2 w-6 h-6" />
-                  </a>
+                {/* DROPDOWN AVATAR MENU */}
+                {isMenuOpen && (
+                   <div className="absolute top-[120%] right-0 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 animate-fade-in z-50">
+                      <div className="px-5 py-3 border-b border-slate-50 flex items-center space-x-3 bg-slate-50/50">
+                         <img src={currentAvatar} className="w-10 h-10 rounded-full bg-slate-200" alt="Avatar"/>
+                         <div className="flex flex-col overflow-hidden">
+                            <span className="text-sm font-bold text-slate-800 truncate">{formData.firstName} {formData.lastName}</span>
+                            <span className="text-[10px] text-slate-400 truncate">{formData.email}</span>
+                         </div>
+                      </div>
+                      <div className="p-2 space-y-1">
+                         <button onClick={() => { setIsSettingsOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#00A89C] rounded-xl transition-colors">
+                            <Settings className="w-4 h-4 mr-3" /> Configuración de Perfil
+                         </button>
+                         <button onClick={handleLogout} className="w-full flex items-center px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                            <LogOut className="w-4 h-4 mr-3" /> Cerrar Sesión Segura
+                         </button>
+                      </div>
+                   </div>
+                )}
+             </div>
+         </nav>
+
+         {/* MAIN CONTENT OF DASHBOARD */}
+         <div className="max-w-5xl mx-auto pt-28 px-4 lg:px-8 space-y-12 animate-fade-in">
+            {/* WELCOME HERO */}
+            <header className="text-center max-w-2xl mx-auto mt-6">
+               <div className="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 border border-emerald-100">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Espacio Privado y Seguro</span>
                </div>
-            </div>
-         )}
+               <h1 className="text-4xl lg:text-5xl font-black text-slate-800 tracking-tight leading-tight">
+                  Bienvenido, <span className="text-[#00A89C]">{formData.firstName}</span>.
+               </h1>
+               <p className="text-slate-500 mt-4 font-medium text-lg leading-relaxed">
+                  Este es tu refugio de transformación. Todo lo que necesitas para regular tu sistema nervioso y avanzar en tu tratamiento está aquí.
+               </p>
+            </header>
 
-         {/* STATE 2: HAS TEST RFAI (THE UPSELL FUNNEL) */}
-         {userTest && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-               {/* Video & Results Side */}
-               <div className="bg-white rounded-[2rem] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
-                  <div className="aspect-video bg-slate-900 rounded-[1.5rem] w-full overflow-hidden relative group">
-                     {RFAIData[userTest.profile] ? (
-                        <iframe 
-                           className="w-full h-full absolute inset-0"
-                           src={RFAIData[userTest.profile]} 
-                           title="Explicación Perfil RFAI" 
-                           frameBorder="0" 
-                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                           allowFullScreen
-                        ></iframe>
-                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-500">
-                           <PlayCircle className="w-16 h-16 opacity-30 mb-2" />
-                           <p className="font-bold text-sm">Video en Preparación</p>
-                        </div>
-                     )}
+            {/* STATE 1: NO TEST RFAI */}
+            {!userTest && (
+               <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2rem] p-8 lg:p-12 shadow-2xl relative overflow-hidden border border-slate-700 group hover:shadow-black/20 transition-all duration-500 hover:-translate-y-1">
+                  <div className="absolute top-0 right-0 w-96 h-96 bg-[#00A89C] opacity-20 blur-[100px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2 group-hover:bg-emerald-500 transition-colors duration-1000"></div>
+                  <div className="relative z-10 max-w-xl">
+                     <div className="inline-flex items-center justify-center w-14 h-14 bg-red-500/20 text-red-400 rounded-2xl mb-6 shadow-inner ring-1 ring-red-500/30">
+                        <Activity className="w-8 h-8 animate-pulse" />
+                     </div>
+                     <h2 className="text-3xl font-black text-white leading-tight mb-4">
+                        Estás volando a ciegas. <br/>Descubre la causa raíz de tu estrés.
+                     </h2>
+                     <p className="text-slate-300 text-lg mb-8">
+                        Para poder recomendarte el tratamiento adecuado o los programas correctos, necesitamos leer tu sistema nervioso. Nuestro modelo RFAI revelará por qué sientes lo que sientes en <strong>menos de 3 minutos</strong>.
+                     </p>
+                     <a href="https://www.clinicaequilibrar.cl/#/test-rfai" target="_blank" rel="noreferrer" className="inline-flex items-center px-8 py-4 bg-[#00A89C] hover:bg-emerald-500 text-white rounded-xl font-black text-lg transition-transform hover:-translate-y-1 shadow-[0_10px_30px_rgba(0,168,156,0.3)]">
+                        Realizar Mi Diagnóstico Gratis <ArrowRight className="ml-2 w-6 h-6 animate-bounce-x" />
+                     </a>
                   </div>
                </div>
+            )}
 
-               {/* Pitch Side */}
-               <div className="flex flex-col justify-center lg:px-6">
-                  <div className="inline-flex items-center px-3 py-1 bg-amber-50 text-amber-600 rounded-md font-black text-[10px] tracking-widest uppercase mb-4 border border-amber-200">
-                     Tu Perfil Neurológico
+            {/* STATE 2: HAS TEST RFAI (THE UPSELL FUNNEL) */}
+            {userTest && (
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                  <div className="bg-white rounded-[2rem] p-2 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden relative group">
+                     <div className="aspect-video bg-slate-900 rounded-[1.5rem] w-full overflow-hidden relative z-10">
+                        {RFAIData[userTest.profile] ? (
+                           <iframe 
+                              className="w-full h-full absolute inset-0"
+                              src={RFAIData[userTest.profile]} 
+                              title="Explicación Perfil RFAI" 
+                              frameBorder="0" 
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                              allowFullScreen
+                           ></iframe>
+                        ) : (
+                           <div className="w-full h-full flex flex-col items-center justify-center text-slate-500">
+                              <PlayCircle className="w-16 h-16 opacity-30 mb-2" />
+                              <p className="font-bold text-sm">Video en Preparación</p>
+                           </div>
+                        )}
+                     </div>
                   </div>
-                  <h2 className="text-3xl lg:text-4xl font-black text-slate-800 mb-4 leading-none">
-                     {userTest.profile}
-                  </h2>
-                  <p className="text-slate-500 text-lg mb-6">
-                     Tu sistema nervioso actual ha entrado en un bucle que agota tus recursos. En el video de la izquierda detallamos exactamente cómo se instaló este patrón y por qué el control consciente no es suficiente para salir de ahí.
-                  </p>
-                  
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-8 relative overflow-hidden">
-                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00A89C]"></div>
-                     <p className="font-bold text-slate-700 italic">
-                        "La solución no es intentar pensar en positivo; debes re-entrenar la ruta biológica de tu cerebro."
+
+                  <div className="flex flex-col justify-center lg:px-6">
+                     <div className="inline-flex items-center px-3 py-1 bg-amber-50 text-amber-600 rounded-md font-black text-[10px] tracking-widest uppercase mb-4 border border-amber-200 w-max shadow-sm">
+                        Tu Perfil Neurológico
+                     </div>
+                     <h2 className="text-3xl lg:text-4xl font-black text-slate-800 mb-4 leading-none">
+                        {userTest.profile}
+                     </h2>
+                     <p className="text-slate-500 text-lg mb-6">
+                        Tu sistema nervioso actual ha entrado en un bucle que agota tus recursos. En el video de la izquierda detallamos exactamente cómo se instaló este patrón y por qué el control consciente no es suficiente para salir de ahí.
+                     </p>
+                     
+                     <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-8 relative overflow-hidden group hover:bg-slate-100 transition-colors">
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00A89C] to-emerald-400"></div>
+                        <p className="font-bold text-slate-700 italic relative z-10">
+                           "La solución no es intentar pensar en positivo; debes re-entrenar la ruta biológica de tu cerebro."
+                        </p>
+                     </div>
+
+                     <a href={`https://wa.me/${wpNumber}?text=Hola,%20acabo%20de%20ver%20mi%20resultado%20RFAI%20(${userTest.profile})%20en%20la%20plataforma,%20y%20quiero%20comenzar%20el%20tratamiento%20recomendado.`} target="_blank" rel="noreferrer" className="w-full flex items-center justify-center p-4 bg-gradient-to-r from-[#00A89C] to-[#009287] text-white rounded-xl font-black text-lg shadow-[0_8px_20px_rgba(0,168,156,0.3)] hover:scale-[1.02] transition-transform">
+                        Comenzar a Sanar Mi Perfil <ArrowUpRight className="w-5 h-5 ml-2" />
+                     </a>
+                     <p className="text-center text-[10px] font-bold text-slate-400 mt-4 uppercase tracking-widest flex items-center justify-center">
+                        <ShieldCheck className="w-3 h-3 mr-1" /> Asignación con profesional vía WhatsApp
                      </p>
                   </div>
+               </div>
+            )}
 
-                  <a href={`https://wa.me/${wpNumber}?text=Hola,%20acabo%20de%20ver%20mi%20resultado%20RFAI%20(${userTest.profile})%20en%20la%20plataforma,%20y%20quiero%20comenzar%20el%20tratamiento%20recomendado.`} target="_blank" rel="noreferrer" className="w-full flex items-center justify-center p-4 bg-[#00A89C] text-white rounded-xl font-black text-lg shadow-[0_8px_20px_rgba(0,168,156,0.3)] hover:-translate-y-1 transition-all hover:bg-[#00968b]">
-                     Comenzar a Sanar Mi Perfil <ArrowUpRight className="w-5 h-5 ml-2" />
-                  </a>
-                  <p className="text-center text-[11px] font-bold text-slate-400 mt-4 uppercase tracking-widest">
-                     Asignación con profesional experto vía WhatsApp Seguro
+            <hr className="border-slate-100" />
+
+            {/* PODCAST / AUTHORITY SECTION */}
+            <div className="bg-white rounded-[2rem] overflow-hidden border border-slate-200 shadow-sm flex flex-col md:flex-row relative">
+               <div className="md:w-5/12 bg-slate-900 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden group">
+                  <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-[#00A89C]/20 blur-[60px] rounded-full group-hover:scale-150 transition-transform duration-1000"></div>
+                  <Headphones className="w-12 h-12 text-[#00A89C] mb-6 relative z-10" />
+                  <h3 className="text-2xl font-black text-white mb-4 relative z-10">Conoce el Trasfondo</h3>
+                  <p className="text-slate-300 text-sm mb-8 relative z-10">
+                     Acompaña a Claudio Reyes en el podcast oficial de Clínica Equilibrar. Profundiza en neurociencia y psicología clínica en tu trayecto al trabajo.
                   </p>
+                  <a href="https://spotify.com" target="_blank" rel="noreferrer" className="inline-flex items-center text-sm font-black text-[#00A89C] hover:text-white transition-colors uppercase tracking-widest relative z-10 w-max">
+                     Ir al Podcast <ExternalLink className="w-4 h-4 ml-2" />
+                  </a>
+               </div>
+               <div className="md:w-7/12 bg-slate-50 p-8 flex items-center justify-center border-l border-slate-200">
+                  <div className="w-full max-w-sm rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow border border-slate-200 bg-white group cursor-pointer">
+                     <div className="h-40 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-6 text-center transform group-hover:scale-105 transition-transform duration-700">
+                        <span className="text-xl font-black text-white drop-shadow-lg">Equilibrar<span className="text-[#00A89C]">Podcast</span></span>
+                     </div>
+                     <div className="p-4 flex justify-between items-center bg-white relative z-10">
+                          <div>
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Episodio Destacado</p>
+                             <p className="font-bold text-slate-800">El origen de la Desregulación</p>
+                          </div>
+                          <button className="w-10 h-10 rounded-full bg-[#00A89C] text-white flex items-center justify-center hover:scale-110 shadow-lg shadow-[#00A89C]/30 transition-all">
+                             <PlayCircle className="w-5 h-5 ml-0.5" />
+                          </button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            {/* CATALOG UPSELL / FAST ACTIONS */}
+            <div>
+               <div className="flex items-end justify-between mb-8">
+                  <div>
+                     <h3 className="text-2xl font-black text-slate-800">Explora nuestro Catálogo</h3>
+                     <p className="text-slate-500 mt-1">Servicios clínicos adicionales y agenda express.</p>
+                  </div>
+               </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {catalog.map(service => (
+                     <div key={service.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:border-[#00A89C]/30 transition-all duration-300 group flex flex-col cursor-pointer">
+                        <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-[#00A89C] group-hover:bg-[#00A89C]/10 transition-colors mb-4 ring-1 ring-slate-100 group-hover:ring-[#00A89C]/20">
+                           <BookOpen className="w-6 h-6" />
+                        </div>
+                        <h4 className="font-black text-slate-800 text-lg leading-tight mb-2 group-hover:text-[#00A89C] transition-colors">{service.name}</h4>
+                        <p className="text-xs text-slate-500 line-clamp-2 flex-1 leading-relaxed">{service.description || 'Consulta clínica especializada con profesionales del modelo Equilibrar.'}</p>
+                        
+                        <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                           <span className="font-black text-slate-800">${parseInt(service.price).toLocaleString('es-CL')}</span>
+                           <a href={`https://wa.me/${wpNumber}?text=Hola,%20me%20interesa%20adquirir:%20${encodeURIComponent(service.name)}.`} target="_blank" rel="noreferrer" className="text-[10px] font-black uppercase tracking-widest text-[#00A89C] hover:text-[#008278] flex items-center bg-[#00A89C]/10 px-3 py-1.5 rounded-lg group-hover:bg-[#00A89C] group-hover:text-white transition-all">
+                              Ver Info <ArrowRight className="w-3 h-3 ml-1" />
+                           </a>
+                        </div>
+                     </div>
+                  ))}
+                  {!catalog.length && [1,2,3].map(i => (
+                     <div key={i} className="bg-white border border-slate-100 rounded-2xl p-6 animate-pulse flex flex-col">
+                        <div className="w-12 h-12 bg-slate-100 rounded-xl mb-4"></div>
+                        <div className="h-4 bg-slate-100 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-slate-50 rounded w-full mb-1"></div>
+                        <div className="h-3 bg-slate-50 rounded w-2/3"></div>
+                     </div>
+                  ))}
+               </div>
+            </div>
+         </div>
+
+         {/* PROFILE SETTINGS MODAL */}
+         {isSettingsOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+               <div className="bg-white rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-slide-up border border-slate-100">
+                  <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                     <h3 className="text-xl font-black text-slate-800 flex items-center">
+                        <User className="w-5 h-5 mr-2 text-[#00A89C]" /> Configurador de Medida
+                     </h3>
+                     <button onClick={() => setIsSettingsOpen(false)} className="text-slate-400 hover:bg-slate-200 p-2 rounded-full transition-colors"><X className="w-5 h-5"/></button>
+                  </div>
+                  
+                  <form onSubmit={handleSaveSettings} className="p-8 space-y-8">
+                     {/* Seccion Avatares */}
+                     <div>
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Recomendaciones Temporales de Avatar</label>
+                        <div className="flex items-center space-x-4 overflow-x-auto hide-scrollbar py-2">
+                           {defaultAvatars.map((url, i) => (
+                              <button type="button" key={i} onClick={() => selectAvatar(url)} className={`relative flex-shrink-0 w-16 h-16 rounded-full border-4 transition-all duration-300 ${currentAvatar === url ? 'border-[#00A89C] scale-110 shadow-lg shadow-[#00A89C]/30' : 'border-slate-100 opacity-60 hover:opacity-100 bg-white'}`}>
+                                 <img src={url} className="w-full h-full rounded-full object-cover" alt={`Avatar ${i}`}/>
+                                 {currentAvatar === url && <CheckCircle className="absolute -bottom-1 -right-1 w-5 h-5 text-[#00A89C] bg-white rounded-full border border-white" />}
+                              </button>
+                           ))}
+                        </div>
+                     </div>
+
+                     <div className="grid grid-cols-2 gap-4">
+                        <div>
+                           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Nombres</label>
+                           <input required type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00A89C]/30 transition-shadow text-slate-700" />
+                        </div>
+                        <div>
+                           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Apellidos</label>
+                           <input required type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00A89C]/30 transition-shadow text-slate-700" />
+                        </div>
+                     </div>
+
+                     <div>
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Correo Electrónico Válido</label>
+                        <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00A89C]/30 transition-shadow text-slate-700" />
+                     </div>
+
+                     <div className="pb-4">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Nueva Contraseña Segura</label>
+                        <input type="password" placeholder="Sólo escribe aquí si deseas cambiarla..." value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00A89C]/30 transition-shadow placeholder:text-slate-300 text-slate-700" />
+                     </div>
+
+                     <div className="flex gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" onClick={() => setIsSettingsOpen(false)} className="flex-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold transition-colors">Cancelar</button>
+                        <button type="submit" disabled={saving} className="flex-1 px-6 py-3 bg-[#00A89C] hover:bg-emerald-500 text-white rounded-xl font-bold transition-colors shadow-lg shadow-[#00A89C]/20 disabled:opacity-50">
+                           {saving ? 'Aplicando...' : 'Fijar Cambios'}
+                        </button>
+                     </div>
+                  </form>
                </div>
             </div>
          )}
-
-         <hr className="border-slate-100" />
-
-         {/* PODCAST / AUTHORITY SECTION */}
-         <div className="bg-white rounded-[2rem] overflow-hidden border border-slate-200 shadow-sm flex flex-col md:flex-row relative">
-            <div className="md:w-5/12 bg-slate-900 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
-               <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-[#00A89C]/20 blur-[60px] rounded-full"></div>
-               <Headphones className="w-12 h-12 text-[#00A89C] mb-6 relative z-10" />
-               <h3 className="text-2xl font-black text-white mb-4 relative z-10">Conoce el Trasfondo</h3>
-               <p className="text-slate-300 text-sm mb-8 relative z-10">
-                  Acompaña a Claudio Reyes en el podcast oficial de Clínica Equilibrar. Profundiza en neurociencia y psicología clínica en tu trayecto al trabajo.
-               </p>
-               <a href="https://spotify.com" target="_blank" rel="noreferrer" className="inline-flex items-center text-sm font-black text-[#00A89C] hover:text-white transition-colors uppercase tracking-widest relative z-10 w-max">
-                  Ir al Podcast <ExternalLink className="w-4 h-4 ml-2" />
-               </a>
-            </div>
-            <div className="md:w-7/12 bg-slate-50 p-8 flex items-center justify-center border-l border-slate-200">
-               {/* Placeholder Embedded Spotify / YouTube Frame layout */}
-               <div className="w-full max-w-sm rounded-xl overflow-hidden shadow-xl border border-slate-200 bg-white">
-                  <div className="h-40 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-6 text-center">
-                     <span className="text-xl font-black text-white">Equilibrar<span className="text-[#00A89C]">Podcast</span></span>
-                  </div>
-                  <div className="p-4 flex justify-between items-center bg-white">
-                       <div>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Episodio Destacado</p>
-                          <p className="font-bold text-slate-800">El origen de la Desregulación</p>
-                       </div>
-                       <button className="w-10 h-10 rounded-full bg-[#00A89C] text-white flex items-center justify-center hover:scale-110 transition-transform">
-                          <PlayCircle className="w-5 h-5 ml-0.5" />
-                       </button>
-                  </div>
-               </div>
-            </div>
-         </div>
-
-         {/* CATALOG UPSELL / FAST ACTIONS */}
-         <div>
-            <div className="flex items-end justify-between mb-8">
-               <div>
-                  <h3 className="text-2xl font-black text-slate-800">Explora nuestro Catálogo</h3>
-                  <p className="text-slate-500 mt-1">Servicios clínicos adicionales y agenda express.</p>
-               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               {catalog.map(service => (
-                  <div key={service.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all group flex flex-col">
-                     <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-[#00A89C] group-hover:bg-[#00A89C]/10 transition-colors mb-4">
-                        <BookOpen className="w-6 h-6" />
-                     </div>
-                     <h4 className="font-black text-slate-800 text-lg leading-tight mb-2">{service.name}</h4>
-                     <p className="text-xs text-slate-500 line-clamp-2 flex-1">{service.description || 'Consulta clínica especializada con profesionales del modelo Equilibrar.'}</p>
-                     
-                     <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <span className="font-black text-slate-800">${parseInt(service.price).toLocaleString('es-CL')}</span>
-                        <a href={`https://wa.me/${wpNumber}?text=Hola,%20me%20interesa%20adquirir:%20${encodeURIComponent(service.name)}.`} target="_blank" rel="noreferrer" className="text-[10px] font-black uppercase tracking-widest text-[#00A89C] hover:text-emerald-600 flex items-center">
-                           Ver Precio <ArrowRight className="w-3 h-3 ml-1" />
-                        </a>
-                     </div>
-                  </div>
-               ))}
-               {!catalog.length && [1,2,3].map(i => (
-                  <div key={i} className="bg-white border border-slate-100 rounded-2xl p-6 animate-pulse flex flex-col">
-                     <div className="w-12 h-12 bg-slate-100 rounded-xl mb-4"></div>
-                     <div className="h-4 bg-slate-100 rounded w-3/4 mb-2"></div>
-                     <div className="h-3 bg-slate-50 rounded w-full mb-1"></div>
-                     <div className="h-3 bg-slate-50 rounded w-2/3"></div>
-                  </div>
-               ))}
-            </div>
-         </div>
-
       </div>
    );
 }
