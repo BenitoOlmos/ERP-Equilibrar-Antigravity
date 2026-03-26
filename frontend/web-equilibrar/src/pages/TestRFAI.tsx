@@ -59,7 +59,7 @@ const scaleOptions = [
 
 // Legacy Google Script bypass
 // const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxdwl3tIbjnebuTGYZGmgLVWUFVPyIHsoxJi9uP1zHO4yN4YuBspUQXVGwNyabAZARF5A/exec";
-const CMS_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const CMS_API_URL = import.meta.env.VITE_API_URL || 'https://login.clinicaequilibrar.cl';
 
 interface ResultsType {
     AF: number;
