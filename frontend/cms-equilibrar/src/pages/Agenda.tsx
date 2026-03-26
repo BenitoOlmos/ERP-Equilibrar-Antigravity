@@ -614,13 +614,7 @@ export function Agenda() {
                      </div>
                   </div>
 
-                  <div>
-                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Modalidad</label>
-                     <select value={appointmentData.sessionType} onChange={e => setAppointmentData({...appointmentData, sessionType: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#00A89C]">
-                        <option value="IN_PERSON">Presencial Clínica</option>
-                        <option value="ONLINE">Telemedicina (Meet)</option>
-                     </select>
-                  </div>
+
 
                   <div className="flex gap-4 pt-4 mt-6">
                      <button type="button" onClick={() => { setShowAppointmentModal(false); setEditApptId(null); }} className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition-colors">Cancelar</button>
