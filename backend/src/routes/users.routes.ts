@@ -37,18 +37,25 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { email, role, firstName, lastName, phone, documentId, address, city, specialty, color, healthSystem, complementaryInsurance, commune, birthDate, emergencyPhone, emergencyContactName, observations, medicalRecordLink } = req.body;
+    const { email, role, password, firstName, lastName, phone, documentId, address, city, specialty, color, healthSystem, complementaryInsurance, commune, birthDate, emergencyPhone, emergencyContactName, observations, medicalRecordLink } = req.body;
+    
+    let updateData: any = {
+      email, role, phone,
+      profile: {
+        upsert: {
+          create: { firstName, lastName, documentId, address, city, specialty, color, healthSystem, complementaryInsurance, commune, birthDate, emergencyPhone, emergencyContactName, observations, medicalRecordLink },
+          update: { firstName, lastName, documentId, address, city, specialty, color, healthSystem, complementaryInsurance, commune, birthDate, emergencyPhone, emergencyContactName, observations, medicalRecordLink }
+        }
+      }
+    };
+
+    if (password && password.trim().length > 0) {
+      updateData.passwordHash = await bcrypt.hash(password, 10);
+    }
+
     const user = await prisma.user.update({
       where: { id },
-      data: {
-        email, role, phone,
-        profile: {
-          upsert: {
-            create: { firstName, lastName, documentId, address, city, specialty, color, healthSystem, complementaryInsurance, commune, birthDate, emergencyPhone, emergencyContactName, observations, medicalRecordLink },
-            update: { firstName, lastName, documentId, address, city, specialty, color, healthSystem, complementaryInsurance, commune, birthDate, emergencyPhone, emergencyContactName, observations, medicalRecordLink }
-          }
-        }
-      },
+      data: updateData,
       include: { profile: true }
     });
     res.json(user);
