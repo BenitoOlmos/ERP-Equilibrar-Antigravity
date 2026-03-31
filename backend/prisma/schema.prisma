@@ -30,6 +30,10 @@ model User {
   agendaServices           AgendaService[] @relation("ServiceSpecialist")
   payments                 Payment[]
 
+  // Fichas Clinicas
+  clinicalRecordsAsClient     ClinicalRecord[] @relation("ClientClinicalRecords")
+  clinicalRecordsAsSpecialist ClinicalRecord[] @relation("SpecialistClinicalRecords")
+
   // RFAI Relations
   completedWeeks   UserCompletedWeek[]
   evaluations      WeeklyEvaluation[]
@@ -159,6 +163,7 @@ model Appointment {
   notes       String?
 
   payment Payment?
+  clinicalRecord ClinicalRecord?
 
   // RFAI specific fields
   patientName String? // If not linked to a user
@@ -197,6 +202,40 @@ model Payment {
 // =======================
 // RFAI MODELS
 // =======================
+
+model AppSettings {
+  id        String   @id @default("singleton")
+  key       String   @unique
+  value     String // JSON string to store anything
+  updatedAt DateTime @updatedAt
+}
+
+model ClinicalRecord {
+  id            String   @id @default(uuid())
+  clientId      String
+  client        User     @relation("ClientClinicalRecords", fields: [clientId], references: [id], onDelete: Cascade)
+  specialistId  String
+  specialist    User     @relation("SpecialistClinicalRecords", fields: [specialistId], references: [id], onDelete: Cascade)
+  appointmentId String?  @unique
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  date          DateTime @default(now())
+  reason        String?  
+  anamnesis     String?  
+  diagnosis     String?  
+  treatment     String?  
+  evolution     String?  
+  observations  String?  
+  
+  isSigned      Boolean  @default(false)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([specialistId])
+  @@index([date])
+}
 
 model UserCompletedWeek {
   id         String @id @default(uuid())

@@ -18,6 +18,7 @@ import crmRoutes from './routes/crm.routes';
 import studentRoutes from './routes/student.routes';
 import statsRoutes from './routes/stats.routes';
 import branchesRoutes from './routes/branches.routes';
+import clinicalRoutes from './routes/clinical.routes';
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ dataRouter.use('/products', productRoutes);
 dataRouter.use('/programs', treatmentRoutes); // Same logical controller as treatments!
 dataRouter.use('/backup', dbRoutes);
 dataRouter.use('/stats', statsRoutes);
+dataRouter.use('/clinical', clinicalRoutes);
 apiRouter.use('/data', dataRouter);
 
 // Mount master API router
