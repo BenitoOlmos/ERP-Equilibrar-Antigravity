@@ -76,7 +76,11 @@ export default function Ventas() {
     setAmount(sale.amount.toString());
     setClientSearch('');
     setShowClientDrop(false);
-    setConcept(sale.concept || '');
+    
+    // Auto-derive concept if sale was generated implicitly from Agenda
+    const derivedConcept = sale.concept || sale.appointment?.service?.name || sale.appointment?.rfaiType || '';
+    setConcept(derivedConcept);
+    
     setProductId(sale.productId || '');
     setUserId(sale.userId || sale.user?.id || '');
     setStatus(sale.status);
@@ -180,8 +184,8 @@ export default function Ventas() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!amount || !userId) return alert('Cliente y Monto son requeridos');
-    if (requiresScheduling && (!appointmentDate || !appointmentTime || !specialistId)) {
-       return alert('El ítem seleccionado incluye atención clínica. Debes asignar Fecha, Hora y Especialista.');
+    if (requiresScheduling && (!appointmentDate || !appointmentTime)) {
+       return alert('El ítem seleccionado incluye atención clínica. Debes asignar Fecha y Hora.');
     }
     
     // Crear el timestamp respetando la zona horaria del navegador
@@ -484,15 +488,6 @@ export default function Ventas() {
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Hora</label>
                       <input type="time" required value={appointmentTime} onChange={e => setAppointmentTime(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-[#00A89C]/20 font-semibold text-slate-700 focus:ring-2 focus:ring-[#00A89C]/30 outline-none" />
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Especialista Asignado</label>
-                    <select required value={specialistId} onChange={e => setSpecialistId(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-[#00A89C]/20 font-semibold text-slate-700 bg-white focus:ring-2 focus:ring-[#00A89C]/30 outline-none">
-                      <option value="">-- Selecciona Profesional --</option>
-                      {users.filter(u => u.role === 'SPECIALIST').map(u => (
-                         <option key={u.id} value={u.id}>{u.name || u.profile?.firstName + ' ' + (u.profile?.lastName||'')}</option>
-                      ))}
-                    </select>
                   </div>
                 </div>
               )}
