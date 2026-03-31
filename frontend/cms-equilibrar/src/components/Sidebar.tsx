@@ -46,6 +46,7 @@ const navGroups = [
     items: [
       { path: '/agenda', label: 'Agenda', icon: Calendar },
       { path: '/directorio', label: 'Directorio de Pacientes', icon: Contact },
+      { path: '/fichas-clinicas', label: 'Fichas Clínicas', icon: FolderOpen },
     ]
   },
   {
