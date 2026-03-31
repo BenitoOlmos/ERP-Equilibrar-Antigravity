@@ -11,10 +11,19 @@ export default function Pacientes() {
 
   const fetchPatients = () => {
     setLoading(true);
-    axios.get('/api/data/users')
-      .then(res => {
-        // Only keep users with the role 'Cliente'
-        const clientUsers = res.data.filter((u: any) => u.role === 'Cliente');
+    Promise.all([
+      axios.get('/api/data/users'),
+      axios.get('/api/data/appointments')
+    ])
+      .then(([resUsers, resAppts]) => {
+        const appointments = resAppts.data || [];
+        const usersWithAppointments = new Set(appointments.map((a: any) => a.clientId).filter(Boolean));
+
+        const clientUsers = resUsers.data.filter((u: any) => 
+          ['CLIENT', 'Cliente', 'USER', 'CLIENTE'].includes(u.role) && 
+          usersWithAppointments.has(u.id)
+        );
+        
         setPatients(clientUsers);
         if (clientUsers.length > 0) {
           setSelectedPatient(clientUsers[0]);
