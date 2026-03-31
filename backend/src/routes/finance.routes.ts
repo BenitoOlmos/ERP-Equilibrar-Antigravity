@@ -147,16 +147,31 @@ router.put('/:id', async (req, res) => {
     // Fetch directly to check existing relations
     const existing = await prisma.payment.findUnique({ where: { id }});
     
-    if (existing?.appointmentId && appointmentDetails && appointmentDetails.date && appointmentDetails.specialistId) {
-       await prisma.appointment.update({
-          where: { id: existing.appointmentId },
-          data: {
-             date: new Date(appointmentDetails.date),
-             timeStr: appointmentDetails.timeStr || null,
-             specialistId: appointmentDetails.specialistId,
-             serviceId: appointmentDetails.serviceId || undefined
-          }
-       });
+    if (appointmentDetails && appointmentDetails.date && appointmentDetails.specialistId) {
+       if (existing?.appointmentId) {
+          await prisma.appointment.update({
+             where: { id: existing.appointmentId },
+             data: {
+                date: new Date(appointmentDetails.date),
+                timeStr: appointmentDetails.timeStr || null,
+                specialistId: appointmentDetails.specialistId,
+                serviceId: appointmentDetails.serviceId || undefined
+             }
+          });
+       } else {
+          // Si el pago no tenía cita atada y el usuario le agrega una en Edición
+          const newAppt = await prisma.appointment.create({
+             data: {
+                clientId: existing!.userId,
+                specialistId: appointmentDetails.specialistId,
+                serviceId: appointmentDetails.serviceId || undefined,
+                date: new Date(appointmentDetails.date),
+                timeStr: appointmentDetails.timeStr || null,
+                status: 'SCHEDULED'
+             }
+          });
+          data.appointmentId = newAppt.id;
+       }
     }
 
     const payment = await prisma.payment.update({
@@ -165,7 +180,8 @@ router.put('/:id', async (req, res) => {
     });
 
     if (payment.status === 'COMPLETED') {
-       await processInternalExpenses(payment.concept || '', payment.status, payment.userId, payment.id);
+       try { await processInternalExpenses(payment.concept || '', payment.status, payment.userId, payment.id); } 
+       catch(err) { console.error('Internal expenses failed, bypassing:', err); }
     }
 
     res.json(payment);

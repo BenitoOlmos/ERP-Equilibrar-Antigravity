@@ -88,7 +88,7 @@ export default function Ventas() {
        // To get local yyyy-mm-dd
        const localDateStr = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
        setAppointmentDate(localDateStr);
-       setAppointmentTime(d.toTimeString().slice(0,5));
+       setAppointmentTime(sale.appointment.timeStr || d.toTimeString().slice(0,5));
        setSpecialistId(sale.appointment.specialistId || '');
        setAttachedServiceId(sale.appointment.serviceId || '');
     } else {
