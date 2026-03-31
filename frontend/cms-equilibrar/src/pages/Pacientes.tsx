@@ -146,7 +146,6 @@ export default function Pacientes() {
                       </div>
                    ) : (
                       <div className="space-y-4 max-w-4xl mx-auto">
-                         <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2"><BookOpen className="w-5 h-5 text-[#00A89C]" /> Bitácora Histórica de Consultas</h3>
                          {allAppointments
                            .filter(app => app.clientId === selectedPatient.id)
                            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
