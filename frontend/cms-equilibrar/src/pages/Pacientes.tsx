@@ -35,10 +35,12 @@ export default function Pacientes() {
 
   useEffect(() => { fetchPatients(); }, []);
 
-  const filteredPatients = patients.filter(p => 
-    (p.profile?.firstName + ' ' + p.profile?.lastName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPatients = patients.filter(p => {
+    const fullName = `${p.profile?.firstName || ''} ${p.profile?.lastName || ''} ${p.name || ''}`.toLowerCase();
+    const emailStr = (p.email || '').toLowerCase();
+    const term = searchTerm.toLowerCase();
+    return fullName.includes(term) || emailStr.includes(term);
+  });
 
   return (
     <div className="flex flex-col h-[calc(100vh-theme(spacing.20))] overflow-hidden">
