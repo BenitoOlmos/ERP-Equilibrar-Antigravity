@@ -408,7 +408,7 @@ export function Agenda() {
                                    .map(app => (
                                          <div
                                             key={app.id}
-                                            className={`absolute inset-x-1 sm:inset-x-2 rounded-xl sm:rounded-2xl border-l-[3px] p-1.5 sm:p-2 shadow z-20 cursor-pointer transition-all flex flex-col group overflow-hidden ${app.color.includes('bg-') ? app.color : 'bg-slate-100 border-slate-400 text-slate-800'} ${app.isBlocked ? 'border-none' : 'hover:shadow-md hover:-translate-y-0.5'}`}
+                                            className={`absolute inset-x-1 sm:inset-x-2 rounded-xl sm:rounded-2xl border-l-[3px] p-1.5 sm:p-2 shadow cursor-pointer transition-all flex flex-col group overflow-visible ${menuOpenId === app.id ? 'z-[60] shadow-xl ring-2 ring-slate-900/5' : 'z-20 hover:z-30'} ${app.color.includes('bg-') ? app.color : 'bg-slate-100 border-slate-400 text-slate-800'} ${app.isBlocked ? 'border-none' : 'hover:shadow-md hover:-translate-y-0.5'}`}
                                             style={{ top: `${(app.startHour - 8) * 60 + 2}px`, height: `${app.duration * 60 - 4}px` }}
                                          >
                                             <div className="flex justify-between items-start mb-0.5">

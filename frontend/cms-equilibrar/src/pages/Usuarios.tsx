@@ -2,6 +2,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Users, Search, Mail, Edit2, Trash2, Plus, ShieldAlert, Smartphone, UserCircle, BriefcaseMedical } from 'lucide-react';
 
+const COLOR_OPTIONS = [
+  { value: 'bg-emerald-100 text-emerald-800 border-emerald-400', label: 'Verde', bg: 'bg-emerald-500' },
+  { value: 'bg-indigo-100 text-indigo-800 border-indigo-400', label: 'Morado', bg: 'bg-indigo-500' },
+  { value: 'bg-blue-100 text-blue-800 border-blue-400', label: 'Azul', bg: 'bg-blue-500' },
+  { value: 'bg-amber-100 text-amber-800 border-amber-400', label: 'Naranja', bg: 'bg-amber-500' },
+  { value: 'bg-rose-100 text-rose-800 border-rose-400', label: 'Rosa', bg: 'bg-rose-500' },
+  { value: 'bg-teal-100 text-teal-800 border-teal-400', label: 'Turquesa', bg: 'bg-teal-500' },
+  { value: 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-400', label: 'Fucsia', bg: 'bg-fuchsia-500' },
+  { value: 'bg-slate-100 text-slate-800 border-slate-400', label: 'Gris', bg: 'bg-slate-500' }
+];
+
 export function Usuarios() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +25,7 @@ export function Usuarios() {
   const [formData, setFormData] = useState({
     id: '', firstName: '', lastName: '', email: '', phone: '', role: 'Cliente', password: '',
     documentId: '', address: '', commune: '', healthSystem: '', complementaryInsurance: '',
-    observations: '', emergencyPhone: '', emergencyContactName: '', birthDate: '', medicalRecordLink: ''
+    observations: '', emergencyPhone: '', emergencyContactName: '', birthDate: '', medicalRecordLink: '', color: ''
   });
 
   const fetchUsers = () => {
@@ -59,7 +70,7 @@ export function Usuarios() {
      setFormData({ 
        id: '', firstName: '', lastName: '', email: '', phone: '', role: 'Cliente', password: '',
        documentId: '', address: '', commune: '', healthSystem: '', complementaryInsurance: '',
-       observations: '', emergencyPhone: '', emergencyContactName: '', birthDate: '', medicalRecordLink: ''
+       observations: '', emergencyPhone: '', emergencyContactName: '', birthDate: '', medicalRecordLink: '', color: ''
      });
      setShowModal(true);
   };
@@ -83,7 +94,8 @@ export function Usuarios() {
         emergencyPhone: user.profile?.emergencyPhone || '',
         emergencyContactName: user.profile?.emergencyContactName || '',
         birthDate: user.profile?.birthDate || '',
-        medicalRecordLink: user.profile?.medicalRecordLink || ''
+        medicalRecordLink: user.profile?.medicalRecordLink || '',
+        color: user.profile?.color || ''
      });
      setShowModal(true);
   };
@@ -280,6 +292,27 @@ export function Usuarios() {
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Contraseña (Sobrescritura)</label>
                         <input type="text" placeholder={isEditing ? "Dejar en blanco para mantener la clave actual" : "Contraseña inicial (Ej: 123456)"} required={!isEditing} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-[#00A89C] shadow-sm placeholder:text-slate-300" />
                      </div>
+
+                     {formData.role === 'Especialista' && (
+                        <div className="mt-6 p-4 rounded-xl border border-slate-200 bg-slate-50">
+                           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 ml-1">Color del Especialista en Agenda</label>
+                           <div className="flex flex-wrap gap-3">
+                              {COLOR_OPTIONS.map(c => (
+                                 <button
+                                    key={c.value}
+                                    type="button"
+                                    onClick={() => setFormData({...formData, color: c.value})}
+                                    className={`w-10 h-10 rounded-full border-2 transition-all shadow-sm flex items-center justify-center ${
+                                       formData.color === c.value ? 'border-slate-800 scale-110 shadow-md' : 'border-transparent hover:scale-105'
+                                    } ${c.bg}`}
+                                    title={c.label}
+                                 >
+                                    {formData.color === c.value && <div className="w-3 h-3 bg-white rounded-full"></div>}
+                                 </button>
+                              ))}
+                           </div>
+                        </div>
+                     )}
                   </div>
 
                   {/* SECCIÓN 2: Información Demográfica y Contacto */}
