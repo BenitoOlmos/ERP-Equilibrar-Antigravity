@@ -117,7 +117,7 @@ export function Programas() {
             <p className="text-slate-500 mt-2">Plataformas restrictivas de 4 semanas de duración. Combine recursos, ejercicios y autoevaluaciones.</p>
           </div>
           <button 
-            onClick={() => { setFormData({ id: '', profile: '', title: '', description: '', price: '', agendaWeeks: Array.from({length: 4}, (_, i) => ({ weekNumber: i + 1, serviceIds: [] as string[], modules: [] as any[] })) }); setIsEditing(true); }}
+            onClick={() => { setFormData({ id: '', profile: '', title: '', description: '', price: '', agendaWeeks: [{ weekNumber: 1, serviceIds: [], modules: [] }] }); setIsEditing(true); }}
             className="bg-[#00A89C] hover:bg-[#009287] text-white px-5 py-2.5 rounded-xl font-bold flex items-center shrink-0 whitespace-nowrap shadow-lg shadow-[#00A89C]/20 transition-all"
           >
             <Plus className="w-5 h-5 mr-2" /> Nuevo Programa
@@ -175,20 +175,17 @@ export function Programas() {
                        </td>
                        <td className="p-4 text-right space-x-2">
                           <button onClick={() => { 
-                              
-                           const weeksMap = new Map<number, string[]>();
-                           (prog.services || []).forEach((s:any) => {
-                               const wNum = s.weekNumber || 1;
-                               const sId = s.serviceId || s.agendaServiceId;
-                               if(!weeksMap.has(wNum)) weeksMap.set(wNum, []);
-                               weeksMap.get(wNum)!.push(sId);
+                           const weeksFromServices = (prog.services || []).map((s:any) => s.weekNumber || 1);
+                           const weeksFromModules = (prog.modules || []).map((m:any) => m.weekNumber || 1);
+                           const maxW = Math.max(1, ...weeksFromServices, ...weeksFromModules);
+                           const aw = Array.from({length: maxW}, (_, i) => {
+                               const wNum = i + 1;
+                               return { 
+                                   weekNumber: wNum, 
+                                   serviceIds: (prog.services || []).filter((s:any) => (s.weekNumber || 1) === wNum).map((s:any) => s.serviceId || s.agendaServiceId),
+                                   modules: (prog.modules || []).filter((m:any) => m.weekNumber === wNum)
+                               };
                            });
-                           const maxW = Math.max(4, ...Array.from(weeksMap.keys()));
-                           const aw = Array.from({length: maxW}, (_, i) => ({ 
-                               weekNumber: i + 1, 
-                               serviceIds: weeksMap.get(i+1) || [],
-                               modules: (prog.modules || []).filter((m:any) => m.weekNumber === i + 1)
-                           }));
                            setFormData({ id: prog.id, profile: prog.profile, title: prog.title, description: prog.description || '', price: prog.price?.toString() || '', agendaWeeks: aw }); 
                              setIsEditing(true); 
                           }} className="p-2 text-slate-400 hover:text-[#00A89C] hover:bg-[#00A89C]/10 rounded-lg transition-colors"><Edit2 className="w-4 h-4" /></button>
