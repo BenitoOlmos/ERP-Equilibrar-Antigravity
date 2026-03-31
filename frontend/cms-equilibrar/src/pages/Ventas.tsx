@@ -391,6 +391,18 @@ export default function Ventas() {
                 >
                   <option value="">-- Seleccionar Ítem --</option>
                   
+                  {concept && 
+                   !catalog.services?.some((s:any) => s.name === concept) &&
+                   !catalog.programs?.some((p:any) => p.title === concept) &&
+                   !catalog.treatments?.some((t:any) => t.name === concept) &&
+                   !catalog.courses?.some((c:any) => c.title === concept) &&
+                   !catalog.products?.some((p:any) => p.name === concept) &&
+                   concept !== 'Servicio Opcional' && (
+                     <optgroup label="Registro Original / Histórico">
+                        <option value={concept}>{concept}</option>
+                     </optgroup>
+                  )}
+                  
                   {catalog.services?.filter((s:any) => s.isActive !== false).length > 0 && (
                      <optgroup label="Consultas y Tratamientos">
                         {catalog.services.filter((s:any) => s.isActive !== false).map((s:any) => <option key={s.id} value={s.name}>{s.name} (${s.price})</option>)}
