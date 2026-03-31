@@ -281,6 +281,11 @@ export default function ClientProgress() {
        );
    }
 
+   const maxWeekFromModules = program.modules?.length ? Math.max(...program.modules.map((m: any) => m.weekNumber || 1)) : 1;
+   const maxWeekFromServices = program.services?.length ? Math.max(...program.services.map((s: any) => s.weekNumber || 1)) : 1;
+   const totalWeeks = Math.max(1, maxWeekFromModules, maxWeekFromServices);
+   const weekNumbersArray = Array.from({length: totalWeeks}, (_, i) => i + 1);
+
    return (
       <div className="min-h-screen bg-[#F4F9F9] font-sans text-slate-800 pb-24">
          {/* Simple Header */}
@@ -317,17 +322,17 @@ export default function ClientProgress() {
                  
                  <div className="bg-white rounded-full border border-slate-200 px-6 py-4 flex items-center gap-5 shadow-sm w-full md:w-auto md:min-w-[280px]">
                    <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
-                     <div className="h-full bg-[#00A89C] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min((currentWeek / 4) * 100, 100)}%` }}></div>
+                     <div className="h-full bg-[#00A89C] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min((currentWeek / totalWeeks) * 100, 100)}%` }}></div>
                    </div>
                    <div className="flex flex-col items-end shrink-0">
-                     <span className="text-[#00A89C] font-black text-lg leading-none">{Math.round((currentWeek / 4) * 100)}%</span>
+                     <span className="text-[#00A89C] font-black text-lg leading-none">{Math.round(Math.min((currentWeek / totalWeeks) * 100, 100))}%</span>
                      <span className="text-[#00A89C] text-xs font-bold uppercase tracking-widest mt-1">Completado</span>
                    </div>
                  </div>
                </div>
 
                <div className="space-y-4">
-                   {[1, 2, 3, 4].map(wNum => {
+                   {weekNumbersArray.map(wNum => {
                        const isLocked = wNum > currentWeek;
                        const isOpen = openWeek === wNum;
                        
