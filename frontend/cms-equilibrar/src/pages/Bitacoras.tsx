@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, User as UserIcon, Calendar, CheckCircle, Search, ChevronRight, PenLine, Send, Info } from 'lucide-react';
+import { BookOpen, User as UserIcon, Calendar, CheckCircle, Search, ChevronRight, ChevronDown, PenLine, Send, Info } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -21,6 +21,15 @@ export default function Bitacoras() {
   const [patientPrograms, setPatientPrograms] = useState<any[]>([]);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+
+  const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
+
+  const toggleLog = (logId: string) => {
+      setExpandedLogs(prev => ({
+          ...prev,
+          [logId]: prev[logId] === undefined ? false : !prev[logId]
+      }));
+  };
 
   useEffect(() => {
     fetchPatients();
@@ -272,7 +281,9 @@ export default function Bitacoras() {
                              </div>
                              
                              <div className="space-y-6 md:pl-16 relative z-10">
-                                 {displayedBitacoras.map((log: any) => (
+                                 {displayedBitacoras.map((log: any) => {
+                                     const isExpanded = expandedLogs[log.id] !== false;
+                                     return (
                                      <div key={log.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative transition-all hover:shadow-md group">
                                         {/* Etiqueta lateral */}
                                         {log.response ? (
@@ -283,10 +294,14 @@ export default function Bitacoras() {
                                         
                                         <div className="p-6">
                                             {/* Encabezado del log */}
-                                            <div className="flex justify-between items-start mb-4">
-                                                <div className="flex items-center gap-2 text-slate-400">
+                                            <div 
+                                                className={`flex justify-between items-center cursor-pointer select-none ${isExpanded ? 'mb-4' : ''}`}
+                                                onClick={() => toggleLog(log.id)}
+                                            >
+                                                <div className="flex items-center gap-2 text-slate-500 hover:text-[#00A89C] transition-colors">
                                                    <BookOpen className="w-4 h-4" /> 
                                                    <span className="text-xs font-bold uppercase tracking-wider">{new Date(log.timestamp).toLocaleString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>
+                                                   <ChevronDown className={`w-4 h-4 ml-2 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                                                 </div>
                                                 {!log.response && (
                                                     <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-50 px-2 py-1 rounded shadow-sm border border-amber-100 animate-pulse">
@@ -295,63 +310,67 @@ export default function Bitacoras() {
                                                 )}
                                             </div>
                                             
-                                            {/* Contenido del paciente */}
-                                            <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 text-sm leading-relaxed mb-6 font-medium quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
+                                            {isExpanded && (
+                                                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                                                    {/* Contenido del paciente */}
+                                                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 text-sm leading-relaxed mb-6 font-medium quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
 
-                                            {/* Respuesta u Opción a Responder */}
-                                            {log.response ? (
-                                                <div className="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 ml-4 md:ml-8 relative">
-                                                    <div className="absolute -left-2 top-4 w-4 h-4 bg-white border-2 border-indigo-200 rounded-full"></div>
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center">
-                                                            <CheckCircle className="w-3.5 h-3.5" />
+                                                    {/* Respuesta u Opción a Responder */}
+                                                    {log.response ? (
+                                                        <div className="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 ml-4 md:ml-8 relative">
+                                                            <div className="absolute -left-2 top-4 w-4 h-4 bg-white border-2 border-indigo-200 rounded-full"></div>
+                                                            <div className="flex items-center gap-2 mb-2">
+                                                                <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                                                                    <CheckCircle className="w-3.5 h-3.5" />
+                                                                </div>
+                                                                <h5 className="font-bold text-indigo-900 text-sm">{log.specialist?.name || 'Tú'} <span className="text-indigo-400 font-normal mt-0.5 inline-block">respondió el {new Date(log.respondedAt).toLocaleDateString('es-CL')}</span></h5>
+                                                            </div>
+                                                            <div className="text-sm text-indigo-800 pl-8 opacity-90 quill-content" dangerouslySetInnerHTML={{ __html: log.response }}></div>
                                                         </div>
-                                                        <h5 className="font-bold text-indigo-900 text-sm">{log.specialist?.name || 'Tú'} <span className="text-indigo-400 font-normal mt-0.5 inline-block">respondió el {new Date(log.respondedAt).toLocaleDateString('es-CL')}</span></h5>
-                                                    </div>
-                                                    <div className="text-sm text-indigo-800 pl-8 opacity-90 quill-content" dangerouslySetInnerHTML={{ __html: log.response }}></div>
-                                                </div>
-                                            ) : (
-                                                <div className="ml-4 md:ml-8 bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden focus-within:border-[#00A89C] focus-within:ring-2 focus-within:ring-[#00A89C]/20 transition-all flex flex-col">
-                                                    <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 flex items-center gap-2">
-                                                        <PenLine className="w-3.5 h-3.5 text-slate-400" />
-                                                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Enviar Respuesta Profesional</span>
-                                                    </div>
-                                                    <div className="bg-white p-1">
-                                                        <ReactQuill 
-                                                            theme="snow"
-                                                            placeholder="Escribe tu feedback u observación para el paciente..."
-                                                            value={replyTexts[log.id] || ''}
-                                                            onChange={(val) => handleReplyChange(log.id, val)}
-                                                            readOnly={savingReplay === log.id}
-                                                            modules={{
-                                                                toolbar: [
-                                                                    ['bold', 'italic'],
-                                                                    [{ list: 'bullet' }],
-                                                                    [{ indent: '-1' }, { indent: '+1' }],
-                                                                    [{ color: [] }]
-                                                                ]
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    <div className="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-end">
-                                                        <button 
-                                                            onClick={() => submitReply(log.id)}
-                                                            disabled={!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id}
-                                                            className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm ${(!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id) ? 'bg-slate-200 text-slate-400' : 'bg-[#00A89C] hover:bg-cyan-600 text-white hover:scale-105'}`}
-                                                        >
-                                                            {savingReplay === log.id ? (
-                                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                            ) : (
-                                                                <Send className="w-4 h-4" />
-                                                            )}
-                                                            Enviar Observación
-                                                        </button>
-                                                    </div>
+                                                    ) : (
+                                                        <div className="ml-4 md:ml-8 bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden focus-within:border-[#00A89C] focus-within:ring-2 focus-within:ring-[#00A89C]/20 transition-all flex flex-col">
+                                                            <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 flex items-center gap-2">
+                                                                <PenLine className="w-3.5 h-3.5 text-slate-400" />
+                                                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Enviar Respuesta Profesional</span>
+                                                            </div>
+                                                            <div className="bg-white p-1">
+                                                                <ReactQuill 
+                                                                    theme="snow"
+                                                                    placeholder="Escribe tu feedback u observación para el paciente..."
+                                                                    value={replyTexts[log.id] || ''}
+                                                                    onChange={(val) => handleReplyChange(log.id, val)}
+                                                                    readOnly={savingReplay === log.id}
+                                                                    modules={{
+                                                                        toolbar: [
+                                                                            ['bold', 'italic'],
+                                                                            [{ list: 'bullet' }],
+                                                                            [{ indent: '-1' }, { indent: '+1' }],
+                                                                            [{ color: [] }]
+                                                                        ]
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                            <div className="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-end">
+                                                                <button 
+                                                                    onClick={() => submitReply(log.id)}
+                                                                    disabled={!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id}
+                                                                    className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm ${(!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id) ? 'bg-slate-200 text-slate-400' : 'bg-[#00A89C] hover:bg-cyan-600 text-white hover:scale-105'}`}
+                                                                >
+                                                                    {savingReplay === log.id ? (
+                                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                                    ) : (
+                                                                        <Send className="w-4 h-4" />
+                                                                    )}
+                                                                    Enviar Observación
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
                                      </div>
-                                 ))}
+                                 )})}
                              </div>
                           </div>
                        </div>
