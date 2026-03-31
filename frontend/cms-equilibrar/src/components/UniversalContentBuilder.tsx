@@ -181,33 +181,22 @@ export function UniversalContentBuilder({ modules, onChange }: Props) {
                   </div>
                 )}
 
-                {['VIDEO', 'PDF', 'REFLECTION', 'TEXT', 'JOURNAL'].includes(m.type) && (
+                {['REFLECTION', 'JOURNAL'].includes(m.type) && (
                   <div>
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-                       {m.type === 'REFLECTION' ? 'Texto de Reflexión / Contenido' : m.type === 'JOURNAL' ? 'Instrucciones para la Bitácora del Estudiante' : 'Instrucciones al Estudiante / Información'}
+                       {m.type === 'REFLECTION' ? 'Texto de Reflexión / Contenido Clínico' : 'Instrucciones Consigna Bitácora'}
                     </label>
                     <textarea 
-                      rows={['REFLECTION', 'JOURNAL'].includes(m.type) ? 5 : 2} 
+                      rows={5} 
                       value={m.description || ''} 
                       onChange={e => updateModule(i, 'description', e.target.value)}
-                      placeholder={m.type === 'REFLECTION' ? 'Escribe o pega el texto para que el paciente lo lea...' : m.type === 'JOURNAL' ? 'Escribe la consigna sobre la cual el paciente debe escribir en su bitácora...' : 'Lee esto antes de ver el video...'} 
+                      placeholder={m.type === 'REFLECTION' ? 'Escribe o pega el texto para que el paciente lo lea...' : 'Escribe la consigna sobre la cual el paciente debe documentar en su bitácora...'} 
                       className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-slate-400 focus:bg-white transition-all resize-none" 
                     />
                   </div>
                 )}
 
-                {['VIDEO', 'AUDIO'].includes(m.type) && (
-                  <div className="w-48">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Duración Total</label>
-                    <input 
-                      type="text" 
-                      value={m.duration || ''} 
-                      onChange={e => updateModule(i, 'duration', e.target.value)}
-                      placeholder="Ej. 15 min" 
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-slate-400 focus:bg-white transition-all" 
-                    />
-                  </div>
-                )}
+
 
                 {/* Question builder */}
                 {m.type === 'QUESTIONNAIRE' && (
