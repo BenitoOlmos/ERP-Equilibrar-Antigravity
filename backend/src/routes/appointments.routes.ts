@@ -33,10 +33,15 @@ router.post('/', async (req, res) => {
     }
 
     const valService = serviceId ? await prisma.agendaService.findUnique({ where: { id: serviceId }}) : null;
+    
+    const isBlocked = sessionType === 'BLOCKED' || status === 'BLOCKED';
+
     const app = await prisma.appointment.create({
       data: {
         clientId, specialistId, serviceId, date: new Date(date), sessionType, status,
-        payment: { create: { userId: clientId, amount: valService?.price || 0, status: 'PENDING', paymentMethod: 'TRANSFER', concept: `Consulta: ${valService?.name || 'Clínica'}` } }
+        ...(!isBlocked && clientId ? { 
+          payment: { create: { userId: clientId, amount: valService?.price || 0, status: 'PENDING', paymentMethod: 'TRANSFER', concept: `Consulta: ${valService?.name || 'Clínica'}` } } 
+        } : {})
       },
       include: { client: {include: {profile:true}}, specialist: {include: {profile:true}}, service: true }
     });
