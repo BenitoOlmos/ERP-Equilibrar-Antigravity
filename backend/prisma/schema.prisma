@@ -252,11 +252,12 @@ model UserCompletedWeek {
 }
 
 model RFAIService {
-  id      String @id @default(uuid())
-  profile String @unique
-  title    String
-  price    Float   @default(0)
-  isActive Boolean @default(true)
+  id          String  @id @default(uuid())
+  profile     String  @unique
+  title       String
+  description String?
+  price       Float   @default(0)
+  isActive    Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -13,7 +13,7 @@ export function Programas() {
   const [isEditing, setIsEditing] = useState(false);
   const [expandedWeeks, setExpandedWeeks] = useState<number[]>([0]);
   const [formData, setFormData] = useState({ 
-     id: '', profile: '', title: '', price: '', 
+     id: '', profile: '', title: '', description: '', price: '', 
      agendaWeeks: Array.from({length: 4}, (_, i) => ({ weekNumber: i + 1, serviceIds: [] as string[], modules: [] as any[] }))
   });
 
@@ -37,7 +37,8 @@ export function Programas() {
     if(e) e.preventDefault();
     try {
       const payload = { 
-         ...formData, 
+         ...formData,
+         profile: formData.profile || formData.title.replace(/\s+/g, ''),
          price: Number(formData.price) || 0,
          agendaWeeks: formData.agendaWeeks.map(aw => ({
             ...aw,
@@ -116,7 +117,7 @@ export function Programas() {
             <p className="text-slate-500 mt-2">Plataformas restrictivas de 4 semanas de duración. Combine recursos, ejercicios y autoevaluaciones.</p>
           </div>
           <button 
-            onClick={() => { setFormData({ id: '', profile: '', title: '', price: '', agendaWeeks: Array.from({length: 4}, (_, i) => ({ weekNumber: i + 1, serviceIds: [] as string[], modules: [] as any[] })) }); setIsEditing(true); }}
+            onClick={() => { setFormData({ id: '', profile: '', title: '', description: '', price: '', agendaWeeks: Array.from({length: 4}, (_, i) => ({ weekNumber: i + 1, serviceIds: [] as string[], modules: [] as any[] })) }); setIsEditing(true); }}
             className="bg-[#00A89C] hover:bg-[#009287] text-white px-5 py-2.5 rounded-xl font-bold flex items-center shrink-0 whitespace-nowrap shadow-lg shadow-[#00A89C]/20 transition-all"
           >
             <Plus className="w-5 h-5 mr-2" /> Nuevo Programa
@@ -159,7 +160,7 @@ export function Programas() {
                           <div className="font-bold text-slate-800 text-sm tracking-tight">{prog.title}</div>
                        </td>
                        <td className="p-4 text-sm text-slate-500 max-w-xs truncate">
-                          Sin descripción
+                          {prog.description || 'Sin descripción'}
                        </td>
                        <td className="p-4">
                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 mr-2">
@@ -188,7 +189,7 @@ export function Programas() {
                                serviceIds: weeksMap.get(i+1) || [],
                                modules: (prog.modules || []).filter((m:any) => m.weekNumber === i + 1)
                            }));
-                           setFormData({ id: prog.id, profile: prog.profile, title: prog.title, price: prog.price?.toString() || '', agendaWeeks: aw }); 
+                           setFormData({ id: prog.id, profile: prog.profile, title: prog.title, description: prog.description || '', price: prog.price?.toString() || '', agendaWeeks: aw }); 
                              setIsEditing(true); 
                           }} className="p-2 text-slate-400 hover:text-[#00A89C] hover:bg-[#00A89C]/10 rounded-lg transition-colors"><Edit2 className="w-4 h-4" /></button>
                           <button onClick={() => handleDelete(prog.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
@@ -227,14 +228,18 @@ export function Programas() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100 p-5 mb-6 flex flex-col md:flex-row md:items-center gap-6">
-        <div className="flex-1">
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Programa / Servicio / Valor</label>
-          <div className="flex gap-2">
-            <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Ej: Desborde Emocional" className="flex-[2] px-4 py-2 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-[#00A89C] focus:ring-1 focus:ring-[#00A89C]"/>
-            <input type="number" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} placeholder="Valor ($)" className="w-24 px-4 py-2 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-[#00A89C] focus:ring-1 focus:ring-[#00A89C]" title="Precio de Venta"/>
-            <input type="text" value={formData.profile} onChange={e => setFormData({...formData, profile: e.target.value})} placeholder="Perfil ID" className="flex-1 px-4 py-2 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-[#00A89C] focus:ring-1 focus:ring-[#00A89C]"/>
-          </div>
+      <div className="bg-white rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100 p-5 mb-6 flex flex-col gap-4">
+        <div>
+           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre Comercial</label>
+           <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-2 font-semibold focus:outline-none focus:border-[#00A89C]" placeholder="Ej: Programa de Ansiedad Completo" />
+        </div>
+        <div>
+           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Descripción (Objetivos)</label>
+           <textarea rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-white border border-slate-200 text-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#00A89C]" placeholder="Describe los objetivos y detalles..."></textarea>
+        </div>
+        <div>
+           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Valor Fijo ($)</label>
+           <input required type="number" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full bg-white border border-slate-200 text-[#00A89C] rounded-xl px-4 py-3 font-black focus:outline-none focus:border-[#00A89C] shadow-inner" placeholder="Ej: 290000" />
         </div>
       </div>
 

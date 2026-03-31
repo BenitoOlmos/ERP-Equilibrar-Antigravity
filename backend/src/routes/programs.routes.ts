@@ -19,14 +19,14 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { profile, title, price, agendaWeeks } = req.body;
+    const { profile, title, description, price, agendaWeeks } = req.body;
     
     const servicesData = (agendaWeeks || []).flatMap((aw:any) => (aw.serviceIds || []).map((id:string) => ({ agendaServiceId: id, weekNumber: aw.weekNumber })));
     const modulesData = (agendaWeeks || []).flatMap((aw:any) => (aw.modules || []).map((m:any) => ({ title: m.title, type: m.type || 'TEXT', description: m.description, contentUrl: m.contentUrl, order: m.order, duration: m.duration ? Number(m.duration) : null, questions: m.questions, weekNumber: aw.weekNumber })));
 
     const doc = await prisma.rFAIService.create({
       data: {
-        profile, title, price: Number(price) || 0,
+        profile, title, description, price: Number(price) || 0,
         services: { create: servicesData },
         modules: { create: modulesData }
       }
@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { profile, title, price, agendaWeeks } = req.body;
+    const { profile, title, description, price, agendaWeeks } = req.body;
     
     await prisma.rFAIProgramService.deleteMany({ where: { rfaiServiceId: id } });
     await prisma.module.deleteMany({ where: { rfaiServiceId: id } });
@@ -49,7 +49,7 @@ router.put('/:id', async (req, res) => {
     const doc = await prisma.rFAIService.update({
       where: { id },
       data: {
-        profile, title, price: Number(price) || 0,
+        profile, title, description, price: Number(price) || 0,
         services: { create: servicesData },
         modules: { create: modulesData }
       }
