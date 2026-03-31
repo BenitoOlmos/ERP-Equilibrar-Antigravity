@@ -141,6 +141,7 @@ export default function ClientProgress() {
    const [bitacoraLogs, setBitacoraLogs] = useState<any[]>([]);
    const [newLogText, setNewLogText] = useState("");
    const [isSavingLog, setIsSavingLog] = useState(false);
+   const [questionnaireAnswers, setQuestionnaireAnswers] = useState<Record<string, number>>({});
 
    useEffect(() => {
       if (!user) {
@@ -503,10 +504,16 @@ export default function ClientProgress() {
                                                                                <div key={i} className="space-y-4">
                                                                                  <div className="flex justify-between items-start gap-4">
                                                                                    <label className="text-sm font-medium text-slate-700 leading-snug">{i + 1}. {q.text}</label>
-                                                                                   <span className="text-xl font-bold text-[#0097B2] w-8 text-right flex-shrink-0">5</span>
+                                                                                   <span className="text-xl font-bold text-[#0097B2] w-8 text-right flex-shrink-0">{questionnaireAnswers[`${mod.id}-${i}`] ?? 5}</span>
                                                                                  </div>
                                                                                  <div className="relative pt-2 pb-2">
-                                                                                   <input min="0" max="10" step="1" className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0097B2]" type="range" defaultValue="5" />
+                                                                                   <input 
+                                                                                      min="0" max="10" step="1" 
+                                                                                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0097B2]" 
+                                                                                      type="range" 
+                                                                                      value={questionnaireAnswers[`${mod.id}-${i}`] ?? 5}
+                                                                                      onChange={(e) => setQuestionnaireAnswers({...questionnaireAnswers, [`${mod.id}-${i}`]: parseInt(e.target.value)})}
+                                                                                   />
                                                                                    <div className="flex justify-between text-xs text-slate-400 mt-3 font-medium px-1">
                                                                                      <span>Bajo (0)</span>
                                                                                      <span>Alto (10)</span>
