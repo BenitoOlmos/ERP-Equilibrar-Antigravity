@@ -168,18 +168,32 @@ export default function ClientProgress() {
       }
    }, [user, openWeek]);
 
-   const handleSendBitacora = async () => {
-      if (!newLogText.trim() || !user?.id) return;
+   const handleSendBitacora = async (customContent?: string) => {
+      const contentToSave = typeof customContent === 'string' ? customContent : newLogText;
+      if (!contentToSave.trim() || contentToSave === '<p><br></p>' || !user?.id) return;
       setIsSavingLog(true);
       try {
-          await axios.post(`/api/data/users/${user.id}/bitacora/${openWeek}`, { content: newLogText });
-          setNewLogText("");
+          await axios.post(`/api/data/users/${user.id}/bitacora/${openWeek}`, { content: contentToSave });
+          if (!customContent) setNewLogText("");
           loadBitacoraLogs(openWeek);
       } catch (e) {
           console.error("Failed to save log", e);
       } finally {
           setIsSavingLog(false);
       }
+   };
+
+   const handleSendQuestionnaire = async (mod: any) => {
+      if (!user?.id) return;
+      
+      let htmlContent = `<h3><strong>Cuestionario de Autoevaluación</strong></h3><ul>`;
+      (mod.questions || []).forEach((q: any, i: number) => {
+          const val = questionnaireAnswers[`${mod.id}-${i}`] ?? 5;
+          htmlContent += `<li><strong>${q.text}:</strong> <span style="color: #0097B2">${val}/10</span></li>`;
+      });
+      htmlContent += `</ul>`;
+      
+      await handleSendBitacora(htmlContent);
    };
 
    const fetchProgramData = async () => {
