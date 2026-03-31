@@ -8,6 +8,7 @@ import {
   Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard, ClientProgress,
   CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas
 } from './pages';
+import Directorio from './pages/Directorio';
 
 function App() {
   return (
@@ -37,7 +38,7 @@ function App() {
               <Route path="crm" element={<CRM />} />
               <Route path="ventas" element={<Ventas />} />
               <Route path="pacientes" element={<Pacientes />} />
-              <Route path="directorio" element={<Pacientes />} />
+              <Route path="directorio" element={<Directorio />} />
               <Route path="fichas-clinicas" element={<FichasClinicas />} />
             </Route>
 
