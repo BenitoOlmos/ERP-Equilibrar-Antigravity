@@ -13,8 +13,8 @@ export default function Pacientes() {
     setLoading(true);
     Promise.all([
       axios.get('/api/data/users'),
-      axios.get('/api/data/finance'),
-      axios.get('/api/data/finance/catalog')
+      axios.get('/api/data/payments'),
+      axios.get('/api/data/payments/catalog')
     ])
       .then(([resUsers, resFinance, resCatalog]) => {
         const payments = resFinance.data || [];
