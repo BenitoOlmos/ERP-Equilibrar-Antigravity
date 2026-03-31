@@ -7,7 +7,7 @@ export default function Pacientes() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
-  const [activeTab, setActiveTab] = useState<'progreso' | 'bitacora' | 'chat'>('progreso');
+  const [activeTab, setActiveTab] = useState<'progreso' | 'bitacora' | 'registro'>('progreso');
   const [patientPrograms, setPatientPrograms] = useState<any[]>([]);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
@@ -233,15 +233,15 @@ export default function Pacientes() {
                   activeTab === 'bitacora' ? 'border-rose-500 text-rose-600' : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}
               >
-                <BookOpen className="w-4 h-4" /> Bitácora de esta semana
+                <BookOpen className="w-4 h-4" /> Bitácora Semanal
               </button>
               <button 
-                onClick={() => setActiveTab('chat')}
+                onClick={() => setActiveTab('registro')}
                 className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'chat' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+                  activeTab === 'registro' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}
               >
-                <MessageCircle className="w-4 h-4" /> Chat con Cliente
+                <MessageCircle className="w-4 h-4" /> Registro Emocional
               </button>
             </div>
 
@@ -270,17 +270,6 @@ export default function Pacientes() {
                                <div className="text-2xl font-black text-slate-800">{weekMetrics.totalVideoMinutes} <span className="text-sm font-bold text-slate-400">min. visualizados</span></div>
                            </div>
                         </div>
-                        
-                        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2">
-                           <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                               <Activity className="w-5 h-5 text-[#0097B2]" /> Resultados del Registro Emocional
-                           </h4>
-                           {weekMetrics.questionnaireHtml ? (
-                              <div className="quill-content text-sm bg-slate-50 p-6 rounded-xl border border-slate-100" dangerouslySetInnerHTML={{ __html: weekMetrics.questionnaireHtml }}></div>
-                           ) : (
-                              <p className="text-sm text-slate-400 font-medium italic">El cliente aún no ha llenado o enviado su cuestionario de esta semana.</p>
-                           )}
-                        </div>
                     </div>
                   ) : (
                     <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
@@ -301,23 +290,38 @@ export default function Pacientes() {
                     </div>
                     <h3 className="text-lg font-bold text-slate-800">Revisión de Bitácoras Semanales</h3>
                     <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                      Área designada para visualizar los test y diarios llenados por el cliente durante sus semanas en los programas.
+                      Área designada para visualizar de forma especializada las Bitácoras. (Redirección programada).
                     </p>
                   </div>
                 </div>
               )}
 
-              {activeTab === 'chat' && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 h-full">
-                  <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center h-full flex flex-col justify-center">
-                    <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <MessageCircle className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800">Central de Mensajería</h3>
-                    <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                      Pronto los clientes podrán intercambiar mensajes directos a través de esta ventana estilo WhatsApp.
-                    </p>
-                  </div>
+              {activeTab === 'registro' && (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                   {weekMetrics ? (
+                       <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200/60 shadow-sm">
+                           <h4 className="font-black text-slate-800 mb-6 flex items-center gap-3 text-xl">
+                               <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                                  <MessageCircle className="w-5 h-5" /> 
+                               </div>
+                               Registro Emocional Detallado
+                           </h4>
+                           {weekMetrics.questionnaireHtml ? (
+                              <div className="quill-content text-base bg-emerald-50/30 p-8 rounded-2xl border border-emerald-100 shadow-inner" dangerouslySetInnerHTML={{ __html: weekMetrics.questionnaireHtml }}></div>
+                           ) : (
+                              <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                 <p className="text-slate-400 font-medium italic">El cliente aún no ha llenado o enviado su registro de esta semana.</p>
+                              </div>
+                           )}
+                        </div>
+                   ) : (
+                     <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
+                        <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+                          <MessageCircle className="w-8 h-8" />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-800">Cargando Resultados...</h3>
+                     </div>
+                   )}
                 </div>
               )}
 
