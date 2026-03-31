@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import { generateSecurePassword } from '../utils/auth';
+import { sendRFAIResultsMail } from '../utils/mailer';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -99,26 +102,40 @@ router.post('/diagnostics', async (req, res) => {
 
         const fullName = name || `${firstName} ${lastName}`;
 
-        // 1. Resolve Prospect User profile
+        // 1. Resolve Prospect User profile and Password
         let user = await prisma.user.findUnique({ where: { email } });
+        let newPasswordForEmail: string | undefined = undefined;
+
         if (!user) {
+            newPasswordForEmail = generateSecurePassword();
+            const hashedPassword = await bcrypt.hash(newPasswordForEmail, 10);
+            
             user = await prisma.user.create({
                 data: {
                     email,
                     name: fullName,
                     phone: phone || null,
+                    passwordHash: hashedPassword,
                     role: 'USER', // Web Prospect
                     isActive: true
                 }
             });
         } else {
             // Refrescamos nombre y teléfono si el usuario ya existía pero estaban vacíos
+            const updateData: any = { 
+                phone: phone || user.phone,
+                name: user.name || fullName
+            };
+
+            // Generamos contraseña solo si no tenía una (e.g. leads antiguos)
+            if (!user.passwordHash) {
+                newPasswordForEmail = generateSecurePassword();
+                updateData.passwordHash = await bcrypt.hash(newPasswordForEmail, 10);
+            }
+
             await prisma.user.update({
                 where: { id: user.id },
-                data: { 
-                    phone: phone || user.phone,
-                    name: user.name || fullName
-                }
+                data: updateData
             });
         }
 
@@ -147,6 +164,17 @@ router.post('/diagnostics', async (req, res) => {
                 profile: perfil,
                 status: 'INICIA_RFAI'
             }
+        });
+
+        // 3. Disparar correo asincrónicamente
+        sendRFAIResultsMail({
+            toEmail: email,
+            userName: firstName ? firstName.trim() : fullName,
+            rfaProfile: perfil,
+            rfaInterpretation: interpretacion,
+            newPassword: newPasswordForEmail
+        }).catch(err => {
+            console.error('Non-blocking error dispatching RFAI email:', err);
         });
 
         res.status(201).json({ message: 'Diagnostic saved successfully', diagnostic });
