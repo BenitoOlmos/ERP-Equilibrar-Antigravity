@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Users, Search, Activity, BookOpen, MessageCircle, UserCircle, Phone, Mail } from 'lucide-react';
+import { Users, Search, Activity, BookOpen, MessageCircle, UserCircle, Phone, Mail, Headphones, Video } from 'lucide-react';
 
 export default function Pacientes() {
   const [patients, setPatients] = useState<any[]>([]);
@@ -8,6 +8,41 @@ export default function Pacientes() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
   const [activeTab, setActiveTab] = useState<'progreso' | 'bitacora' | 'chat'>('progreso');
+  const [patientPrograms, setPatientPrograms] = useState<any[]>([]);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+  const [weekMetrics, setWeekMetrics] = useState<any>(null);
+
+  useEffect(() => {
+     if (selectedPatient) {
+         axios.get(`/api/data/users/${selectedPatient.id}/programs`).then(res => {
+             const programs = res.data.programs || [];
+             setPatientPrograms(programs);
+             if (programs.length > 0) {
+                 setSelectedServiceId(programs[0].id);
+                 setSelectedWeek(1);
+             } else {
+                 setSelectedServiceId(null);
+                 setSelectedWeek(null);
+             }
+         }).catch(console.error);
+     } else {
+         setPatientPrograms([]);
+         setSelectedServiceId(null);
+         setSelectedWeek(null);
+     }
+  }, [selectedPatient]);
+
+  useEffect(() => {
+     if (selectedPatient && selectedServiceId && selectedWeek) {
+         setWeekMetrics(null);
+         axios.get(`/api/data/stats/metrics/${selectedPatient.id}/${selectedWeek}/${selectedServiceId}`)
+              .then(res => setWeekMetrics(res.data))
+              .catch(() => setWeekMetrics(null));
+     } else {
+         setWeekMetrics(null);
+     }
+  }, [selectedPatient, selectedServiceId, selectedWeek]);
 
   const fetchPatients = () => {
     setLoading(true);
@@ -147,6 +182,40 @@ export default function Pacientes() {
                 </div>
               </div>
             </div>
+            
+            {/* SERVICIOS Y SEMANAS */}
+            {patientPrograms.length > 0 && (
+              <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex flex-col gap-4 shrink-0">
+                 <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                     {patientPrograms.map((p) => {
+                         const maxWeek = Math.max(...(p.modules || []).map((m: any) => m.weekNumber || 1), 4);
+                         return (
+                           <button
+                              key={p.id}
+                              onClick={() => { setSelectedServiceId(p.id); setSelectedWeek(1); }}
+                              className={`px-4 py-2 rounded-xl text-sm font-bold shrink-0 transition-colors ${selectedServiceId === p.id ? 'bg-[#0097B2] text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}
+                           >
+                              {p.title}
+                           </button>
+                         )
+                     })}
+                 </div>
+                 
+                 {selectedServiceId && (
+                   <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                      {[1,2,3,4].map(wNum => (
+                         <button
+                            key={wNum}
+                            onClick={() => setSelectedWeek(wNum)}
+                            className={`px-4 py-1.5 rounded-full text-xs font-bold shrink-0 transition-colors ${selectedWeek === wNum ? 'bg-indigo-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}
+                         >
+                            Semana {wNum}
+                         </button>
+                      ))}
+                   </div>
+                 )}
+              </div>
+            )}
 
             {/* TABULADOR */}
             <div className="flex items-center gap-2 px-6 pt-4 border-b border-slate-100 shrink-0">
@@ -181,15 +250,46 @@ export default function Pacientes() {
               
               {activeTab === 'progreso' && (
                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
-                    <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Activity className="w-8 h-8" />
+                  {weekMetrics ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex items-center gap-4">
+                           <div className="w-14 h-14 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center shrink-0">
+                               <Headphones className="w-6 h-6" />
+                           </div>
+                           <div>
+                               <h4 className="text-sm font-bold text-slate-500">Reprogramación Auditiva</h4>
+                               <div className="text-2xl font-black text-slate-800">{weekMetrics.totalAudioMinutes} <span className="text-sm font-bold text-slate-400">min. escuchados</span></div>
+                           </div>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex items-center gap-4">
+                           <div className="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center shrink-0">
+                               <Video className="w-6 h-6" />
+                           </div>
+                           <div>
+                               <h4 className="text-sm font-bold text-slate-500">Cápsulas Audiovisuales</h4>
+                               <div className="text-2xl font-black text-slate-800">{weekMetrics.totalVideoMinutes} <span className="text-sm font-bold text-slate-400">min. visualizados</span></div>
+                           </div>
+                        </div>
+                        
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm md:col-span-2">
+                           <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                               <Activity className="w-5 h-5 text-[#0097B2]" /> Resultados del Registro Emocional
+                           </h4>
+                           {weekMetrics.questionnaireHtml ? (
+                              <div className="quill-content text-sm bg-slate-50 p-6 rounded-xl border border-slate-100" dangerouslySetInnerHTML={{ __html: weekMetrics.questionnaireHtml }}></div>
+                           ) : (
+                              <p className="text-sm text-slate-400 font-medium italic">El cliente aún no ha llenado o enviado su cuestionario de esta semana.</p>
+                           )}
+                        </div>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-800">Panel de Progreso Clínico</h3>
-                    <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                      Aquí aparecerán las estadísticas de avance, gráficas RFAI y evaluación longitudinal del paciente.
-                    </p>
-                  </div>
+                  ) : (
+                    <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
+                      <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+                        <Activity className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-800">Cargando Métricas de Seguimiento...</h3>
+                    </div>
+                  )}
                 </div>
               )}
 

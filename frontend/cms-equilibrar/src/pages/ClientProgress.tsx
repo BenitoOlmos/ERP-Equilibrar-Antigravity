@@ -6,6 +6,14 @@ import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, H
 import ChatWidget from '../components/ChatWidget';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import YouTube from 'react-youtube';
+
+const trackMediaConsumption = (userId: string, weekNumber: number, mediaType: 'AUDIO' | 'VIDEO', serviceId: string, secondsWatched: number) => {
+   if (!userId || secondsWatched < 1) return;
+   axios.post('/api/data/stats/track-media', {
+      userId, weekNumber, mediaType, secondsWatched, serviceId
+   }).catch(e => console.error('Media track block failed:', e));
+};
 
 const getModuleStyle = (type: string) => {
     const t = type?.toUpperCase() || 'UNKNOWN';
@@ -21,12 +29,16 @@ const getModuleStyle = (type: string) => {
     return { icon: FileText, color: 'text-slate-500', bg: 'bg-slate-50', ring: 'ring-slate-100', subtext: 'Recurso Clínico', isAction: false };
 };
 
-const CustomAudioPlayer = ({ src, title }: { src: string, title?: string }) => {
+const CustomAudioPlayer = ({ src, title, userId, weekNumber, serviceId }: { src: string, title?: string, userId?: string, weekNumber?: number, serviceId?: string }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isLooping, setIsLooping] = useState(false);
+  
+  // Tracking
+  const timeLogRef = useRef(0);
+  const lastPlayTimeRef = useRef(0);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -38,10 +50,12 @@ const CustomAudioPlayer = ({ src, title }: { src: string, title?: string }) => {
     }
     
     const setAudioTime = () => setCurrentTime(audio.currentTime);
-    const setAudioEnd = () => setIsPlaying(false);
+    const setAudioEnd = () => {
+        setIsPlaying(false);
+        commitTracking();
+    };
 
     audio.addEventListener('loadeddata', setAudioData);
-    // Many browsers fire loadedmetadata before loadeddata for audio duration
     audio.addEventListener('loadedmetadata', setAudioData);
     audio.addEventListener('timeupdate', setAudioTime);
     audio.addEventListener('ended', setAudioEnd);
@@ -51,8 +65,41 @@ const CustomAudioPlayer = ({ src, title }: { src: string, title?: string }) => {
       audio.removeEventListener('loadedmetadata', setAudioData);
       audio.removeEventListener('timeupdate', setAudioTime);
       audio.removeEventListener('ended', setAudioEnd);
-    }
-  }, [src]);
+    };
+  }, []);
+
+  const commitTracking = () => {
+      if (!userId || !weekNumber || !serviceId) return;
+      const elapsedTime = timeLogRef.current;
+      if (elapsedTime > 0) {
+          trackMediaConsumption(userId, weekNumber, 'AUDIO', serviceId, elapsedTime);
+          timeLogRef.current = 0; // Reset after sending
+      }
+  };
+
+  useEffect(() => {
+      let interval: any;
+      if (isPlaying) {
+          lastPlayTimeRef.current = performance.now();
+          interval = setInterval(() => {
+              const now = performance.now();
+              const delta = (now - lastPlayTimeRef.current) / 1000;
+              timeLogRef.current += delta;
+              lastPlayTimeRef.current = now;
+              
+              // Emit every 15 accumulated seconds
+              if (timeLogRef.current >= 15) {
+                 commitTracking();
+              }
+          }, 1000);
+      } else {
+          // Si pausó, commit lo atrasado
+          commitTracking();
+      }
+      return () => {
+          if (interval) clearInterval(interval);
+      };
+  }, [isPlaying]);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -405,13 +452,47 @@ export default function ClientProgress() {
                                                                  {/* Embeds Reales */}
                                                                  {mod.type === 'VIDEO' && mod.contentUrl && (
                                                                      <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-black">
-                                                                         <iframe 
-                                                                            src={mod.contentUrl.includes('watch?v=') ? mod.contentUrl.replace('watch?v=', 'embed/').split('&')[0] : mod.contentUrl} 
-                                                                            className="w-full h-full" 
-                                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                                                            allowFullScreen 
-                                                                            title={mod.title}
-                                                                         ></iframe>
+                                                                       {(() => {
+                                                                         const extractVideoId = (url: string) => {
+                                                                           const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/) || url.match(/embed\/([^?]+)/);
+                                                                           return match ? match[1] : url;
+                                                                         };
+                                                                         const videoId = extractVideoId(mod.contentUrl);
+                                                                         let videoInterval: any;
+                                                                         let lastPlay: number = 0;
+                                                                         return (
+                                                                           <YouTube 
+                                                                              videoId={videoId} 
+                                                                              opts={{ width: '100%', height: '100%', playerVars: { autoplay: 0 } }} 
+                                                                              className="w-full h-full"
+                                                                              onPlay={() => {
+                                                                                lastPlay = performance.now();
+                                                                                videoInterval = setInterval(() => {
+                                                                                  const now = performance.now();
+                                                                                  const delta = (now - lastPlay) / 1000;
+                                                                                  lastPlay = now;
+                                                                                  trackMediaConsumption(user?.id || '', wNum, 'VIDEO', program.id, delta);
+                                                                                }, 15000);
+                                                                              }}
+                                                                              onPause={() => {
+                                                                                if (videoInterval) clearInterval(videoInterval);
+                                                                                if (lastPlay > 0) {
+                                                                                  const delta = (performance.now() - lastPlay) / 1000;
+                                                                                  trackMediaConsumption(user?.id || '', wNum, 'VIDEO', program.id, delta);
+                                                                                  lastPlay = 0;
+                                                                                }
+                                                                              }}
+                                                                              onEnd={() => {
+                                                                                if (videoInterval) clearInterval(videoInterval);
+                                                                                if (lastPlay > 0) {
+                                                                                  const delta = (performance.now() - lastPlay) / 1000;
+                                                                                  trackMediaConsumption(user?.id || '', wNum, 'VIDEO', program.id, delta);
+                                                                                  lastPlay = 0;
+                                                                                }
+                                                                              }}
+                                                                           />
+                                                                         );
+                                                                       })()}
                                                                      </div>
                                                                  )}
                                                                  
@@ -419,6 +500,9 @@ export default function ClientProgress() {
                                                                      <CustomAudioPlayer 
                                                                          src={mod.contentUrl.startsWith('http') ? mod.contentUrl : `/audios/${mod.contentUrl}`} 
                                                                          title={mod.title} 
+                                                                         userId={user?.id}
+                                                                         weekNumber={wNum}
+                                                                         serviceId={program.id}
                                                                      />
                                                                  )}
                                                                  
