@@ -27,7 +27,7 @@ export default function Bitacoras() {
   const toggleLog = (logId: string) => {
       setExpandedLogs(prev => ({
           ...prev,
-          [logId]: prev[logId] === undefined ? false : !prev[logId]
+          [logId]: !prev[logId]
       }));
   };
 
@@ -282,7 +282,7 @@ export default function Bitacoras() {
                              
                              <div className="space-y-6 md:pl-16 relative z-10">
                                  {displayedBitacoras.map((log: any) => {
-                                     const isExpanded = expandedLogs[log.id] !== false;
+                                     const isExpanded = !!expandedLogs[log.id];
                                      return (
                                      <div key={log.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative transition-all hover:shadow-md group">
                                         {/* Etiqueta lateral */}
