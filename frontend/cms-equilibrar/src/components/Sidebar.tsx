@@ -128,14 +128,16 @@ export default function Sidebar() {
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
     'Panel de Control': true,
-    'Gestión': true,
-    'Seguimiento': true,
-    'Servicios': true,
-    'Ventas y Finanzas': true,
-    'Web Equilibrar': true,
-    'Administración': true,
-    'Productos': true,
-    'Ajustes': true,
+    'Gestión': false,
+    'Seguimiento': false,
+    'Servicios': false,
+    'Ventas y Finanzas': false,
+    'Ventas': false,
+    'Finanzas': false,
+    'Web Equilibrar': false,
+    'Administración': false,
+    'Productos': false,
+    'Ajustes': false,
   });
 
   const toggleGroup = (title: string) => {
