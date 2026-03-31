@@ -18,9 +18,33 @@ export default function Bitacoras() {
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
   const [savingReplay, setSavingReplay] = useState<string | null>(null); // Guardando ID
 
+  const [patientPrograms, setPatientPrograms] = useState<any[]>([]);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+
   useEffect(() => {
     fetchPatients();
   }, []);
+
+  useEffect(() => {
+     if (selectedPatient) {
+         axios.get(`/api/data/users/${selectedPatient.id}/programs`).then(res => {
+             const programs = res.data.programs || [];
+             setPatientPrograms(programs);
+             if (programs.length > 0) {
+                 setSelectedServiceId(programs[0].id);
+                 setSelectedWeek(1);
+             } else {
+                 setSelectedServiceId(null);
+                 setSelectedWeek(null);
+             }
+         }).catch(console.error);
+     } else {
+         setPatientPrograms([]);
+         setSelectedServiceId(null);
+         setSelectedWeek(null);
+     }
+  }, [selectedPatient]);
 
   const fetchPatients = () => {
     setLoading(true);
@@ -107,14 +131,11 @@ export default function Bitacoras() {
 
   const filteredPatients = patients.filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  // Grupos por semana
-  const groupedBitacoras = bitacoras.reduce((acc, log) => {
-      if (!acc[log.weekNumber]) acc[log.weekNumber] = [];
-      acc[log.weekNumber].push(log);
-      return acc;
-  }, {} as Record<number, any[]>);
-  
-  const sortedWeeks = Object.keys(groupedBitacoras).map(Number).sort((a, b) => b - a); // Descendente
+  // Filtrar bitácoras para la semana seleccionada, excluyendo cuestionarios
+  const displayedBitacoras = bitacoras.filter(log => 
+      log.weekNumber === selectedWeek &&
+      !log.content.includes('Cuestionario de Autoevaluación')
+  );
 
   return (
     <div className="h-full flex flex-col md:flex-row gap-6">
@@ -193,110 +214,146 @@ export default function Bitacoras() {
                    </div>
                 </div>
 
-                {/* Historial de Bitácoras */}
+                {/* SERVICIOS Y SEMANAS */}
+                {patientPrograms.length > 0 && (
+                  <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex flex-col gap-4 shrink-0">
+                     <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                         {patientPrograms.map((p) => {
+                             return (
+                               <button
+                                  key={p.id}
+                                  onClick={() => { setSelectedServiceId(p.id); setSelectedWeek(1); }}
+                                  className={`px-4 py-2 rounded-xl text-sm font-bold shrink-0 transition-colors ${selectedServiceId === p.id ? 'bg-[#0097B2] text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}
+                               >
+                                  {p.title}
+                               </button>
+                             )
+                         })}
+                     </div>
+                     
+                     {selectedServiceId && (
+                       <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                          {[1,2,3,4].map(wNum => (
+                             <button
+                                key={wNum}
+                                onClick={() => setSelectedWeek(wNum)}
+                                className={`px-4 py-1.5 rounded-full text-xs font-bold shrink-0 transition-colors ${selectedWeek === wNum ? 'bg-indigo-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}
+                             >
+                                Semana {wNum}
+                             </button>
+                          ))}
+                       </div>
+                     )}
+                  </div>
+                )}
+
+                {/* Historial de Bitácoras Escritas */}
                 <div className="flex-1 overflow-y-auto p-6 lg:p-8 bg-slate-50/30">
                    {bitacoras.length === 0 ? (
                        <div className="flex flex-col items-center justify-center h-40 text-slate-400">
                           <Info className="w-8 h-8 mb-3 opacity-50" />
                           <p className="font-medium text-sm">Este paciente no ha registrado entradas en su bitácora todavía.</p>
                        </div>
+                   ) : displayedBitacoras.length === 0 ? (
+                       <div className="flex flex-col items-center justify-center h-40 text-slate-400">
+                          <BookOpen className="w-8 h-8 mb-3 opacity-30" />
+                          <p className="font-medium text-sm">No hay bitácoras escritas para esta semana o servicio seleccionados.</p>
+                       </div>
                    ) : (
                        <div className="space-y-8 max-w-4xl mx-auto pb-10">
-                          {sortedWeeks.map(week => (
-                              <div key={week} className="relative">
-                                 {/* Línea conectora */}
-                                 <div className="absolute top-8 left-8 bottom-[-2rem] w-px bg-slate-200 z-0 hidden md:block"></div>
-                                 
-                                 <div className="flex items-center gap-4 mb-6 relative z-10">
-                                     <div className="bg-slate-800 text-white text-xs font-black px-4 py-2 rounded-xl shadow-md uppercase tracking-widest flex items-center gap-2">
-                                         <Calendar className="w-4 h-4 opacity-50" /> Semana {week}
-                                     </div>
+                          <div className="relative">
+                             {/* Línea conectora */}
+                             <div className="absolute top-8 left-8 bottom-[-2rem] w-px bg-slate-200 z-0 hidden md:block"></div>
+                             
+                             <div className="flex items-center gap-4 mb-6 relative z-10">
+                                 <div className="bg-slate-800 text-white text-xs font-black px-4 py-2 rounded-xl shadow-md uppercase tracking-widest flex items-center gap-2">
+                                     <Calendar className="w-4 h-4 opacity-50" /> Semana {selectedWeek}
                                  </div>
-                                 
-                                 <div className="space-y-6 md:pl-16 relative z-10">
-                                     {groupedBitacoras[week].map((log: any) => (
-                                         <div key={log.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative transition-all hover:shadow-md group">
-                                            {/* Etiqueta lateral */}
-                                            {log.response ? (
-                                                <div className="absolute top-0 right-0 w-2 h-full bg-emerald-400"></div>
-                                            ) : (
-                                                <div className="absolute top-0 right-0 w-2 h-full bg-amber-400"></div>
-                                            )}
-                                            
-                                            <div className="p-6">
-                                                {/* Encabezado del log */}
-                                                <div className="flex justify-between items-start mb-4">
-                                                    <div className="flex items-center gap-2 text-slate-400">
-                                                       <BookOpen className="w-4 h-4" /> 
-                                                       <span className="text-xs font-bold uppercase tracking-wider">{new Date(log.timestamp).toLocaleString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>
-                                                    </div>
-                                                    {!log.response && (
-                                                        <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-50 px-2 py-1 rounded shadow-sm border border-amber-100 animate-pulse">
-                                                            Pendiente
-                                                        </span>
-                                                    )}
+                             </div>
+                             
+                             <div className="space-y-6 md:pl-16 relative z-10">
+                                 {displayedBitacoras.map((log: any) => (
+                                     <div key={log.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative transition-all hover:shadow-md group">
+                                        {/* Etiqueta lateral */}
+                                        {log.response ? (
+                                            <div className="absolute top-0 right-0 w-2 h-full bg-emerald-400"></div>
+                                        ) : (
+                                            <div className="absolute top-0 right-0 w-2 h-full bg-amber-400"></div>
+                                        )}
+                                        
+                                        <div className="p-6">
+                                            {/* Encabezado del log */}
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className="flex items-center gap-2 text-slate-400">
+                                                   <BookOpen className="w-4 h-4" /> 
+                                                   <span className="text-xs font-bold uppercase tracking-wider">{new Date(log.timestamp).toLocaleString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>
                                                 </div>
-                                                
-                                                {/* Contenido del paciente */}
-                                                <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 text-sm leading-relaxed mb-6 font-medium quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
-
-                                                {/* Respuesta u Opción a Responder */}
-                                                {log.response ? (
-                                                    <div className="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 ml-4 md:ml-8 relative">
-                                                        <div className="absolute -left-2 top-4 w-4 h-4 bg-white border-2 border-indigo-200 rounded-full"></div>
-                                                        <div className="flex items-center gap-2 mb-2">
-                                                            <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center">
-                                                                <CheckCircle className="w-3.5 h-3.5" />
-                                                            </div>
-                                                            <h5 className="font-bold text-indigo-900 text-sm">{log.specialist?.name || 'Tú'} <span className="text-indigo-400 font-normal mt-0.5 inline-block">respondió el {new Date(log.respondedAt).toLocaleDateString('es-CL')}</span></h5>
-                                                        </div>
-                                                        <div className="text-sm text-indigo-800 pl-8 opacity-90 quill-content" dangerouslySetInnerHTML={{ __html: log.response }}></div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="ml-4 md:ml-8 bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden focus-within:border-[#00A89C] focus-within:ring-2 focus-within:ring-[#00A89C]/20 transition-all flex flex-col">
-                                                        <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 flex items-center gap-2">
-                                                            <PenLine className="w-3.5 h-3.5 text-slate-400" />
-                                                            <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Enviar Respuesta Profesional</span>
-                                                        </div>
-                                                        <div className="bg-white p-1">
-                                                            <ReactQuill 
-                                                                theme="snow"
-                                                                placeholder="Escribe tu feedback u observación para el paciente..."
-                                                                value={replyTexts[log.id] || ''}
-                                                                onChange={(val) => handleReplyChange(log.id, val)}
-                                                                readOnly={savingReplay === log.id}
-                                                                modules={{
-                                                                    toolbar: [
-                                                                        ['bold', 'italic'],
-                                                                        [{ list: 'bullet' }],
-                                                                        [{ indent: '-1' }, { indent: '+1' }],
-                                                                        [{ color: [] }]
-                                                                    ]
-                                                                }}
-                                                            />
-                                                        </div>
-                                                        <div className="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-end">
-                                                            <button 
-                                                                onClick={() => submitReply(log.id)}
-                                                                disabled={!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id}
-                                                                className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm ${(!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id) ? 'bg-slate-200 text-slate-400' : 'bg-[#00A89C] hover:bg-cyan-600 text-white hover:scale-105'}`}
-                                                            >
-                                                                {savingReplay === log.id ? (
-                                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                                ) : (
-                                                                    <Send className="w-4 h-4" />
-                                                                )}
-                                                                Enviar Observación
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                {!log.response && (
+                                                    <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-50 px-2 py-1 rounded shadow-sm border border-amber-100 animate-pulse">
+                                                        Pendiente
+                                                    </span>
                                                 )}
                                             </div>
-                                         </div>
-                                     ))}
-                                 </div>
-                              </div>
-                          ))}
+                                            
+                                            {/* Contenido del paciente */}
+                                            <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 text-sm leading-relaxed mb-6 font-medium quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
+
+                                            {/* Respuesta u Opción a Responder */}
+                                            {log.response ? (
+                                                <div className="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 ml-4 md:ml-8 relative">
+                                                    <div className="absolute -left-2 top-4 w-4 h-4 bg-white border-2 border-indigo-200 rounded-full"></div>
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                                                            <CheckCircle className="w-3.5 h-3.5" />
+                                                        </div>
+                                                        <h5 className="font-bold text-indigo-900 text-sm">{log.specialist?.name || 'Tú'} <span className="text-indigo-400 font-normal mt-0.5 inline-block">respondió el {new Date(log.respondedAt).toLocaleDateString('es-CL')}</span></h5>
+                                                    </div>
+                                                    <div className="text-sm text-indigo-800 pl-8 opacity-90 quill-content" dangerouslySetInnerHTML={{ __html: log.response }}></div>
+                                                </div>
+                                            ) : (
+                                                <div className="ml-4 md:ml-8 bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden focus-within:border-[#00A89C] focus-within:ring-2 focus-within:ring-[#00A89C]/20 transition-all flex flex-col">
+                                                    <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 flex items-center gap-2">
+                                                        <PenLine className="w-3.5 h-3.5 text-slate-400" />
+                                                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Enviar Respuesta Profesional</span>
+                                                    </div>
+                                                    <div className="bg-white p-1">
+                                                        <ReactQuill 
+                                                            theme="snow"
+                                                            placeholder="Escribe tu feedback u observación para el paciente..."
+                                                            value={replyTexts[log.id] || ''}
+                                                            onChange={(val) => handleReplyChange(log.id, val)}
+                                                            readOnly={savingReplay === log.id}
+                                                            modules={{
+                                                                toolbar: [
+                                                                    ['bold', 'italic'],
+                                                                    [{ list: 'bullet' }],
+                                                                    [{ indent: '-1' }, { indent: '+1' }],
+                                                                    [{ color: [] }]
+                                                                ]
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-end">
+                                                        <button 
+                                                            onClick={() => submitReply(log.id)}
+                                                            disabled={!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id}
+                                                            className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm ${(!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id) ? 'bg-slate-200 text-slate-400' : 'bg-[#00A89C] hover:bg-cyan-600 text-white hover:scale-105'}`}
+                                                        >
+                                                            {savingReplay === log.id ? (
+                                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                            ) : (
+                                                                <Send className="w-4 h-4" />
+                                                            )}
+                                                            Enviar Observación
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                     </div>
+                                 ))}
+                             </div>
+                          </div>
                        </div>
                    )}
                 </div>
