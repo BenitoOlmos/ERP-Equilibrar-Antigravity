@@ -85,7 +85,7 @@ export function Agenda() {
       setAppointments(resAppts.data);
       const allUsers = resUsers.data || [];
       setProfessionals(
-         allUsers.filter((u:any) => u.role === 'SPECIALIST').map((s:any) => ({
+         allUsers.filter((u:any) => ['SPECIALIST', 'Especialista', 'ESPECIALISTA'].includes(u.role)).map((s:any) => ({
             id: s.id,
             name: `${s.profile?.firstName || ''} ${s.profile?.lastName || ''}`.trim() || s.name || s.email,
             color: s.profile?.color || 'bg-slate-100 border-slate-300 text-slate-700',
@@ -93,7 +93,7 @@ export function Agenda() {
          }))
       );
       setClients(
-         allUsers.filter((u:any) => u.role === 'CLIENT').map((c:any) => ({
+         allUsers.filter((u:any) => ['CLIENT', 'Cliente', 'USER', 'CLIENTE'].includes(u.role)).map((c:any) => ({
             id: c.id,
             name: `${c.profile?.firstName || ''} ${c.profile?.lastName || ''}`.trim() || c.name || c.email
          }))
@@ -349,12 +349,12 @@ export function Agenda() {
 
         {(viewMode === 'week' || viewMode === 'day') && (
            <div className="flex-1 overflow-auto bg-slate-50/50 scroll-smooth flex flex-col relative custom-scrollbar">
-              <div className={`flex flex-col ${viewMode === 'week' ? 'min-w-[900px] lg:min-w-full' : 'w-full'}`}>
+              <div className={`flex flex-col ${viewMode === 'week' ? 'min-w-[600px] lg:min-w-full' : 'w-full'}`}>
                  <div className="flex border-b border-slate-200 shrink-0 bg-white shadow-sm font-sans sticky top-0 z-40">
-                    <div className="w-16 sm:w-20 border-r border-slate-100 flex items-center justify-center bg-slate-50 shrink-0 sticky left-0 z-50 shadow-[1px_0_2px_rgba(0,0,0,0.02)]">
+                    <div className="w-12 sm:w-16 border-r border-slate-100 flex items-center justify-center bg-slate-50 shrink-0 sticky left-0 z-50 shadow-[1px_0_2px_rgba(0,0,0,0.02)]">
                        <Clock className="w-5 h-5 text-slate-400" />
                     </div>
-                    {Array.from({ length: viewMode === 'week' ? 7 : 1 }, (_, i) => {
+                    {Array.from({ length: viewMode === 'week' ? 6 : 1 }, (_, i) => {
                        const d = new Date(selectedDate);
                        if (viewMode === 'week') {
                           const currentDay = d.getDay();
@@ -362,7 +362,7 @@ export function Agenda() {
                        }
                        const isToday = d.toDateString() === new Date().toDateString();
                        return (
-                          <div key={i} className={`flex-1 min-w-[120px] sm:min-w-[150px] py-4 flex flex-col items-center justify-center border-r border-slate-100 transition-colors ${isToday ? 'bg-[#00A89C]/5' : 'bg-white'}`}>
+                          <div key={i} className={`flex-1 min-w-[80px] lg:min-w-0 py-3 flex flex-col items-center justify-center border-r border-slate-100 transition-colors ${isToday ? 'bg-[#00A89C]/5' : 'bg-white'}`}>
                              <span className={`text-[9px] sm:text-[10px] uppercase font-black tracking-widest ${isToday ? 'text-[#00A89C]' : 'text-slate-400'}`}>{d.toLocaleDateString('es-ES', { weekday: 'long' })}</span>
                              <span className={`text-xl sm:text-2xl font-black mt-1 ${isToday ? 'text-[#00A89C]' : 'text-slate-800'}`}>{d.getDate()}</span>
                           </div>
@@ -372,7 +372,7 @@ export function Agenda() {
 
                  <div className="flex min-h-[1120px]">
                     {/* Horas */}
-                    <div className="w-16 sm:w-20 shrink-0 bg-white border-r border-slate-100 sticky left-0 z-30 shadow-[1px_0_2px_rgba(0,0,0,0.02)]">
+                    <div className="w-12 sm:w-16 shrink-0 bg-white border-r border-slate-100 sticky left-0 z-30 shadow-[1px_0_2px_rgba(0,0,0,0.02)]">
                        {hours.map(hour => (
                           <div key={hour} className="h-[80px] border-b border-slate-50 flex items-start justify-center pt-3 shrink-0">
                              <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 bg-slate-50 px-1.5 sm:px-2 py-0.5 rounded-lg border border-slate-100 shadow-sm">{hour.toString().padStart(2, '0')}:00</span>
@@ -381,7 +381,7 @@ export function Agenda() {
                     </div>
 
                     <div className="flex-1 flex relative bg-[linear-gradient(to_right,#f8fafc_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:100%_80px]">
-                       {Array.from({ length: viewMode === 'week' ? 7 : 1 }, (_, i) => {
+                       {Array.from({ length: viewMode === 'week' ? 6 : 1 }, (_, i) => {
                           const d = new Date(selectedDate);
                           if(viewMode === 'week') {
                              const currentDay = d.getDay();
@@ -389,7 +389,7 @@ export function Agenda() {
                           }
                           
                           return (
-                             <div key={i} className="flex-1 min-w-[120px] sm:min-w-[150px] border-r border-slate-200/50 relative hover:bg-slate-100/30 transition-colors">
+                             <div key={i} className="flex-1 min-w-[80px] lg:min-w-0 border-r border-slate-200/50 relative hover:bg-slate-100/30 transition-colors">
                                 {gridAppointments
                                    .filter(app => app.rawDate.toDateString() === d.toDateString())
                                    .filter(app => effectiveFilter === 'ALL' || app.profId === effectiveFilter)
