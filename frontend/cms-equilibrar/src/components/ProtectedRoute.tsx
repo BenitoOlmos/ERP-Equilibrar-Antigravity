@@ -27,9 +27,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles, ch
    if (allowedRoles && !allowedRoles.includes(user.role)) {
       // User is logged in but does not have the required role
       // Redirect to a safe fallback relative to their role
-      if (user.role === 'SPECIALIST') return <Navigate to="/agenda" replace />;
-      if (user.role === 'CLIENT') return <Navigate to="/mi-cuenta" replace />;
-      return <Navigate to="/" replace />;
+      if (user.role === 'Super Admin' || user.role === 'Administrador' || user.role === 'Coordinador') return <Navigate to="/resumen" replace />;
+      if (user.role === 'Especialista') return <Navigate to="/agenda" replace />;
+      if (user.role === 'Cliente') return <Navigate to="/mi-cuenta" replace />;
+      
+      // Fallback para roles inválidos o desactualizados
+      return <Navigate to="/login" replace />;
    }
 
    return children ? <>{children}</> : <Outlet />;

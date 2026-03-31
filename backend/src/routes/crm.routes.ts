@@ -11,7 +11,7 @@ router.get('/leads', async (req, res) => {
     try {
         const leads = await prisma.user.findMany({
             where: {
-                role: { in: ['USER', 'CLIENT', 'PATIENT'] }
+                role: { in: ['Cliente'] }
             },
             include: {
                 profile: true,

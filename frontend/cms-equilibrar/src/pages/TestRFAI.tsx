@@ -42,6 +42,53 @@ export function TestRFAI() {
 
   const validStatuses = ['INGRESADO', 'PILOTO', 'SESION CON CLAUDIO', 'PROPUESTA ENTREGADA', 'INICIA RFAI'];
 
+  const handleExportCSV = () => {
+    if (filteredDiagnostics.length === 0) {
+      alert('No hay datos para exportar');
+      return;
+    }
+
+    const headers = [
+      'Fecha', 'Nombre', 'Correo', 'Activación Fisiológica (AF)', 
+      'Activación Mental (AM)', 'Activación Emocional (AE)', 'Regulación (R)',
+      'Carga Interna (ITA)', 'Regulación eq (Re)', 'Índice (IDS-E)',
+      'Interpretación', 'Perfil General', 'Estado'
+    ];
+    
+    const rows = filteredDiagnostics.map(diag => {
+      const dateVal = diag.date || diag.createdAt;
+      const dateStr = dateVal ? new Date(dateVal).toLocaleString('es-CL') : '';
+      const name = `${diag.user?.profile?.firstName || diag.user?.name || ''} ${diag.user?.profile?.lastName || ''}`.trim();
+      const email = diag.user?.email || '';
+      
+      return [
+        `"${dateStr}"`, 
+        `"${name}"`, 
+        `"${email}"`, 
+        diag.af || 0, 
+        diag.am || 0, 
+        diag.ae || 0, 
+        diag.r || 0, 
+        diag.ita || 0, 
+        diag.re || 0, 
+        diag.idsE ?? diag.ids_e ?? 0, 
+        `"${(diag.interpretation || '').replace(/"/g, '""')}"`, 
+        `"${(diag.profile || '').replace(/"/g, '""')}"`, 
+        `"${diag.status || ''}"`
+      ].join(',');
+    });
+    
+    // Use \uFEFF to ensure UTF-8 encoding is recognized by Excel
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(',') + "\n" + rows.join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Test_RFAI_Export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="max-w-[100vw] mx-auto animate-fade-in flex flex-col min-h-[calc(100vh-6rem)] relative pb-6 px-2 sm:px-4">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 md:mb-8 shrink-0">
@@ -56,7 +103,7 @@ export function TestRFAI() {
            <button className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 flex-1 md:flex-none justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold flex items-center transition-all">
              <Bot className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Auto-Perfilador
            </button>
-           <button className="bg-slate-900 text-white hover:bg-slate-800 flex-1 md:flex-none justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold flex items-center shadow-lg shadow-slate-900/20 transition-all">
+           <button onClick={handleExportCSV} className="bg-slate-900 text-white hover:bg-slate-800 flex-1 md:flex-none justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold flex items-center shadow-lg shadow-slate-900/20 transition-all">
              <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Exportar CSV
            </button>
         </div>

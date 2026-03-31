@@ -18,3 +18,4 @@ export { default as Ventas } from './Ventas';
 export { default as Productos } from './Productos';
 export { default as ClientDashboard } from './ClientDashboard';
 export { default as ClientProgress } from './ClientProgress';
+export { default as Pacientes } from './Pacientes';

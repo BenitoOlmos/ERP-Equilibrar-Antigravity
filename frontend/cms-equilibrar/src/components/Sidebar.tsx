@@ -20,7 +20,14 @@ import {
   ShoppingCart,
   CreditCard,
   Package,
-  MapPin
+  Archive,
+  Heart,
+  MessageCircle,
+  BookOpen,
+  MapPin,
+  FileText,
+  Contact,
+  FolderOpen
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -28,17 +35,28 @@ const navGroups = [
   {
     title: 'Panel de Control',
     icon: PieChart,
+    isStandalone: true,
     items: [
       { path: '/', label: 'Resumen', icon: LayoutDashboard },
-      { path: '/mi-cuenta', label: 'Mi Portal Clínico', icon: Target },
     ]
   },
   {
-    title: 'Gestión Operativa',
+    title: 'Gestión',
     icon: ClipboardList,
     items: [
       { path: '/agenda', label: 'Agenda', icon: Calendar },
-      { path: '/crm', label: 'CRM / Seguimiento', icon: Target },
+      { path: '/directorio', label: 'Directorio de Pacientes', icon: Contact },
+      { path: '/fichas-clinicas', label: 'Fichas Clínicas', icon: FolderOpen },
+      { path: '/crm', label: 'CRM', icon: Target },
+    ]
+  },
+  {
+    title: 'Seguimiento',
+    icon: Heart,
+    items: [
+      { path: '/pacientes', label: 'Pacientes Activos', icon: Users },
+      { path: '/bitacoras', label: 'Revisión de Bitácoras', icon: BookOpen },
+      { path: '/chat', label: 'Chat', icon: MessageCircle },
     ]
   },
   {
@@ -49,7 +67,14 @@ const navGroups = [
       { path: '/programas', label: 'Programas', icon: Dumbbell },
       { path: '/tratamientos', label: 'Tratamientos', icon: Activity },
       { path: '/cursos', label: 'Cursos', icon: GraduationCap },
-      { path: '/productos', label: 'Productos', icon: Package },
+    ]
+  },
+  {
+    title: 'Productos',
+    icon: Package,
+    items: [
+      { path: '/productos', label: 'Inventario', icon: Package },
+      { path: '/bodega', label: 'Bodega', icon: Archive },
     ]
   },
   {
@@ -57,18 +82,36 @@ const navGroups = [
     icon: Wallet,
     items: [
       { path: '/ventas', label: 'Ventas', icon: ShoppingCart },
+      { path: '/cotizaciones', label: 'Cotizaciones', icon: ClipboardList },
       { path: '/pagos', label: 'Pagos', icon: CreditCard },
+      { path: '/cuentas-cobrar', label: 'Cuentas por Cobrar', icon: Wallet },
+      { path: '/facturacion', label: 'Facturación / Boletas', icon: FileText },
     ]
   },
   {
-    title: 'Configuración',
-    icon: Settings,
+    title: 'Web Equilibrar',
+    icon: Activity,
+    items: [
+      { path: '/test-rfai', label: 'Test RFAI', icon: Activity },
+      { path: '/web-editor', label: 'Editor de Sitio Web', icon: LayoutDashboard },
+      { path: '/web-noticias', label: 'Noticias Web', icon: Activity },
+      { path: '/web-servicios', label: 'Servicios Web', icon: Tags },
+    ]
+  },
+  {
+    title: 'Administración',
+    icon: Users,
     items: [
       { path: '/usuarios', label: 'Usuarios', icon: Users },
       { path: '/sucursales', label: 'Sucursales', icon: MapPin },
-      { path: '/ajustes', label: 'Ajustes', icon: Settings },
-      { path: '/db', label: 'Respaldos', icon: Server },
-      { path: '/test-rfai', label: 'Test RFAI', icon: Activity },
+    ]
+  },
+  {
+    title: 'Ajustes',
+    icon: Settings,
+    items: [
+      { path: '/ajustes', label: 'Ajustes Generales', icon: Settings },
+      { path: '/db', label: 'Respaldos DB', icon: Server },
     ]
   }
 ];
@@ -79,10 +122,14 @@ export default function Sidebar() {
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
     'Panel de Control': true,
-    'Gestión Operativa': true,
+    'Gestión': true,
+    'Seguimiento': true,
     'Servicios': true,
     'Ventas y Finanzas': true,
-    'Configuración': true,
+    'Web Equilibrar': true,
+    'Administración': true,
+    'Productos': true,
+    'Ajustes': true,
   });
 
   const toggleGroup = (title: string) => {
@@ -95,15 +142,19 @@ export default function Sidebar() {
   // Filter groups and items by role
   const renderedGroups = navGroups.map(group => {
     const filteredItems = group.items.filter(item => {
-      if (!user || user.role === 'ADMIN') return true;
-      if (user.role === 'COORDINATOR') return [
-        '/agenda', '/crm', 
-        '/servicios', '/programas', '/tratamientos', '/cursos', '/productos', 
-        '/ventas', '/pagos', 
-        '/usuarios', '/sucursales', '/test-rfai'
+      if (!user || user.role === 'Super Admin') return true;
+      if (user.role === 'Administrador') return !['/ajustes', '/db'].includes(item.path || '');
+      if (user.role === 'Coordinador') return [
+        '/',
+        '/agenda', '/directorio', '/fichas-clinicas', '/crm', 
+        '/servicios', '/programas', '/tratamientos', '/cursos', 
+        '/productos', '/bodega',
+        '/ventas', '/cotizaciones', '/pagos', '/cuentas-cobrar', '/facturacion', 
+        '/usuarios', '/sucursales', 
+        '/test-rfai', '/editor-web', '/noticias-web', '/servicios-web'
       ].includes(item.path || '');
-      if (user.role === 'SPECIALIST') return ['/agenda', '/usuarios', '/test-rfai'].includes(item.path || '');
-      if (user.role === 'CLIENT' || user.role === 'USER') return ['/mi-cuenta'].includes(item.path || '');
+      if (user.role === 'Especialista') return ['/agenda', '/directorio', '/fichas-clinicas', '/pacientes', '/bitacoras', '/chat', '/test-rfai'].includes(item.path || '');
+      if (user.role === 'Cliente') return ['/mi-cuenta'].includes(item.path || '');
       return false;
     });
     return { ...group, items: filteredItems };
@@ -123,27 +174,31 @@ export default function Sidebar() {
       </div>
       <nav className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2 pb-6 relative z-10">
         {renderedGroups.map((group) => {
-          const isExpanded = expandedGroups[group.title];
+          const isStandalone = (group as any).isStandalone;
+          const isExpanded = isStandalone || expandedGroups[group.title];
           const GroupIcon = group.icon;
           return (
-            <div key={group.title} className="mb-4">
-              <button 
-                onClick={() => toggleGroup(group.title)}
-                className="w-full flex items-center justify-between px-4 py-3 mb-1 text-slate-400 hover:text-white transition-colors group rounded-xl hover:bg-slate-800/40 outline-none"
-                title={`Alternar ${group.title}`}
-              >
-                <h3 className="text-xs font-bold uppercase tracking-wider group-hover:text-white transition-colors flex items-center gap-3">
-                  <GroupIcon className="w-[22px] h-[22px] text-[#00A89C] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" />
-                  {group.title}
-                </h3>
-                <div className={`transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isExpanded ? 'rotate-180 text-white' : 'rotate-0 text-slate-500'}`}>
-                  <ChevronDown className="w-5 h-5" />
-                </div>
-              </button>
+            <div key={group.title} className={isStandalone ? "mb-2" : "mb-4"}>
+              {/* Omitir botón y título si es Standalone */}
+              {!isStandalone && (
+                <button 
+                  onClick={() => toggleGroup(group.title)}
+                  className="w-full flex items-center justify-between px-4 py-3 mb-1 text-slate-400 hover:text-white transition-colors group rounded-xl hover:bg-slate-800/40 outline-none"
+                  title={`Alternar ${group.title}`}
+                >
+                  <h3 className="text-xs font-bold uppercase tracking-wider group-hover:text-white transition-colors flex items-center gap-3">
+                    <GroupIcon className="w-[22px] h-[22px] text-[#00A89C] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" />
+                    {group.title}
+                  </h3>
+                  <div className={`transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isExpanded ? 'rotate-180 text-white' : 'rotate-0 text-slate-500'}`}>
+                    <ChevronDown className="w-5 h-5" />
+                  </div>
+                </button>
+              )}
               
               {/* CSS Grid Animation for perfect height transition */}
               <div 
-                className={`grid transition-[grid-template-rows,opacity,transform] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-top ${
+                className={isStandalone ? "grid grid-rows-[1fr] opacity-100 w-full" : `grid transition-[grid-template-rows,opacity,transform] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-top ${
                   isExpanded ? 'grid-rows-[1fr] opacity-100 scale-100 mt-1' : 'grid-rows-[0fr] opacity-0 scale-95 pointer-events-none'
                 }`}
               >

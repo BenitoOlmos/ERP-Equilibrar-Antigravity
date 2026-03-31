@@ -8,10 +8,10 @@ const prisma = new PrismaClient();
 router.get('/resumen', async (req, res) => {
   try {
     const totalUsers = await prisma.user.count();
-    const clients = await prisma.user.count({ where: { role: 'CLIENT' } });
-    const specialists = await prisma.user.count({ where: { role: 'SPECIALIST' } });
-    const coordinators = await prisma.user.count({ where: { role: 'COORDINATOR' } });
-    const admins = await prisma.user.count({ where: { role: 'ADMIN' } });
+    const clients = await prisma.user.count({ where: { role: 'Cliente' } });
+    const specialists = await prisma.user.count({ where: { role: 'Especialista' } });
+    const coordinators = await prisma.user.count({ where: { role: 'Coordinador' } });
+    const admins = await prisma.user.count({ where: { role: 'Administrador' } });
 
     // Stats
     const totalAppointments = await prisma.appointment.count();

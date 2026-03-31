@@ -12,7 +12,7 @@ export function Usuarios() {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    id: '', firstName: '', lastName: '', email: '', phone: '', role: 'USER', password: '',
+    id: '', firstName: '', lastName: '', email: '', phone: '', role: 'Cliente', password: '',
     documentId: '', address: '', commune: '', healthSystem: '', complementaryInsurance: '',
     observations: '', emergencyPhone: '', emergencyContactName: '', birthDate: '', medicalRecordLink: ''
   });
@@ -57,7 +57,7 @@ export function Usuarios() {
   const openCreateModal = () => {
      setIsEditing(false);
      setFormData({ 
-       id: '', firstName: '', lastName: '', email: '', phone: '', role: 'USER', password: '',
+       id: '', firstName: '', lastName: '', email: '', phone: '', role: 'Cliente', password: '',
        documentId: '', address: '', commune: '', healthSystem: '', complementaryInsurance: '',
        observations: '', emergencyPhone: '', emergencyContactName: '', birthDate: '', medicalRecordLink: ''
      });
@@ -72,7 +72,7 @@ export function Usuarios() {
         lastName: user.profile?.lastName || '',
         email: user.email || '',
         phone: user.phone || '',
-        role: user.role || 'USER',
+        role: user.role || 'Cliente',
         password: '', // Don't fill password on edit
         documentId: user.profile?.documentId || '',
         address: user.profile?.address || '',
@@ -90,29 +90,30 @@ export function Usuarios() {
 
   const roles = [
     { id: 'ALL', label: 'Todos' },
-    { id: 'ADMIN', label: 'Administradores' },
-    { id: 'COORDINATOR', label: 'Coordinadores' },
-    { id: 'SPECIALIST', label: 'Profesionales' },
-    { id: 'CLIENT', label: 'Clientes (Inscritos)' },
-    { id: 'USER', label: 'Test Web (Prospectos)' }
+    { id: 'Super Admin', label: 'Super Admins' },
+    { id: 'Administrador', label: 'Administradores' },
+    { id: 'Coordinador', label: 'Coordinadores' },
+    { id: 'Especialista', label: 'Especialistas' },
+    { id: 'Cliente', label: 'Clientes' }
   ];
 
   const getRoleBadge = (role: string) => {
     switch(role) {
-      case 'ADMIN': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-600 border border-red-200 shadow-sm">Admin</span>;
-      case 'COORDINATOR': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-blue-100 text-blue-600 border border-blue-200 shadow-sm">Coordinador</span>;
-      case 'SPECIALIST': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-purple-100 text-purple-600 border border-purple-200 shadow-sm">Profesional</span>;
-      case 'CLIENT': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-[#00A89C]/20 text-[#00A89C] border border-[#00A89C]/30 shadow-sm">Cliente</span>;
-      case 'USER': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200 shadow-sm">Web Test</span>;
-      default: return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">Desconocido</span>;
+      case 'Super Admin': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-600 border border-red-200 shadow-sm">Super Admin</span>;
+      case 'Administrador': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-orange-100 text-orange-600 border border-orange-200 shadow-sm">Admin</span>;
+      case 'Coordinador': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-blue-100 text-blue-600 border border-blue-200 shadow-sm">Coordinador</span>;
+      case 'Especialista': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-purple-100 text-purple-600 border border-purple-200 shadow-sm">Especialista</span>;
+      case 'Cliente': return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-[#00A89C]/20 text-[#00A89C] border border-[#00A89C]/30 shadow-sm">Cliente</span>;
+      default: return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">{role || 'Desconocido'}</span>;
     }
   };
 
   const getRoleIcon = (role: string) => {
      switch(role) {
-        case 'ADMIN': return <ShieldAlert className="w-4 h-4 text-red-500" />;
-        case 'COORDINATOR': return <BriefcaseMedical className="w-4 h-4 text-blue-500" />;
-        case 'SPECIALIST': return <BriefcaseMedical className="w-4 h-4 text-purple-500" />;
+        case 'Super Admin': return <ShieldAlert className="w-4 h-4 text-red-600" />;
+        case 'Administrador': return <ShieldAlert className="w-4 h-4 text-orange-500" />;
+        case 'Coordinador': return <BriefcaseMedical className="w-4 h-4 text-blue-500" />;
+        case 'Especialista': return <BriefcaseMedical className="w-4 h-4 text-purple-500" />;
         default: return <UserCircle className="w-4 h-4 text-slate-400" />;
      }
   }
@@ -216,7 +217,7 @@ export function Usuarios() {
                       </td>
                       <td className="p-4 pr-6 text-right space-x-1 opacity-60 group-hover:opacity-100 transition-opacity">
                          <button onClick={() => openEditModal(user)} className="p-2 text-slate-400 hover:text-[#00A89C] hover:bg-[#00A89C]/10 rounded-lg transition-colors"><Edit2 className="w-5 h-5" /></button>
-                         {(user.role !== 'ADMIN' || filteredUsers.filter(u=>u.role==='ADMIN').length > 1) && (
+                         {(user.role !== 'Super Admin' || filteredUsers.filter(u=>u.role==='Super Admin').length > 1) && (
                             <button onClick={() => handleDelete(user.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-5 h-5" /></button>
                          )}
                       </td>

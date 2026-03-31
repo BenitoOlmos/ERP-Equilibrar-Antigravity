@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 
 router.get('/', async (req, res) => {
   try {
-    const specialists = await prisma.user.count({ where: { role: 'SPECIALIST', isActive: true } });
-    const clients = await prisma.user.count({ where: { role: 'CLIENT', isActive: true } });
+    const specialists = await prisma.user.count({ where: { role: 'Especialista', isActive: true } });
+    const clients = await prisma.user.count({ where: { role: 'Cliente', isActive: true } });
     
     const startOfDay = new Date();
     startOfDay.setHours(0,0,0,0);

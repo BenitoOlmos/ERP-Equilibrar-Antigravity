@@ -47,10 +47,10 @@ export function Login() {
          if (from && from !== '/login') {
             navigate(from, { replace: true });
          } else {
-            if (user.role === 'ADMIN') navigate('/resumen', { replace: true });
-            else if (user.role === 'COORDINATOR') navigate('/agenda', { replace: true });
-            else if (user.role === 'SPECIALIST') navigate('/agenda', { replace: true });
-            else if (user.role === 'CLIENT') navigate('/mi-cuenta', { replace: true });
+            if (user.role === 'Super Admin' || user.role === 'Administrador' || user.role === 'Coordinador') navigate('/resumen', { replace: true });
+            else if (user.role === 'Coordinador') navigate('/agenda', { replace: true });
+            else if (user.role === 'Especialista') navigate('/agenda', { replace: true });
+            else if (user.role === 'Cliente') navigate('/mi-cuenta', { replace: true });
             else navigate('/', { replace: true });
          }
       } catch (err: any) {

@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 export default function Layout() {
   const { user } = useAuth();
   
-  const isClientView = user?.role === 'CLIENT' || user?.role === 'USER';
+  const isClientView = user?.role === 'Cliente';
 
   return (
     <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans">
