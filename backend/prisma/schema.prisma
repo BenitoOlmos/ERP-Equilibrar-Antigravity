@@ -354,7 +354,7 @@ model Message {
 
 model DiagnosticResult {
   id             String   @id @default(uuid())
-  userId         String   @unique
+  userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date           DateTime
   af             Int
