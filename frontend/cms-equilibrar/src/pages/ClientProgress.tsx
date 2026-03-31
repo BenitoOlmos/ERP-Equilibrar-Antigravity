@@ -490,7 +490,7 @@ export default function ClientProgress() {
                                                                                 <div className="flex justify-end">
                                                                                   <button 
                                                                                      disabled={!newLogText.trim() || newLogText === '<p><br></p>' || isSavingLog}
-                                                                                     onClick={handleSendBitacora} 
+                                                                                     onClick={() => handleSendBitacora()} 
                                                                                      className={`px-6 py-2 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm transition-colors ${!newLogText.trim() || newLogText === '<p><br></p>' || isSavingLog ? 'bg-slate-200 text-slate-400' : 'bg-[#0097B2] hover:bg-cyan-600 text-white cursor-pointer'}`}
                                                                                   >
                                                                                     <Send className="w-4 h-4 mr-2" /> Enviar Registro
