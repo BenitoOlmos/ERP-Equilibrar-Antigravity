@@ -319,6 +319,8 @@ const TestRFAI: React.FC = () => {
                 },
                 body: JSON.stringify({
                     name: fullName,
+                    firstName: userInfo.firstName.trim(),
+                    lastName: userInfo.lastName.trim(),
                     email: userInfo.email.trim(),
                     phone: userInfo.phone.trim(),
                     AF: calculatedResults.AF,
