@@ -7,7 +7,7 @@ export default function Pacientes() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
-  const [activeTab, setActiveTab] = useState<'progreso' | 'bitacora' | 'registro'>('progreso');
+  const [activeTab, setActiveTab] = useState<'progreso' | 'registro'>('progreso');
   const [patientPrograms, setPatientPrograms] = useState<any[]>([]);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
@@ -228,14 +228,6 @@ export default function Pacientes() {
                 <Activity className="w-4 h-4" /> Progreso
               </button>
               <button 
-                onClick={() => setActiveTab('bitacora')}
-                className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'bitacora' ? 'border-rose-500 text-rose-600' : 'border-transparent text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                <BookOpen className="w-4 h-4" /> Bitácora Semanal
-              </button>
-              <button 
                 onClick={() => setActiveTab('registro')}
                 className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
                   activeTab === 'registro' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-400 hover:text-slate-600'
@@ -279,20 +271,6 @@ export default function Pacientes() {
                       <h3 className="text-lg font-bold text-slate-800">Cargando Métricas de Seguimiento...</h3>
                     </div>
                   )}
-                </div>
-              )}
-
-              {activeTab === 'bitacora' && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
-                    <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <BookOpen className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800">Revisión de Bitácoras Semanales</h3>
-                    <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                      Área designada para visualizar de forma especializada las Bitácoras. (Redirección programada).
-                    </p>
-                  </div>
                 </div>
               )}
 
