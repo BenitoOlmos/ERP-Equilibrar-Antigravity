@@ -46,8 +46,6 @@ const navGroups = [
     items: [
       { path: '/agenda', label: 'Agenda', icon: Calendar },
       { path: '/directorio', label: 'Directorio de Pacientes', icon: Contact },
-      { path: '/fichas-clinicas', label: 'Fichas Clínicas', icon: FolderOpen },
-      { path: '/crm', label: 'CRM', icon: Target },
     ]
   },
   {
@@ -81,6 +79,7 @@ const navGroups = [
     title: 'Ventas',
     icon: ShoppingCart,
     items: [
+      { path: '/crm', label: 'CRM', icon: Target },
       { path: '/ventas', label: 'Ventas', icon: ShoppingCart },
       { path: '/cotizaciones', label: 'Cotizaciones', icon: ClipboardList },
     ]
