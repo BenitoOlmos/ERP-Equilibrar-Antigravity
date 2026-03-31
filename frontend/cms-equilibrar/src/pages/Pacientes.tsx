@@ -44,6 +44,19 @@ export default function Pacientes() {
      }
   }, [selectedPatient, selectedServiceId, selectedWeek]);
 
+  const parseQuestionnaireHtml = (html: string) => {
+      const results: { question: string, score: number }[] = [];
+      const regex = /<li><strong>(.*?)<\/strong>.*?<span[^>]*>(\d+)\/10<\/span><\/li>/g;
+      let match;
+      while ((match = regex.exec(html)) !== null) {
+          results.push({ 
+              question: match[1].replace(':', '').trim(), 
+              score: parseInt(match[2]) 
+          });
+      }
+      return results;
+  };
+
   const fetchPatients = () => {
     setLoading(true);
     Promise.all([
@@ -285,9 +298,36 @@ export default function Pacientes() {
                                Registro Emocional Detallado
                            </h4>
                            {weekMetrics.questionnaireHtml ? (
-                              <div className="quill-content text-base bg-emerald-50/30 p-8 rounded-2xl border border-emerald-100 shadow-inner" dangerouslySetInnerHTML={{ __html: weekMetrics.questionnaireHtml }}></div>
+                              <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm mt-6">
+                                 <div className="space-y-6">
+                                    {parseQuestionnaireHtml(weekMetrics.questionnaireHtml).map((item, idx) => (
+                                       <div key={idx} className="bg-slate-50 p-5 rounded-2xl border border-slate-100 hover:border-[#0097B2]/30 transition-colors">
+                                          <div className="flex justify-between items-start mb-3 gap-4">
+                                            <h5 className="font-bold text-slate-700 text-sm md:text-base leading-snug flex-1">{item.question}</h5>
+                                            <div className="bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-sm flex items-center gap-1 shrink-0">
+                                              <span className="font-black text-[#0097B2] text-lg">{item.score}</span>
+                                              <span className="text-slate-400 font-bold text-xs mt-1">/10</span>
+                                            </div>
+                                          </div>
+                                          <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                                             <div 
+                                               className={`h-full rounded-full transition-all duration-1000 ${
+                                                 item.score <= 3 ? 'bg-rose-500' : 
+                                                 item.score <= 7 ? 'bg-amber-400' : 
+                                                 'bg-[#0097B2]'
+                                               }`} 
+                                               style={{ width: `${(item.score / 10) * 100}%` }}
+                                             ></div>
+                                          </div>
+                                       </div>
+                                    ))}
+                                 </div>
+                                 {parseQuestionnaireHtml(weekMetrics.questionnaireHtml).length === 0 && (
+                                     <div className="quill-content text-base bg-emerald-50/30 p-8 rounded-2xl border border-emerald-100 shadow-inner" dangerouslySetInnerHTML={{ __html: weekMetrics.questionnaireHtml }}></div>
+                                 )}
+                              </div>
                            ) : (
-                              <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                              <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 mt-6">
                                  <p className="text-slate-400 font-medium italic">El cliente aún no ha llenado o enviado su registro de esta semana.</p>
                               </div>
                            )}
