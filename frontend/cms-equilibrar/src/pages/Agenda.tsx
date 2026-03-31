@@ -413,30 +413,32 @@ export function Agenda() {
                                          >
                                             <div className="flex justify-between items-start mb-0.5">
                                                <span className="font-extrabold text-[10px] sm:text-xs leading-tight truncate drop-shadow-sm">{app.name}</span>
-                                               {!app.isBlocked && (
                                                   <div className="relative">
                                                      <MoreVertical onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === app.id ? null : app.id); }} className="w-3.5 h-3.5 opacity-50 hover:opacity-100 shrink-0 group-hover:block hidden" />
                                                      {menuOpenId === app.id && (
                                                         <div className="absolute top-4 right-0 w-32 bg-white rounded-lg shadow-xl border border-slate-200 z-[100] py-1 overflow-visible" onClick={e => e.stopPropagation()}>
-                                                           <button onClick={() => {
-                                                              setMenuOpenId(null);
-                                                              setEditApptId(app.id);
-                                                              setAppointmentData({
-                                                                 date: app.rawDate.toISOString().split('T')[0],
-                                                                 time: app.rawDate.toTimeString().slice(0,5),
-                                                                 specialistId: app.profId,
-                                                                 clientId: app.clientId || '',
-                                                                 serviceId: app.serviceId || '',
-                                                                 sessionType: app.sessionType || 'IN_PERSON'
-                                                              });
-                                                              setClientSearch('');
-                                                              setShowAppointmentModal(true);
-                                                           }} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C]">Editar Consulta</button>
-                                                           <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">Eliminar</button>
+                                                           {!app.isBlocked && (
+                                                              <button onClick={() => {
+                                                                 setMenuOpenId(null);
+                                                                 setEditApptId(app.id);
+                                                                 setAppointmentData({
+                                                                    date: app.rawDate.toISOString().split('T')[0],
+                                                                    time: app.rawDate.toTimeString().slice(0,5),
+                                                                    specialistId: app.profId,
+                                                                    clientId: app.clientId || '',
+                                                                    serviceId: app.serviceId || '',
+                                                                    sessionType: app.sessionType || 'IN_PERSON'
+                                                                 });
+                                                                 setClientSearch('');
+                                                                 setShowAppointmentModal(true);
+                                                              }} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C]">Editar Consulta</button>
+                                                           )}
+                                                           <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">
+                                                              Eliminar{app.isBlocked ? ' Bloqueo' : ''}
+                                                           </button>
                                                         </div>
                                                      )}
                                                   </div>
-                                               )}
                                             </div>
                                             <div className="mt-auto flex items-center justify-between font-bold text-[9px] sm:text-[10px] leading-none overflow-hidden">
                                                <span className="opacity-80 truncate mr-1.5">{app.type}</span>
@@ -484,8 +486,8 @@ export function Agenda() {
                              <p className="font-black text-slate-800 text-lg leading-tight tracking-tight">{app.name}</p>
                              <p className={`text-xs font-bold mt-1 w-max px-2.5 py-1 rounded-md ${app.isBlocked ? 'bg-slate-800 text-white' : 'text-[#00A89C] bg-[#00A89C]/10'}`}>{app.type}</p>
                           </div>
-                          {!app.isBlocked && (
-                             <div className="flex shrink-0 items-center justify-end space-x-6">
+                          <div className="flex shrink-0 items-center justify-end space-x-6">
+                             {!app.isBlocked && (
                                 <div className="w-56 shrink-0 flex items-center space-x-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                                    <img src={professionals.find(p => p.id === app.profId)?.avatar} className="w-10 h-10 rounded-xl shadow-sm" alt="" />
                                    <div className="flex flex-col">
@@ -493,13 +495,15 @@ export function Agenda() {
                                      <span className="font-bold text-slate-700 text-sm">{professionals.find(p => p.id === app.profId)?.name}</span>
                                    </div>
                                 </div>
-                                
-                                <div className="relative">
-                                   <button onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === app.id ? null : app.id); }} className="w-10 h-10 hover:bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-800 transition-colors">
-                                      <MoreVertical className="w-5 h-5" />
-                                   </button>
-                                   {menuOpenId === app.id && (
-                                       <div className="absolute top-12 right-0 w-36 bg-white rounded-lg shadow-xl border border-slate-200 z-[100] py-1 overflow-hidden" onClick={e => e.stopPropagation()}>
+                             )}
+                             
+                             <div className="relative">
+                                <button onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === app.id ? null : app.id); }} className="w-10 h-10 hover:bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-800 transition-colors">
+                                   <MoreVertical className="w-5 h-5" />
+                                </button>
+                                {menuOpenId === app.id && (
+                                    <div className="absolute top-12 right-0 w-36 bg-white rounded-lg shadow-xl border border-slate-200 z-[100] py-1 overflow-hidden" onClick={e => e.stopPropagation()}>
+                                       {!app.isBlocked && (
                                           <button onClick={() => {
                                              setMenuOpenId(null);
                                              setEditApptId(app.id);
@@ -514,12 +518,12 @@ export function Agenda() {
                                              setClientSearch('');
                                              setShowAppointmentModal(true);
                                           }} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C]">Editar Consulta</button>
-                                          <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">Eliminar</button>
-                                       </div>
-                                    )}
-                                </div>
+                                       )}
+                                       <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">Eliminar{app.isBlocked ? ' Bloqueo' : ''}</button>
+                                    </div>
+                                 )}
                              </div>
-                          )}
+                          </div>
                        </div>
                     ))}
                     
