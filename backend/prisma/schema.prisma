@@ -39,7 +39,8 @@ model User {
   evaluations      WeeklyEvaluation[]
   audioLogs        AudioLog[]
   activityProgress ActivityProgress[]
-  bitacoraLogs     BitacoraLog[]
+  bitacoraLogs     BitacoraLog[] @relation("UserBitacoras")
+  specialistBitacoras BitacoraLog[] @relation("SpecialistBitacora")
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
@@ -323,13 +324,19 @@ model ActivityProgress {
 }
 
 model BitacoraLog {
-  id         String   @id @default(uuid())
-  userId     String
-  weekNumber Int
-  content    String
-  timestamp  DateTime @default(now())
+  id            String    @id @default(uuid())
+  userId        String
+  weekNumber    Int
+  content       String
+  timestamp     DateTime  @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Respuestas Clínicas
+  specialistId  String?
+  specialist    User?     @relation("SpecialistBitacora", fields: [specialistId], references: [id], onDelete: SetNull)
+  response      String?
+  respondedAt   DateTime?
+
+  user User @relation("UserBitacoras", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Message {

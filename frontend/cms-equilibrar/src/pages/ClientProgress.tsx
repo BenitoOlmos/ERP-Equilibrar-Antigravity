@@ -435,11 +435,26 @@ export default function ClientProgress() {
                                                                                   <div className="text-center py-4 text-xs font-bold text-slate-400">Sin registros en esta semana. Escribe tu primera reflexión.</div>
                                                                                ) : (
                                                                                  bitacoraLogs.map((log: any, idx: number) => (
-                                                                                    <div key={idx} className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                                                                                      <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{log.content}</p>
-                                                                                      <div className="text-[10px] text-slate-400 mt-2 text-right">
-                                                                                        {new Date(log.timestamp).toLocaleString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                                                    <div key={idx} className="flex flex-col gap-3">
+                                                                                      {/* Mensaje del Paciente */}
+                                                                                      <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700 ml-4 md:ml-8 relative">
+                                                                                        <div className="absolute top-4 -left-4 w-3 h-3 bg-slate-200 rounded-full dark:bg-slate-600"></div>
+                                                                                        <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{log.content}</p>
+                                                                                        <div className="text-[10px] text-slate-400 mt-2 text-right">
+                                                                                          Tú • {new Date(log.timestamp).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                                                        </div>
                                                                                       </div>
+                                                                                      
+                                                                                      {/* Respuesta del Especialista */}
+                                                                                      {log.response && (
+                                                                                        <div className="bg-indigo-50/50 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800 mr-4 md:mr-8 relative">
+                                                                                          <div className="absolute top-4 -right-4 w-3 h-3 bg-indigo-200 rounded-full dark:bg-indigo-700"></div>
+                                                                                          <p className="text-sm text-indigo-900 dark:text-indigo-200 whitespace-pre-wrap">{log.response}</p>
+                                                                                          <div className="text-[10px] text-indigo-400 mt-2 flex items-center gap-1">
+                                                                                            <span className="font-bold">{log.specialist?.name || 'Especialista Clínico'}</span> • {new Date(log.respondedAt).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      )}
                                                                                     </div>
                                                                                  ))
                                                                                )}

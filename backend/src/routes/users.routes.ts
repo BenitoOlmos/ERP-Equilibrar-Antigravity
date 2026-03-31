@@ -172,7 +172,8 @@ router.get('/:id/bitacora/:weekNumber', async (req, res) => {
        const { id, weekNumber } = req.params;
        const logs = await prisma.bitacoraLog.findMany({
           where: { userId: id, weekNumber: parseInt(weekNumber) },
-          orderBy: { timestamp: 'asc' }
+          orderBy: { timestamp: 'asc' },
+          include: { specialist: { select: { id: true, name: true } } }
        });
        res.json(logs);
    } catch (error) {
@@ -198,6 +199,43 @@ router.post('/:id/bitacora/:weekNumber', async (req, res) => {
        console.error('Error saving bitacora:', error);
        res.status(500).json({ error: 'Database error' });
    }
+});
+
+// GET /api/data/users/:id/bitacoras - Fetch ALL bitacora history for a user
+router.get('/:id/bitacoras', async (req, res) => {
+   try {
+       const { id } = req.params;
+       const logs = await prisma.bitacoraLog.findMany({
+          where: { userId: id },
+          orderBy: { timestamp: 'desc' },
+          include: { specialist: { select: { id: true, name: true } } }
+       });
+       res.json(logs);
+   } catch (error) {
+       console.error('Error fetching all bitacoras:', error);
+       res.status(500).json({ error: 'Database error' });
+   }
+});
+
+// PUT /api/data/users/:id/bitacoras/:logId/reply - Add specialist reply
+router.put('/:id/bitacoras/:logId/reply', async (req, res) => {
+    try {
+        const { logId } = req.params;
+        const { response, specialistId } = req.body;
+        
+        const log = await prisma.bitacoraLog.update({
+            where: { id: logId },
+            data: {
+                response,
+                specialistId,
+                respondedAt: new Date()
+            }
+        });
+        res.json(log);
+    } catch (error) {
+        console.error('Error saving bitacora reply:', error);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 
 export default router;
