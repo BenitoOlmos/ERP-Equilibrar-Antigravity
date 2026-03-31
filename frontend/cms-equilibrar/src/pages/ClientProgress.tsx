@@ -385,14 +385,6 @@ export default function ClientProgress() {
                                                          {/* EXPANDED CONTENT AREA */}
                                                          {isExpanded && (
                                                              <div className="bg-slate-50 border-t border-slate-100 p-6 animate-fade-in space-y-6">
-                                                                 {/* Descripción / Instrucciones */}
-                                                                 {mod.description && (
-                                                                     <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
-                                                                         <h5 className="text-[10px] font-black uppercase tracking-widest text-[#00A89C] mb-2 flex items-center"><FileText className="w-3.5 h-3.5 mr-1" /> Instrucciones Clínicas</h5>
-                                                                         <p className="text-sm font-medium text-slate-600 leading-relaxed whitespace-pre-wrap">{mod.description}</p>
-                                                                     </div>
-                                                                 )}
-                                                                 
                                                                  {/* Embeds Reales */}
                                                                  {mod.type === 'VIDEO' && mod.contentUrl && (
                                                                      <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-black">
