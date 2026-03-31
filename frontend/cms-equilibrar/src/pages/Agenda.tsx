@@ -75,7 +75,7 @@ export function Agenda() {
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [editApptId, setEditApptId] = useState<string | null>(null);
 
-  const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 to 21:00
+  const hours = Array.from({ length: 12 }, (_, i) => i + 9); // 9:00 to 20:59
 
   const fetchData = () => {
     Promise.all([
@@ -222,7 +222,7 @@ export function Agenda() {
     };
   });
 
-  const timePos = Math.max(0, (now.getHours() - 8) * 60 + (now.getMinutes() / 60) * 60);
+  const timePos = Math.max(0, (now.getHours() - 9) * 60 + (now.getMinutes() / 60) * 60);
 
   // Month View Helpers
   const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
@@ -402,50 +402,110 @@ export function Agenda() {
                           
                           return (
                              <div key={i} className="flex-1 min-w-[80px] lg:min-w-0 border-r border-slate-200/50 relative hover:bg-slate-100/30 transition-colors">
-                                {gridAppointments
-                                   .filter(app => app.rawDate.toDateString() === d.toDateString())
-                                   .filter(app => effectiveFilter === 'ALL' || app.profId === effectiveFilter)
-                                   .map(app => (
-                                         <div
-                                            key={app.id}
-                                            className={`absolute inset-x-1 sm:inset-x-2 rounded-xl sm:rounded-2xl border-l-[3px] p-1.5 sm:p-2 shadow cursor-pointer transition-all flex flex-col group overflow-visible ${menuOpenId === app.id ? 'z-[60] shadow-xl ring-2 ring-slate-900/5' : 'z-20 hover:z-30'} ${app.color.includes('bg-') ? app.color : 'bg-slate-100 border-slate-400 text-slate-800'} ${app.isBlocked ? 'border-none' : 'hover:shadow-md hover:-translate-y-0.5'}`}
-                                            style={{ top: `${(app.startHour - 8) * 60 + 2}px`, height: `${app.duration * 60 - 4}px` }}
-                                         >
-                                            <div className="flex justify-between items-start mb-0.5">
-                                               <span className="font-extrabold text-[10px] sm:text-xs leading-tight truncate drop-shadow-sm">{app.name}</span>
-                                                  <div className="relative">
-                                                     <MoreVertical onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === app.id ? null : app.id); }} className="w-3.5 h-3.5 opacity-50 hover:opacity-100 shrink-0 group-hover:block hidden" />
-                                                     {menuOpenId === app.id && (
-                                                        <div className="absolute top-4 right-0 w-32 bg-white rounded-lg shadow-xl border border-slate-200 z-[100] py-1 overflow-visible" onClick={e => e.stopPropagation()}>
-                                                           {!app.isBlocked && (
-                                                              <button onClick={() => {
-                                                                 setMenuOpenId(null);
-                                                                 setEditApptId(app.id);
-                                                                 setAppointmentData({
-                                                                    date: app.rawDate.toISOString().split('T')[0],
-                                                                    time: app.rawDate.toTimeString().slice(0,5),
-                                                                    specialistId: app.profId,
-                                                                    clientId: app.clientId || '',
-                                                                    serviceId: app.serviceId || '',
-                                                                    sessionType: app.sessionType || 'IN_PERSON'
-                                                                 });
-                                                                 setClientSearch('');
-                                                                 setShowAppointmentModal(true);
-                                                              }} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C]">Editar Consulta</button>
-                                                           )}
-                                                           <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">
-                                                              Eliminar{app.isBlocked ? ' Bloqueo' : ''}
-                                                           </button>
-                                                        </div>
-                                                     )}
-                                                  </div>
-                                            </div>
-                                            <div className="mt-auto flex items-center justify-between font-bold text-[9px] sm:text-[10px] leading-none overflow-hidden">
-                                               <span className="opacity-80 truncate mr-1.5">{app.type}</span>
-                                               <span className="opacity-90 bg-white/50 px-1 py-0.5 rounded text-slate-800 whitespace-nowrap">{app.time.split(' - ')[0]}</span>
-                                            </div>
-                                         </div>
-                                   ))}
+                                {(() => {
+                                     const dailyApps = gridAppointments
+                                       .filter(app => app.rawDate.toDateString() === d.toDateString())
+                                       .filter(app => effectiveFilter === 'ALL' || app.profId === effectiveFilter)
+                                       .sort((a,b) => a.startHour - b.startHour || a.duration - b.duration);
+
+                                     const groups: any[][] = [];
+                                     let currentGroup: any[] = [];
+                                     let groupEnd = 0;
+
+                                     dailyApps.forEach(app => {
+                                         if (currentGroup.length === 0) {
+                                             currentGroup.push(app);
+                                             groupEnd = app.startHour + app.duration;
+                                         } else {
+                                             if (app.startHour < groupEnd) {
+                                                 currentGroup.push(app);
+                                                 groupEnd = Math.max(groupEnd, app.startHour + app.duration);
+                                             } else {
+                                                 groups.push(currentGroup);
+                                                 currentGroup = [app];
+                                                 groupEnd = app.startHour + app.duration;
+                                             }
+                                         }
+                                     });
+                                     if (currentGroup.length > 0) groups.push(currentGroup);
+
+                                     const positionedApps: any[] = [];
+                                     groups.forEach(group => {
+                                         const columns: any[][] = [];
+                                         group.forEach(app => {
+                                             let placed = false;
+                                             for (let i = 0; i < columns.length; i++) {
+                                                 const lastAppInCol = columns[i][columns[i].length - 1];
+                                                 if (lastAppInCol.startHour + lastAppInCol.duration <= app.startHour) {
+                                                     columns[i].push(app);
+                                                     app.column = i;
+                                                     placed = true;
+                                                     break;
+                                                 }
+                                             }
+                                             if (!placed) {
+                                                 app.column = columns.length;
+                                                 columns.push([app]);
+                                             }
+                                         });
+                                         const numCols = columns.length;
+                                         group.forEach(app => {
+                                             app.totalCols = numCols;
+                                             positionedApps.push(app);
+                                         });
+                                     });
+
+                                     return positionedApps.map(app => {
+                                         const leftPerc = (app.column / app.totalCols) * 100;
+                                         const widthPerc = 100 / app.totalCols;
+                                         return (
+                                           <div
+                                              key={app.id}
+                                              className={`absolute rounded-xl sm:rounded-2xl border-l-[3px] p-1.5 sm:p-2 shadow cursor-pointer transition-all flex flex-col group overflow-visible ${menuOpenId === app.id ? 'z-[60] shadow-xl ring-2 ring-slate-900/5' : 'z-20 hover:z-30'} ${app.color.includes('bg-') ? app.color : 'bg-slate-100 border-slate-400 text-slate-800'} ${app.isBlocked ? 'border-none' : 'hover:shadow-md hover:-translate-y-0.5'}`}
+                                              style={{ 
+                                                  top: `${(app.startHour - 9) * 60 + 2}px`, 
+                                                  height: `${app.duration * 60 - 4}px`,
+                                                  left: `calc(${leftPerc}% + 4px)`,
+                                                  width: `calc(${widthPerc}% - 8px)`
+                                              }}
+                                           >
+                                              <div className="flex justify-between items-start mb-0.5">
+                                                 <span className="font-extrabold text-[10px] sm:text-xs leading-tight truncate drop-shadow-sm">{app.name}</span>
+                                                    <div className="relative">
+                                                       <MoreVertical onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === app.id ? null : app.id); }} className="w-3.5 h-3.5 opacity-50 hover:opacity-100 shrink-0 group-hover:block hidden" />
+                                                       {menuOpenId === app.id && (
+                                                          <div className="absolute top-4 right-0 w-32 bg-white rounded-lg shadow-xl border border-slate-200 z-[100] py-1 overflow-visible" onClick={e => e.stopPropagation()}>
+                                                             {!app.isBlocked && (
+                                                                <button onClick={() => {
+                                                                   setMenuOpenId(null);
+                                                                   setEditApptId(app.id);
+                                                                   setAppointmentData({
+                                                                      date: app.rawDate.toISOString().split('T')[0],
+                                                                      time: app.rawDate.toTimeString().slice(0,5),
+                                                                      specialistId: app.profId,
+                                                                      clientId: app.clientId || '',
+                                                                      serviceId: app.serviceId || '',
+                                                                      sessionType: app.sessionType || 'IN_PERSON'
+                                                                   });
+                                                                   setClientSearch('');
+                                                                   setShowAppointmentModal(true);
+                                                                }} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C]">Editar Consulta</button>
+                                                             )}
+                                                             <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">
+                                                                Eliminar{app.isBlocked ? ' Bloqueo' : ''}
+                                                             </button>
+                                                          </div>
+                                                       )}
+                                                    </div>
+                                              </div>
+                                              <div className="mt-auto flex items-center justify-between font-bold text-[9px] sm:text-[10px] leading-none overflow-hidden">
+                                                 <span className="opacity-80 truncate mr-1.5">{app.type}</span>
+                                                 <span className="opacity-90 bg-white/50 px-1 py-0.5 rounded text-slate-800 whitespace-nowrap">{app.time.split(' - ')[0]}</span>
+                                              </div>
+                                           </div>
+                                         );
+                                     });
+                                 })()}
                              </div>
                           );
                        })}
