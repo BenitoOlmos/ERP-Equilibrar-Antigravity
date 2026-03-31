@@ -61,9 +61,9 @@ export default function Chat() {
 
   const loadConversation = async (patientId: string) => {
     try {
-        const res = await axios.get(`/api/data/messages/conversation/${user?.id}/${patientId}`);
-        setMessages(res.data);
-        setTimeout(scrollToBottom, 100);
+        const res = await axios.get(`/api/data/messages/history/${patientId}`);
+        setMessages(res.data.reverse());
+        setTimeout(scrollToBottom, 200);
     } catch (e) {
         console.error("Error cargando conversación", e);
     }
@@ -184,10 +184,10 @@ export default function Chat() {
                             </div>
                         ) : (
                             messages.map((msg, i) => {
-                                const isMe = msg.senderId === user?.id;
+                                const fromClinic = msg.senderId !== selectedPatient?.id;
                                 return (
-                                    <div key={msg.id || i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                                        <div className={`max-w-[85%] px-4 py-2 text-sm shadow-sm rounded-2xl ${isMe ? 'bg-[#0097B2] text-white rounded-tr-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-tl-sm'}`}>
+                                    <div key={msg.id || i} className={`flex flex-col ${fromClinic ? 'items-end' : 'items-start'}`}>
+                                        <div className={`max-w-[85%] px-4 py-2 text-sm shadow-sm rounded-2xl ${fromClinic ? 'bg-[#0097B2] text-white rounded-tr-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-tl-sm'}`}>
                                             {msg.content}
                                         </div>
                                         <span className="text-[10px] text-slate-400 mt-1 px-1">
