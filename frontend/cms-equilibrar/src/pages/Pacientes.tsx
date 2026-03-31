@@ -7,7 +7,8 @@ export default function Pacientes() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
-  const [activeTab, setActiveTab] = useState<'progreso' | 'bitacora' | 'chat'>('progreso');
+  const [allAppointments, setAllAppointments] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'progreso' | 'bitacora' | 'chat' | 'consultas'>('consultas');
 
   const fetchPatients = () => {
     setLoading(true);
@@ -17,6 +18,7 @@ export default function Pacientes() {
     ])
       .then(([resUsers, resAppts]) => {
         const appointments = resAppts.data || [];
+        setAllAppointments(appointments);
         const usersWithAppointments = new Set(appointments.map((a: any) => a.clientId).filter(Boolean));
 
         const clientUsers = resUsers.data.filter((u: any) => 
@@ -136,9 +138,17 @@ export default function Pacientes() {
             {/* TABULADOR */}
             <div className="flex items-center gap-2 px-6 pt-4 border-b border-slate-100 shrink-0">
               <button 
+                onClick={() => setActiveTab('consultas')}
+                className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
+                  activeTab === 'consultas' ? 'border-[#0097B2] text-[#0097B2]' : 'border-transparent text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                <BookOpen className="w-4 h-4" /> Historial de Consultas
+              </button>
+              <button 
                 onClick={() => setActiveTab('progreso')}
                 className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'progreso' ? 'border-[#0097B2] text-[#0097B2]' : 'border-transparent text-slate-400 hover:text-slate-600'
+                  activeTab === 'progreso' ? 'border-amber-500 text-amber-600' : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}
               >
                 <Activity className="w-4 h-4" /> Progreso
@@ -149,7 +159,7 @@ export default function Pacientes() {
                   activeTab === 'bitacora' ? 'border-rose-500 text-rose-600' : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}
               >
-                <BookOpen className="w-4 h-4" /> Bitácora de esta semana
+                <BookOpen className="w-4 h-4" /> Bitácora
               </button>
               <button 
                 onClick={() => setActiveTab('chat')}
@@ -157,13 +167,60 @@ export default function Pacientes() {
                   activeTab === 'chat' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}
               >
-                <MessageCircle className="w-4 h-4" /> Chat con Cliente
+                <MessageCircle className="w-4 h-4" /> Chat VIP
               </button>
             </div>
 
             {/* CONTENIDO VARIABLE */}
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
               
+              {activeTab === 'consultas' && (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                   {allAppointments.filter(app => app.clientId === selectedPatient.id).length === 0 ? (
+                      <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
+                        <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-bold text-slate-800">Sin Consultas Registradas</h3>
+                        <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">Este paciente no posee un historial de consultas médicas agendadas en el sistema.</p>
+                      </div>
+                   ) : (
+                      <div className="space-y-4 max-w-4xl mx-auto">
+                         <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2"><BookOpen className="w-5 h-5 text-[#00A89C]" /> Bitácora Histórica de Consultas</h3>
+                         {allAppointments
+                           .filter(app => app.clientId === selectedPatient.id)
+                           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                           .map((app, index) => {
+                             const apptDate = new Date(app.date);
+                             const statusColors: any = { SCHEDULED: 'bg-emerald-100 text-emerald-700 border-emerald-200', COMPLETED: 'bg-blue-100 text-blue-700 border-blue-200', CANCELLED: 'bg-red-100 text-red-700 border-red-200', NO_SHOW: 'bg-amber-100 text-amber-700 border-amber-200' };
+                             const statusLabels: any = { SCHEDULED: 'Agendada', COMPLETED: 'Completada', CANCELLED: 'Cancelada', NO_SHOW: 'Inasistencia' };
+                             
+                             return (
+                               <div key={app.id || index} className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
+                                  <div className="flex items-center gap-5">
+                                     <div className="w-20 shrink-0 text-center flex flex-col justify-center border-r border-slate-100 pr-5">
+                                        <div className="text-[10px] uppercase font-black tracking-widest text-[#00A89C] bg-[#00A89C]/10 py-1 px-2 rounded-lg mb-1">{apptDate.toLocaleDateString('es-ES', { month: 'short', day: '2-digit' })}</div>
+                                        <div className="text-xl font-black text-slate-700 leading-none">{apptDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute:'2-digit' })}<span className="text-xs ml-0.5">hs</span></div>
+                                        <div className="text-[10px] font-bold text-slate-400 mt-1">{apptDate.getFullYear()}</div>
+                                     </div>
+                                     <div>
+                                        <h4 className="font-bold text-lg text-slate-800 tracking-tight leading-tight">{app.service?.name || app.rfaiType || 'Reserva Estándar'}</h4>
+                                        <div className="flex items-center gap-3 mt-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                                           <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                                              <UserCircle className="w-3.5 h-3.5 text-slate-400" /> Atendió: {app.specialist?.profile?.firstName || 'Especialista'} {app.specialist?.profile?.lastName || ''}
+                                           </div>
+                                        </div>
+                                     </div>
+                                  </div>
+                                  <div className={`px-4 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest ${statusColors[app.status] || 'bg-slate-100 text-slate-500'}`}>
+                                     {statusLabels[app.status] || app.status}
+                                  </div>
+                               </div>
+                             );
+                           })}
+                      </div>
+                   )}
+                </div>
+              )}
+
               {activeTab === 'progreso' && (
                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                   <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
