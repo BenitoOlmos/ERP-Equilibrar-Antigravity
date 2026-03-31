@@ -13,15 +13,24 @@ export default function Pacientes() {
     setLoading(true);
     Promise.all([
       axios.get('/api/data/users'),
-      axios.get('/api/data/finance')
+      axios.get('/api/data/finance'),
+      axios.get('/api/data/finance/catalog')
     ])
-      .then(([resUsers, resFinance]) => {
+      .then(([resUsers, resFinance, resCatalog]) => {
         const payments = resFinance.data || [];
-        // Extract users who purchased a Program, Course, or Treatment
-        // (COMPLETED payments that are not mapped purely to single appointments or standalone physical products)
+        const catalog = resCatalog.data || { programs: [], treatments: [], courses: [] };
+        
+        // Valid concepts correspond strictly to Programs, Treatments, and Courses
+        const validConcepts = [
+          ...(catalog.programs || []).map((p: any) => p.title),
+          ...(catalog.treatments || []).map((p: any) => p.name),
+          ...(catalog.courses || []).map((c: any) => c.title)
+        ];
+
+        // Ensure users only qualify if their payment concept matches a premium package
         const validPaymentUserIds = new Set(
           payments
-            .filter((p: any) => p.status === 'COMPLETED' && !p.appointmentId && !p.productId)
+            .filter((p: any) => p.status === 'COMPLETED' && p.concept && validConcepts.includes(p.concept))
             .map((p: any) => p.userId)
         );
 
