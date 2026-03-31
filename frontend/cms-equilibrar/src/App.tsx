@@ -37,6 +37,7 @@ function App() {
               <Route path="crm" element={<CRM />} />
               <Route path="ventas" element={<Ventas />} />
               <Route path="pacientes" element={<Pacientes />} />
+              <Route path="directorio" element={<Pacientes />} />
             </Route>
 
             {/* Protected Area (Clients) */}
