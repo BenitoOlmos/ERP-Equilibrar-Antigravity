@@ -78,11 +78,17 @@ const navGroups = [
     ]
   },
   {
-    title: 'Ventas y Finanzas',
-    icon: Wallet,
+    title: 'Ventas',
+    icon: ShoppingCart,
     items: [
       { path: '/ventas', label: 'Ventas', icon: ShoppingCart },
       { path: '/cotizaciones', label: 'Cotizaciones', icon: ClipboardList },
+    ]
+  },
+  {
+    title: 'Finanzas',
+    icon: Wallet,
+    items: [
       { path: '/pagos', label: 'Pagos', icon: CreditCard },
       { path: '/cuentas-cobrar', label: 'Cuentas por Cobrar', icon: Wallet },
       { path: '/facturacion', label: 'Facturación / Boletas', icon: FileText },
