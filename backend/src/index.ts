@@ -19,6 +19,7 @@ import studentRoutes from './routes/student.routes';
 import statsRoutes from './routes/stats.routes';
 import branchesRoutes from './routes/branches.routes';
 import clinicalRoutes from './routes/clinical.routes';
+import messagesRoutes from './routes/messages.routes';
 
 dotenv.config();
 
@@ -58,6 +59,7 @@ dataRouter.use('/programs', treatmentRoutes); // Same logical controller as trea
 dataRouter.use('/backup', dbRoutes);
 dataRouter.use('/stats', statsRoutes);
 dataRouter.use('/clinical', clinicalRoutes);
+dataRouter.use('/messages', messagesRoutes);
 apiRouter.use('/data', dataRouter);
 
 // Mount master API router

@@ -15,6 +15,7 @@ export { Ajustes } from './Ajustes';
 export { Login } from './Login';
 export { default as CRM } from './CRM';
 export { default as Bitacoras } from './Bitacoras';
+export { default as Chat } from './Chat';
 export { default as Ventas } from './Ventas';
 export { default as Productos } from './Productos';
 export { default as ClientDashboard } from './ClientDashboard';

@@ -6,7 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { 
   Resumen, Agenda, Servicios, Programas, Tratamientos, 
   Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard, ClientProgress,
-  CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras
+  CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat
 } from './pages';
 import Directorio from './pages/Directorio';
 
@@ -41,6 +41,7 @@ function App() {
               <Route path="directorio" element={<Directorio />} />
               <Route path="fichas-clinicas" element={<FichasClinicas />} />
               <Route path="bitacoras" element={<Bitacoras />} />
+              <Route path="chat" element={<Chat />} />
             </Route>
 
             {/* Protected Area (Clients) */}
