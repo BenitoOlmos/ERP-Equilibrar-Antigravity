@@ -626,8 +626,8 @@ export default function ClientProgress() {
                                                                              
                                                                              {mod.questions && mod.questions.length > 0 && (
                                                                                <div className="pt-8 flex justify-center">
-                                                                                 <button className="flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold transition-all shadow-sm w-full md:w-auto bg-[#0097B2] text-white hover:bg-cyan-600 shadow-cyan-200">
-                                                                                   <Send className="w-5 h-5" /> Enviar Registro Semanal
+                                                                                 <button onClick={() => handleSendQuestionnaire(mod)} disabled={isSavingLog} className={`flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold transition-all shadow-sm w-full md:w-auto ${isSavingLog ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-[#0097B2] text-white hover:bg-cyan-600 shadow-cyan-200'}`}>
+                                                                                   <Send className="w-5 h-5" /> {isSavingLog ? 'Enviando...' : 'Enviar Registro Semanal'}
                                                                                  </button>
                                                                                </div>
                                                                              )}
