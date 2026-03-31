@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen, Download, PenLine, MessageCircle, Send, CircleCheck, Play, Pause, Repeat } from 'lucide-react';
 import ChatWidget from '../components/ChatWidget';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const getModuleStyle = (type: string) => {
     const t = type?.toUpperCase() || 'UNKNOWN';
@@ -432,7 +434,7 @@ export default function ClientProgress() {
                                                                                       {/* Mensaje del Paciente */}
                                                                                       <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700 ml-4 md:ml-8 relative">
                                                                                         <div className="absolute top-4 -left-4 w-3 h-3 bg-slate-200 rounded-full dark:bg-slate-600"></div>
-                                                                                        <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{log.content}</p>
+                                                                                        <div className="text-sm text-slate-700 dark:text-slate-300 quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
                                                                                         <div className="text-[10px] text-slate-400 mt-2 text-right">
                                                                                           Tú • {new Date(log.timestamp).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                                                                                         </div>
@@ -442,7 +444,7 @@ export default function ClientProgress() {
                                                                                       {log.response && (
                                                                                         <div className="bg-indigo-50/50 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800 mr-4 md:mr-8 relative">
                                                                                           <div className="absolute top-4 -right-4 w-3 h-3 bg-indigo-200 rounded-full dark:bg-indigo-700"></div>
-                                                                                          <p className="text-sm text-indigo-900 dark:text-indigo-200 whitespace-pre-wrap">{log.response}</p>
+                                                                                          <div className="text-sm text-indigo-900 dark:text-indigo-200 quill-content pl-8 opacity-90" dangerouslySetInnerHTML={{ __html: log.response }}></div>
                                                                                           <div className="text-[10px] text-indigo-400 mt-2 flex items-center gap-1">
                                                                                             <span className="font-bold">{log.specialist?.name || 'Especialista Clínico'}</span> • {new Date(log.respondedAt).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                                                                                           </div>
@@ -453,22 +455,33 @@ export default function ClientProgress() {
                                                                                )}
                                                                              </div>
                                                                              
-                                                                             <div className="flex gap-3">
-                                                                               <textarea 
-                                                                                  placeholder="Escribe tu reflexión o registro personal aquí..." 
-                                                                                  className="w-full h-14 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0097B2] resize-none"
-                                                                                  value={newLogText}
-                                                                                  onChange={(e) => setNewLogText(e.target.value)}
-                                                                                  disabled={isSavingLog}
-                                                                               ></textarea>
-                                                                               <button 
-                                                                                  disabled={!newLogText.trim() || isSavingLog}
-                                                                                  onClick={handleSendBitacora} 
-                                                                                  className={`px-4 rounded-xl flex items-center justify-center shadow-sm transition-colors ${!newLogText.trim() || isSavingLog ? 'bg-slate-200 text-slate-400' : 'bg-[#0097B2]/10 hover:bg-[#0097B2]/20 text-[#0097B2] cursor-pointer'}`}
-                                                                               >
-                                                                                 <Send className="w-5 h-5" />
-                                                                               </button>
-                                                                             </div>
+                                                                             <div className="flex flex-col gap-3">
+                                                                                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden focus-within:border-[#0097B2] focus-within:ring-2 focus-within:ring-[#0097B2]/20 transition-all">
+                                                                                  <ReactQuill 
+                                                                                     theme="snow"
+                                                                                     placeholder="Escribe tu reflexión o registro personal aquí..." 
+                                                                                     value={newLogText}
+                                                                                     onChange={setNewLogText}
+                                                                                     readOnly={isSavingLog}
+                                                                                     modules={{
+                                                                                        toolbar: [
+                                                                                          ['bold', 'italic'],
+                                                                                          [{ list: 'bullet' }],
+                                                                                          [{ color: [] }]
+                                                                                        ]
+                                                                                     }}
+                                                                                  />
+                                                                                </div>
+                                                                                <div className="flex justify-end">
+                                                                                  <button 
+                                                                                     disabled={!newLogText.trim() || newLogText === '<p><br></p>' || isSavingLog}
+                                                                                     onClick={handleSendBitacora} 
+                                                                                     className={`px-6 py-2 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm transition-colors ${!newLogText.trim() || newLogText === '<p><br></p>' || isSavingLog ? 'bg-slate-200 text-slate-400' : 'bg-[#0097B2] hover:bg-cyan-600 text-white cursor-pointer'}`}
+                                                                                  >
+                                                                                    <Send className="w-4 h-4 mr-2" /> Enviar Registro
+                                                                                  </button>
+                                                                                </div>
+                                                                              </div>
                                                                            </div>
                                                                          </div>
                                                                        </div>

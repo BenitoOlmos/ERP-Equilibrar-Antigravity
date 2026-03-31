@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { BookOpen, User as UserIcon, Calendar, CheckCircle, Search, ChevronRight, PenLine, Send, Info } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 export default function Bitacoras() {
   const { user } = useAuth();
@@ -236,9 +238,7 @@ export default function Bitacoras() {
                                                 </div>
                                                 
                                                 {/* Contenido del paciente */}
-                                                <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 whitespace-pre-wrap text-sm leading-relaxed mb-6 font-medium">
-                                                    {log.content}
-                                                </div>
+                                                <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 text-sm leading-relaxed mb-6 font-medium quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
 
                                                 {/* Respuesta u Opción a Responder */}
                                                 {log.response ? (
@@ -250,7 +250,7 @@ export default function Bitacoras() {
                                                             </div>
                                                             <h5 className="font-bold text-indigo-900 text-sm">{log.specialist?.name || 'Tú'} <span className="text-indigo-400 font-normal mt-0.5 inline-block">respondió el {new Date(log.respondedAt).toLocaleDateString('es-CL')}</span></h5>
                                                         </div>
-                                                        <p className="text-sm text-indigo-800 whitespace-pre-wrap pl-8 opacity-90">{log.response}</p>
+                                                        <div className="text-sm text-indigo-800 pl-8 opacity-90 quill-content" dangerouslySetInnerHTML={{ __html: log.response }}></div>
                                                     </div>
                                                 ) : (
                                                     <div className="ml-4 md:ml-8 bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden focus-within:border-[#00A89C] focus-within:ring-2 focus-within:ring-[#00A89C]/20 transition-all flex flex-col">
@@ -258,17 +258,28 @@ export default function Bitacoras() {
                                                             <PenLine className="w-3.5 h-3.5 text-slate-400" />
                                                             <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Enviar Respuesta Profesional</span>
                                                         </div>
-                                                        <textarea 
-                                                            className="w-full min-h-[100px] p-4 text-sm focus:outline-none resize-y"
-                                                            placeholder="Escribe tu feedback u observación para el paciente..."
-                                                            value={replyTexts[log.id] || ''}
-                                                            onChange={(e) => handleReplyChange(log.id, e.target.value)}
-                                                        ></textarea>
+                                                        <div className="bg-white p-1">
+                                                            <ReactQuill 
+                                                                theme="snow"
+                                                                placeholder="Escribe tu feedback u observación para el paciente..."
+                                                                value={replyTexts[log.id] || ''}
+                                                                onChange={(val) => handleReplyChange(log.id, val)}
+                                                                readOnly={savingReplay === log.id}
+                                                                modules={{
+                                                                    toolbar: [
+                                                                        ['bold', 'italic'],
+                                                                        [{ list: 'bullet' }],
+                                                                        [{ indent: '-1' }, { indent: '+1' }],
+                                                                        [{ color: [] }]
+                                                                    ]
+                                                                }}
+                                                            />
+                                                        </div>
                                                         <div className="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-end">
                                                             <button 
                                                                 onClick={() => submitReply(log.id)}
-                                                                disabled={!replyTexts[log.id]?.trim() || savingReplay === log.id}
-                                                                className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm ${(!replyTexts[log.id]?.trim() || savingReplay === log.id) ? 'bg-slate-200 text-slate-400' : 'bg-[#00A89C] hover:bg-cyan-600 text-white hover:scale-105'}`}
+                                                                disabled={!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id}
+                                                                className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-sm ${(!replyTexts[log.id]?.trim() || replyTexts[log.id] === '<p><br></p>' || savingReplay === log.id) ? 'bg-slate-200 text-slate-400' : 'bg-[#00A89C] hover:bg-cyan-600 text-white hover:scale-105'}`}
                                                             >
                                                                 {savingReplay === log.id ? (
                                                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
