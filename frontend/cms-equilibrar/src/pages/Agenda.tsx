@@ -210,7 +210,7 @@ export function Agenda() {
     };
   });
 
-  const timePos = Math.max(0, (now.getHours() - 8) * 80 + (now.getMinutes() / 60) * 80);
+  const timePos = Math.max(0, (now.getHours() - 8) * 60 + (now.getMinutes() / 60) * 60);
 
   // Month View Helpers
   const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
@@ -370,17 +370,17 @@ export function Agenda() {
                     })}
                  </div>
 
-                 <div className="flex min-h-[1120px]">
+                 <div className="flex min-h-[840px]">
                     {/* Horas */}
                     <div className="w-12 sm:w-16 shrink-0 bg-white border-r border-slate-100 sticky left-0 z-30 shadow-[1px_0_2px_rgba(0,0,0,0.02)]">
                        {hours.map(hour => (
-                          <div key={hour} className="h-[80px] border-b border-slate-50 flex items-start justify-center pt-3 shrink-0">
+                          <div key={hour} className="h-[60px] border-b border-slate-50 flex items-start justify-center pt-2 shrink-0">
                              <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 bg-slate-50 px-1.5 sm:px-2 py-0.5 rounded-lg border border-slate-100 shadow-sm">{hour.toString().padStart(2, '0')}:00</span>
                           </div>
                        ))}
                     </div>
 
-                    <div className="flex-1 flex relative bg-[linear-gradient(to_right,#f8fafc_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:100%_80px]">
+                    <div className="flex-1 flex relative bg-[linear-gradient(to_right,#f8fafc_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:100%_60px]">
                        {Array.from({ length: viewMode === 'week' ? 6 : 1 }, (_, i) => {
                           const d = new Date(selectedDate);
                           if(viewMode === 'week') {
@@ -394,50 +394,49 @@ export function Agenda() {
                                    .filter(app => app.rawDate.toDateString() === d.toDateString())
                                    .filter(app => effectiveFilter === 'ALL' || app.profId === effectiveFilter)
                                    .map(app => (
-                                      <div
-                                         key={app.id}
-                                         className={`absolute inset-x-1 sm:inset-x-2 rounded-2xl border-l-[4px] p-2 sm:p-3 shadow-md z-20 cursor-pointer transition-all flex flex-col group ${app.color.includes('bg-') ? app.color : 'bg-slate-100 border-slate-400 text-slate-800'} ${app.isBlocked ? 'border-none' : 'hover:shadow-lg hover:-translate-y-1'}`}
-                                         style={{ top: `${(app.startHour - 8) * 80 + 3}px`, height: `${app.duration * 80 - 6}px` }}
-                                      >
-                                         <div className="flex justify-between items-start mb-1">
-                                            <span className="font-extrabold text-xs truncate drop-shadow-sm">{app.name}</span>
-                                            {!app.isBlocked && (
-                                               <div className="relative">
-                                                  <MoreVertical onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === app.id ? null : app.id); }} className="w-4 h-4 opacity-50 hover:opacity-100 shrink-0 group-hover:block hidden" />
-                                                  {menuOpenId === app.id && (
-                                                     <div className="absolute top-5 right-0 w-32 bg-white rounded-lg shadow-xl border border-slate-200 z-[100] py-1 overflow-hidden" onClick={e => e.stopPropagation()}>
-                                                        <button onClick={() => {
-                                                           setMenuOpenId(null);
-                                                           setEditApptId(app.id);
-                                                           setAppointmentData({
-                                                              date: app.rawDate.toISOString().split('T')[0],
-                                                              time: app.rawDate.toTimeString().slice(0,5),
-                                                              specialistId: app.profId,
-                                                              clientId: app.clientId || '',
-                                                              serviceId: app.serviceId || '',
-                                                              sessionType: app.sessionType || 'IN_PERSON'
-                                                           });
-                                                           setClientSearch('');
-                                                           setShowAppointmentModal(true);
-                                                        }} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C]">Editar Consulta</button>
-                                                        <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">Eliminar</button>
-                                                     </div>
-                                                  )}
-                                               </div>
-                                            )}
+                                         <div
+                                            key={app.id}
+                                            className={`absolute inset-x-1 sm:inset-x-2 rounded-xl sm:rounded-2xl border-l-[3px] p-1.5 sm:p-2 shadow z-20 cursor-pointer transition-all flex flex-col group overflow-hidden ${app.color.includes('bg-') ? app.color : 'bg-slate-100 border-slate-400 text-slate-800'} ${app.isBlocked ? 'border-none' : 'hover:shadow-md hover:-translate-y-0.5'}`}
+                                            style={{ top: `${(app.startHour - 8) * 60 + 2}px`, height: `${app.duration * 60 - 4}px` }}
+                                         >
+                                            <div className="flex justify-between items-start mb-0.5">
+                                               <span className="font-extrabold text-[10px] sm:text-xs leading-tight truncate drop-shadow-sm">{app.name}</span>
+                                               {!app.isBlocked && (
+                                                  <div className="relative">
+                                                     <MoreVertical onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === app.id ? null : app.id); }} className="w-3.5 h-3.5 opacity-50 hover:opacity-100 shrink-0 group-hover:block hidden" />
+                                                     {menuOpenId === app.id && (
+                                                        <div className="absolute top-4 right-0 w-32 bg-white rounded-lg shadow-xl border border-slate-200 z-[100] py-1 overflow-visible" onClick={e => e.stopPropagation()}>
+                                                           <button onClick={() => {
+                                                              setMenuOpenId(null);
+                                                              setEditApptId(app.id);
+                                                              setAppointmentData({
+                                                                 date: app.rawDate.toISOString().split('T')[0],
+                                                                 time: app.rawDate.toTimeString().slice(0,5),
+                                                                 specialistId: app.profId,
+                                                                 clientId: app.clientId || '',
+                                                                 serviceId: app.serviceId || '',
+                                                                 sessionType: app.sessionType || 'IN_PERSON'
+                                                              });
+                                                              setClientSearch('');
+                                                              setShowAppointmentModal(true);
+                                                           }} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C]">Editar Consulta</button>
+                                                           <button onClick={() => handleDeleteAppt(app.id)} className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-wider text-red-600 hover:bg-red-50 border-t border-slate-100">Eliminar</button>
+                                                        </div>
+                                                     )}
+                                                  </div>
+                                               )}
+                                            </div>
+                                            <div className="mt-auto flex items-center justify-between font-bold text-[9px] sm:text-[10px] leading-none overflow-hidden">
+                                               <span className="opacity-80 truncate mr-1.5">{app.type}</span>
+                                               <span className="opacity-90 bg-white/50 px-1 py-0.5 rounded text-slate-800 whitespace-nowrap">{app.time.split(' - ')[0]}</span>
+                                            </div>
                                          </div>
-                                         <div className="font-bold text-[10px] opacity-80 mb-1 truncate">{app.type}</div>
-                                         <div className="mt-auto flex items-center justify-between font-bold text-[10px]">
-                                            <span className="opacity-90 bg-white/50 px-1.5 py-0.5 rounded text-slate-800">{app.time}</span>
-                                            {app.hasGlobe && <span>🌐</span>}
-                                         </div>
-                                      </div>
                                    ))}
                              </div>
                           );
                        })}
 
-                       {timePos >= 0 && timePos <= (hours.length * 80) && (
+                       {timePos >= 0 && timePos <= (hours.length * 60) && (
                           <div className="absolute w-full flex items-center pointer-events-none z-40" style={{ top: `${timePos}px` }}>
                              <div className="absolute -left-1 w-12 h-5 bg-red-500 rounded-full flex items-center justify-center text-[9px] text-white font-black shadow-lg ring-2 ring-red-100/50 z-50">
                                 {now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
