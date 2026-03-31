@@ -144,6 +144,18 @@ export function Agenda() {
      }
      
      const dt = new Date(`${appointmentData.date}T${appointmentData.time}:00`);
+
+     // Validar disponibilidad
+     const isConflict = appointments.some(app => {
+         if (editApptId && app.id === editApptId) return false;
+         const apptDate = new Date(app.date);
+         return app.specialistId === derivedSpecialistId && apptDate.getTime() === dt.getTime();
+     });
+
+     if (isConflict) {
+        alert('Este especialista ya tiene una consulta agendada o un bloqueo en este horario. Seleccione otro por favor.');
+        return;
+     }
      
      try {
         if (editApptId) {

@@ -22,7 +22,17 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { clientId, specialistId, serviceId, date, sessionType, status } = req.body;
-    const valService = await prisma.agendaService.findUnique({ where: { id: serviceId }});
+    
+    // Check if slot is taken for that specialist
+    const targetDate = new Date(date);
+    const existing = await prisma.appointment.findFirst({
+      where: { specialistId, date: targetDate }
+    });
+    if (existing) {
+      return res.status(400).json({ error: 'El especialista ya tiene ese horario bloqueado u ocupado.' });
+    }
+
+    const valService = serviceId ? await prisma.agendaService.findUnique({ where: { id: serviceId }}) : null;
     const app = await prisma.appointment.create({
       data: {
         clientId, specialistId, serviceId, date: new Date(date), sessionType, status,
@@ -41,6 +51,17 @@ router.put('/:id', async (req, res) => {
     
     const valService = serviceId ? await prisma.agendaService.findUnique({ where: { id: serviceId } }) : null;
     
+    // Validar si el slot está ocupado por otra cita/bloqueo
+    if (date && specialistId) {
+      const targetDate = new Date(date);
+      const existing = await prisma.appointment.findFirst({
+        where: { specialistId, date: targetDate, id: { not: id } }
+      });
+      if (existing) {
+        return res.status(400).json({ error: 'El especialista ya tiene ese horario bloqueado u ocupado.' });
+      }
+    }
+
     const app = await prisma.appointment.update({
       where: { id },
       data: {
