@@ -8,7 +8,6 @@ export default function Pacientes() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
   const [allAppointments, setAllAppointments] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'progreso' | 'bitacora' | 'chat' | 'consultas'>('consultas');
 
   const fetchPatients = () => {
     setLoading(true);
@@ -135,46 +134,9 @@ export default function Pacientes() {
               </div>
             </div>
 
-            {/* TABULADOR */}
-            <div className="flex items-center gap-2 px-6 pt-4 border-b border-slate-100 shrink-0">
-              <button 
-                onClick={() => setActiveTab('consultas')}
-                className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'consultas' ? 'border-[#0097B2] text-[#0097B2]' : 'border-transparent text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                <BookOpen className="w-4 h-4" /> Historial de Consultas
-              </button>
-              <button 
-                onClick={() => setActiveTab('progreso')}
-                className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'progreso' ? 'border-amber-500 text-amber-600' : 'border-transparent text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                <Activity className="w-4 h-4" /> Progreso
-              </button>
-              <button 
-                onClick={() => setActiveTab('bitacora')}
-                className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'bitacora' ? 'border-rose-500 text-rose-600' : 'border-transparent text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                <BookOpen className="w-4 h-4" /> Bitácora
-              </button>
-              <button 
-                onClick={() => setActiveTab('chat')}
-                className={`pb-3 px-4 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${
-                  activeTab === 'chat' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                <MessageCircle className="w-4 h-4" /> Chat VIP
-              </button>
-            </div>
-
-            {/* CONTENIDO VARIABLE */}
+            {/* CONTENIDO PRINCIPAL */}
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
               
-              {activeTab === 'consultas' && (
                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                    {allAppointments.filter(app => app.clientId === selectedPatient.id).length === 0 ? (
                       <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
@@ -219,49 +181,6 @@ export default function Pacientes() {
                       </div>
                    )}
                 </div>
-              )}
-
-              {activeTab === 'progreso' && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
-                    <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Activity className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800">Panel de Progreso Clínico</h3>
-                    <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                      Aquí aparecerán las estadísticas de avance, gráficas RFAI y evaluación longitudinal del paciente.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'bitacora' && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center">
-                    <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <BookOpen className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800">Revisión de Bitácoras Semanales</h3>
-                    <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                      Área designada para visualizar los test y diarios llenados por el cliente durante sus semanas en los programas.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'chat' && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 h-full">
-                  <div className="bg-white p-8 rounded-2xl border border-slate-200/60 shadow-sm text-center h-full flex flex-col justify-center">
-                    <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <MessageCircle className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800">Central de Mensajería</h3>
-                    <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                      Pronto los clientes podrán intercambiar mensajes directos a través de esta ventana estilo WhatsApp.
-                    </p>
-                  </div>
-                </div>
-              )}
 
             </div>
           </div>
