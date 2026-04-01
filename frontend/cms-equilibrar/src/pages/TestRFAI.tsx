@@ -9,7 +9,7 @@ export function TestRFAI() {
   
   // Column Visibility State
   const [visibleCols, setVisibleCols] = useState({
-     date: true, name: true, email: true, af: true, am: true, ae: true,
+     date: true, name: true, email: true, phone: true, af: true, am: true, ae: true,
      r: true, ita: true, re: true, ids: true, interpretacion: true, perfil: true, estado: true
   });
   const [showColMenu, setShowColMenu] = useState(false);
@@ -49,7 +49,7 @@ export function TestRFAI() {
     }
 
     const headers = [
-      'Fecha', 'Nombre', 'Correo', 'Activación Fisiológica (AF)', 
+      'Fecha', 'Nombre', 'Correo', 'Teléfono', 'Activación Fisiológica (AF)', 
       'Activación Mental (AM)', 'Activación Emocional (AE)', 'Regulación (R)',
       'Carga Interna (ITA)', 'Regulación eq (Re)', 'Índice (IDS-E)',
       'Interpretación', 'Perfil General', 'Estado'
@@ -60,11 +60,13 @@ export function TestRFAI() {
       const dateStr = dateVal ? new Date(dateVal).toLocaleString('es-CL') : '';
       const name = `${diag.user?.profile?.firstName || diag.user?.name || ''} ${diag.user?.profile?.lastName || ''}`.trim();
       const email = diag.user?.email || '';
+      const phone = diag.user?.phone || diag.phone || '';
       
       return [
         `"${dateStr}"`, 
         `"${name}"`, 
         `"${email}"`, 
+        `"${phone}"`,
         diag.af || 0, 
         diag.am || 0, 
         diag.ae || 0, 
@@ -149,6 +151,7 @@ export function TestRFAI() {
                         {visibleCols.date && <th className="p-4 font-black">Fecha</th>}
                         {visibleCols.name && <th className="p-4 font-black">Nombre</th>}
                         {visibleCols.email && <th className="p-4 font-black">Correo</th>}
+                        {visibleCols.phone && <th className="p-4 font-black">Teléfono</th>}
                         {visibleCols.af && <th className="p-4 font-black text-center text-indigo-500 bg-indigo-50/30">Activación Fisiológica (AF)</th>}
                         {visibleCols.am && <th className="p-4 font-black text-center text-indigo-500 bg-indigo-50/30">Activación Mental (AM)</th>}
                         {visibleCols.ae && <th className="p-4 font-black text-center text-indigo-500 bg-indigo-50/30">Activación Emocional (AE)</th>}
@@ -170,6 +173,7 @@ export function TestRFAI() {
                            {visibleCols.date && <td className="p-4 text-xs font-bold text-slate-500">{dateFormated}</td>}
                            {visibleCols.name && <td className="p-4 font-black text-slate-800">{diag.user?.profile?.firstName || diag.user?.name || 'Vació'} {diag.user?.profile?.lastName || ''}</td>}
                            {visibleCols.email && <td className="p-4 text-xs font-medium text-slate-500">{diag.user?.email || '[Sin Correo]'}</td>}
+                           {visibleCols.phone && <td className="p-4 text-xs font-medium text-slate-500">{diag.user?.phone || diag.phone || '[Sin Teléfono]'}</td>}
                            {visibleCols.af && <td className="p-4 text-center bg-indigo-50/10">{diag.af}</td>}
                            {visibleCols.am && <td className="p-4 text-center bg-indigo-50/10">{diag.am}</td>}
                            {visibleCols.ae && <td className="p-4 text-center bg-indigo-50/10">{diag.ae}</td>}
