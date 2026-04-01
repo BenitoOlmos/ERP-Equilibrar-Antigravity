@@ -107,7 +107,7 @@ async function runSeed() {
     }
 
     // Check if diagnostic already exists for user
-    const existingDiag = await prisma.diagnosticResult.findUnique({
+    const existingDiag = await prisma.diagnosticResult.findFirst({
       where: { userId: user.id }
     });
 
