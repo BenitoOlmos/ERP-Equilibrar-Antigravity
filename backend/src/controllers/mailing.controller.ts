@@ -244,13 +244,13 @@ export const getTemplates = async (req: Request, res: Response): Promise<void> =
                 {
                     title: "Recordatorio Test", description: "Invitación a completar evaluación emocional.", iconName: "PenTool", colorClass: "bg-amber-50 text-amber-600",
                     subject: "🧠 ¿Cómo estás hoy? Completa tu test de bienestar, {{nombre}}",
-                    content: `<img src="https://placehold.co/600x200/f8fafc/94a3b8?text=Reemplazar+Imagen+Hero" alt="Hero" width="100%" /> 
+                    content: `<img src="https://placehold.co/600x200/f8fafc/94a3b8?text=Reemplazar+Imagen+(600x200)" alt="Hero" width="100%" /> 
 <h2 style="color: #4f46e5;">Hola {{nombre}},</h2>
 <p>Hace unos días te enviamos una invitación para realizar tu test de bienestar emocional y aún no hemos recibido tu respuesta.</p>
 <p>Conocer tu estado actual es el primer paso para una vida plena. El test solo toma 5 minutos.</p>
 <br/>
 <p style="text-align: center;">
-  <a href="https://tusitio.com/test" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Realizar Test Ahora</a>
+  <a href="https://tusitio.com/test" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px;">Realizar Test Ahora</a>
 </p>
 <br/>
 <p style="color: #64748b; font-style: italic;">"Cuidar de tu mente es la mejor inversión que puedes hacer."</p>
@@ -259,13 +259,14 @@ export const getTemplates = async (req: Request, res: Response): Promise<void> =
                 {
                     title: "Contratar Servicio", description: "Propuesta de valor y planes premium.", iconName: "PenTool", colorClass: "bg-emerald-50 text-emerald-600",
                     subject: "🚀 {{nombre}}, impulsa tu crecimiento con nuestros planes",
-                    content: `<h2 style="color: #059669;">Tu evolución no tiene límites</h2>
+                    content: `<img src="https://placehold.co/600x200/ecfdf5/059669?text=Reemplazar+Imagen+(600x200)" alt="Hero" width="100%" /> 
+<h2 style="color: #059669;">Tu evolución no tiene límites</h2>
 <p>Hola {{nombre}}, hemos notado tu compromiso con tu crecimiento personal. Por eso, queremos invitarte a dar el siguiente paso.</p>
 <br/>
 <p><strong>Nuestros Planes Premium:</strong> Accede a sesiones personalizadas y herramientas exclusivas para potenciar tu proceso.</p>
 <br/>
 <p style="text-align: center;">
-  <a href="https://tusitio.com/planes" style="background-color: #166534; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Ver Planes Disponibles</a>
+  <a href="https://tusitio.com/planes" style="background-color: #166534; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px;">Ver Planes Disponibles</a>
 </p>
 <br/>
 <p>Estamos listos para acompañarte en este viaje. ¿Hablamos?</p>`
@@ -273,15 +274,84 @@ export const getTemplates = async (req: Request, res: Response): Promise<void> =
                 {
                     title: "Escuchar Podcast", description: "Novedades y contenido en audio.", iconName: "PenTool", colorClass: "bg-indigo-50 text-indigo-600",
                     subject: "🎧 Nuevo Episodio: Superando la ansiedad con {{nombre}}",
-                    content: `<img src="https://placehold.co/600x200/1e293b/ffffff?text=Nuevo+Episodio" alt="Podcast Hero" width="100%" /> 
+                    content: `<img src="https://placehold.co/600x200/1e293b/ffffff?text=Reemplazar+Imagen+(600x200)" alt="Podcast Hero" width="100%" /> 
 <h2 style="color: #1e293b; text-align: center;">¡Nuevo Podcast Disponible!</h2>
 <p style="text-align: center;">En el episodio de hoy hablamos sobre herramientas prácticas para gestionar el estrés diario. ¡Algo que te interesará mucho, {{nombre}}!</p>
 <br/>
 <p style="text-align: center;">
-  <a href="https://spotify.com/podcast" style="background-color: #1DB954; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">ESCUCHAR EN SPOTIFY</a>
+  <a href="https://spotify.com/podcast" style="background-color: #1DB954; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 20px;">ESCUCHAR EN SPOTIFY</a>
 </p>
 <br/>
 <p style="text-align: center; color: #94a3b8;">También disponible en Apple Podcasts y YouTube.</p>`
+                },
+                {
+                    title: "Promo Terapia Psicológica", description: "Incentivo para iniciar sesiones de terapia.", iconName: "PenTool", colorClass: "bg-blue-50 text-blue-600",
+                    subject: "✨ ¿Sientes que es momento de un cambio, {{nombre}}? Da el primer paso",
+                    content: `<img src="https://placehold.co/600x250/eff6ff/1d4ed8?text=Imagen+Terapia+(600x250)" alt="Terapia" width="100%" /> 
+<h2 style="color: #1d4ed8;">Tu bienestar mental es nuestra prioridad</h2>
+<p>Hola {{nombre}}, sabemos que pedir ayuda es el paso más valiente. En Clínica Equilibrar contamos con especialistas listos para escucharte y guiarte en tu proceso psicológico.</p>
+<br/>
+<p>Inicia hoy tu terapia con nosotros y descubre un espacio seguro y confidencial, diseñado a tu medida.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/reserva-terapia" style="background-color: #2563eb; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 8px;">Agendar Mi Primera Sesión</a>
+</p>
+<br/>
+<p>Te esperamos con los brazos abiertos.</p>`
+                },
+                {
+                    title: "Venta: Taller Grupal", description: "Suscripción a talleres y cupos limitados.", iconName: "PenTool", colorClass: "bg-orange-50 text-orange-600",
+                    subject: "👥 ¡Últimos cupos para nuestro Taller de Manejo de Ansiedad!",
+                    content: `<img src="https://placehold.co/600x250/fff7ed/ea580c?text=Imagen+Taller+(600x250)" alt="Taller" width="100%" /> 
+<h2 style="color: #ea580c;">¡Aprende en comunidad, {{nombre}}!</h2>
+<p>Quedan muy pocos lugares para nuestro próximo <strong>Taller Grupal Teórico-Práctico</strong>. Una oportunidad única para aprender herramientas emocionales mientras compartes con un grupo enriquecedor.</p>
+<br/>
+<p><strong>Fecha de Inicio:</strong> Próximo Sábado<br><strong>Modalidad:</strong> Presencial / Online</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/talleres" style="background-color: #f97316; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 8px;">Asegurar Mi Cupo (15% OFF)</a>
+</p>
+<br/>
+<p>¡No dejes pasar esta oportunidad de crecimiento!</p>`
+                },
+                {
+                    title: "Evaluación Neuropsicológica", description: "Venta de paquete de evaluación clínica.", iconName: "PenTool", colorClass: "bg-cyan-50 text-cyan-600",
+                    subject: "🧠 Conoce el verdadero potencial cognitivo con nuestra Evaluación",
+                    content: `<img src="https://placehold.co/600x250/ecfeff/0891b2?text=Imagen+Neuropsicología+(600x250)" alt="Neuro" width="100%" /> 
+<h2 style="color: #0891b2;">Respuestas claras para tomar decisiones, {{nombre}}</h2>
+<p>¿Necesitas un perfil cognitivo detallado? Nuestra <strong>Evaluación Neuropsicológica Completa</strong> te brindará un mapa exacto de tus fortalezas y áreas de mejora a nivel de memoria, atención y funciones ejecutivas.</p>
+<br/>
+<p>Ideal para diagnósticos diferenciales, escolares o clínicos.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/evaluaciones" style="background-color: #06b6d4; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 8px;">Solicitar Presupuesto Evaluación</a>
+</p>`
+                },
+                {
+                    title: "Venta: Gift Card Bienestar", description: "Regala terapia o servicios clínicos.", iconName: "PenTool", colorClass: "bg-pink-50 text-pink-600",
+                    subject: "🎁 El mejor regalo que puedes hacer, {{nombre}}: Regala Bienestar",
+                    content: `<img src="https://placehold.co/600x250/fdf2f8/db2777?text=Imagen+GiftCard+(600x250)" alt="GiftCard" width="100%" /> 
+<h2 style="color: #db2777;">Demuestra que te importa regalando salud</h2>
+<p>Se acercan fechas especiales y no hay mejor detalle que ofrecer paz mental. Con nuestra <strong>Gift Card Equilibrar</strong>, puedes regalar desde 1 hasta 4 sesiones de terapia o masajes de relajación clínica.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/giftcards" style="background-color: #db2777; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 8px;">Comprar Gift Card Digital</a>
+</p>
+<br/>
+<p>Envío inmediato al correo del beneficiario con un mensaje tuyo personalizado.</p>`
+                },
+                {
+                    title: "Promoción Pack Sesiones", description: "Descuento en paquetes de 4 o más sesiones.", iconName: "PenTool", colorClass: "bg-purple-50 text-purple-600",
+                    subject: "⭐ {{nombre}}, asegura tu proceso terapéutico ahorrando",
+                    content: `<img src="https://placehold.co/600x250/faf5ff/9333ea?text=Imagen+PromoPack+(600x250)" alt="Pack" width="100%" /> 
+<h2 style="color: #9333ea;">Beneficios exclusivos para pacientes comprometidos</h2>
+<p>Hola {{nombre}}, sabemos que la terapia requiere consistencia. Para premiar tu compromiso con tu salud, hemos aperturado nuestros <strong>Packs de 4 y 8 Sesiones</strong> con hasta un 20% de descuento sobre el valor unitario.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/packs" style="background-color: #9333ea; color: #ffffff; padding: 14px 28px; text-decoration: none; font-weight: bold; border-radius: 8px;">Adquirir Pack de Sesiones</a>
+</p>
+<br/>
+<p>No pongas en pausa tu bienestar. Asegura tus próximas citas hoy mismo.</p>`
                 }
             ];
 
