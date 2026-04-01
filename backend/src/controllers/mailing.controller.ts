@@ -193,3 +193,41 @@ export const getContacts = async (req: Request, res: Response): Promise<void> =>
         res.status(500).json({ error: 'Failed to fetch contacts', details: error.message });
     }
 };
+
+export const deleteGroup = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        await prisma.mailingGroup.delete({
+            where: { id }
+        });
+        res.json({ success: true });
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to delete group', details: error.message });
+    }
+};
+
+export const updateContactGroups = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const { groupIds } = req.body; // array of strings
+        
+        if (!Array.isArray(groupIds)) {
+            res.status(400).json({ error: 'groupIds must be an array' });
+            return;
+        }
+
+        const contact = await prisma.mailingContact.update({
+            where: { id },
+            data: {
+                groups: {
+                    set: groupIds.map((gId: string) => ({ id: gId }))
+                }
+            },
+            include: { groups: true }
+        });
+
+        res.json(contact);
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to update contact groups', details: error.message });
+    }
+};

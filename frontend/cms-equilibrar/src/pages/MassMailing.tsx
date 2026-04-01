@@ -48,6 +48,11 @@ export function MassMailing() {
     const [isTesting, setIsTesting] = useState(false);
     const [activeTemplate, setActiveTemplate] = useState<number | null>(null);
 
+    // Tag Editor Modal State
+    const [isTaggingModalOpen, setIsTaggingModalOpen] = useState(false);
+    const [taggingContact, setTaggingContact] = useState<MailingContact | null>(null);
+    const [selectedTagsForContact, setSelectedTagsForContact] = useState<string[]>([]);
+
     const EMAIL_TEMPLATES = useMemo(() => [
         {
             title: "Recordatorio Test", desc: "Invitación a completar evaluación emocional.",
@@ -107,6 +112,42 @@ export function MassMailing() {
         }
     };
 
+    const handleDeleteGroup = async (e: React.MouseEvent, groupId: string) => {
+        e.stopPropagation();
+        if (!confirm('¿Seguro que deseas eliminar esta etiqueta? Los contactos asocicados no se borrarán, solo perderán la etiqueta.')) return;
+        try {
+            await axios.delete(`/api/mailing/groups/${groupId}`);
+            if (selectedFilterGroup === groupId) setSelectedFilterGroup(null);
+            fetchData();
+        } catch (e) {
+            alert('Error eliminando grupo');
+        }
+    };
+
+    const handleOpenTaggingModal = (contact: MailingContact) => {
+        setTaggingContact(contact);
+        setSelectedTagsForContact(contact.groups ? contact.groups.map(g => g.id) : []);
+        setIsTaggingModalOpen(true);
+    };
+
+    const handleSaveTags = async () => {
+        if (!taggingContact) return;
+        try {
+            await axios.put(`/api/mailing/contacts/${taggingContact.id}/groups`, {
+                groupIds: selectedTagsForContact
+            });
+            setIsTaggingModalOpen(false);
+            fetchData();
+        } catch (e) { 
+            alert('Error actualizando etiquetas'); 
+        }
+    };
+
+    const toggleTagSelection = (groupId: string) => {
+        setSelectedTagsForContact(prev => 
+            prev.includes(groupId) ? prev.filter(id => id !== groupId) : [...prev, groupId]
+        );
+    };
     // Bulk logic
     const [isSendingBulk, setIsSendingBulk] = useState(false);
     const [bulkSuccess, setBulkSuccess] = useState(false);
@@ -361,9 +402,14 @@ export function MassMailing() {
                                                         <FolderOpen className={`w-4 h-4 ${g.color?.split(' ')[1] || 'text-indigo-400'}`}/>
                                                         <span>{g.name}</span>
                                                     </div>
-                                                    {g._count?.contacts !== undefined && (
-                                                        <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">{g._count.contacts}</span>
-                                                    )}
+                                                    <div className="flex items-center gap-2">
+                                                        {g._count?.contacts !== undefined && (
+                                                            <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">{g._count.contacts}</span>
+                                                        )}
+                                                        <button onClick={(e) => handleDeleteGroup(e, g.id)} className="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1 rounded transition-colors hidden group-[.group-item]:block">
+                                                            <Trash2 className="w-3.5 h-3.5" />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -438,15 +484,20 @@ export function MassMailing() {
                                                                 </span>
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                {rec.groups && rec.groups.length > 0 ? (
-                                                                    <div className="flex flex-wrap gap-1">
-                                                                        {rec.groups.map((g: MailingGroup) => (
-                                                                            <span key={g.id} className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md text-[10px] font-medium">{g.name}</span>
-                                                                        ))}
-                                                                    </div>
-                                                                ) : (
-                                                                    <span className="text-xs text-slate-400 italic">Sin etiquetas</span>
-                                                                )}
+                                                                <div className="flex items-center justify-between">
+                                                                    {rec.groups && rec.groups.length > 0 ? (
+                                                                        <div className="flex flex-wrap gap-1">
+                                                                            {rec.groups.map((g: MailingGroup) => (
+                                                                                <span key={g.id} className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md text-[10px] font-medium">{g.name}</span>
+                                                                            ))}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <span className="text-xs text-slate-400 italic">Sin etiquetas</span>
+                                                                    )}
+                                                                    <button onClick={() => handleOpenTaggingModal(rec)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                                                                        <Edit2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -457,6 +508,42 @@ export function MassMailing() {
                                 </div>
                             </main>
                         </div>
+
+                        {/* Modal Gestor de Etiquetas por Contacto */}
+                        {isTaggingModalOpen && taggingContact && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsTaggingModalOpen(false)}></div>
+                                <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in flex flex-col">
+                                    <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-lg font-extrabold text-slate-800">Etiquetas</h3>
+                                            <p className="text-xs text-slate-500">{taggingContact.email}</p>
+                                        </div>
+                                        <button onClick={() => setIsTaggingModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5"/></button>
+                                    </div>
+                                    <div className="p-5 max-h-[60vh] overflow-y-auto">
+                                        <div className="space-y-2">
+                                            {groups.map(g => (
+                                                <div key={g.id} onClick={() => toggleTagSelection(g.id)} className={`flex items-center gap-3 p-3 rounded-xl border ${selectedTagsForContact.includes(g.id) ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 hover:bg-slate-50 text-slate-600'} cursor-pointer transition-colors`}>
+                                                    <div className={`w-5 h-5 rounded flex items-center justify-center border ${selectedTagsForContact.includes(g.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300'}`}>
+                                                        {selectedTagsForContact.includes(g.id) && <CheckCircle2 className="w-3 h-3 text-white" />}
+                                                    </div>
+                                                    <span className="font-bold text-sm">{g.name}</span>
+                                                </div>
+                                            ))}
+                                            {groups.length === 0 && (
+                                                <p className="text-sm text-slate-400 text-center py-4">No hay grupos creados</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="p-5 border-t border-slate-100 bg-slate-50">
+                                        <button onClick={handleSaveTags} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors">
+                                            Guardar Cambios
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Modal de Importación */}
                         {isImportModalOpen && (
