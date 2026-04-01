@@ -215,6 +215,7 @@ export function TestRFAI() {
                         <thead className="sticky top-0 bg-white/95 backdrop-blur-md z-20 shadow-[0_1px_0_rgba(226,232,240,1)]">
                             <tr className="text-[10px] uppercase font-black tracking-widest text-slate-400">
                                 <th className="px-6 py-4">Usuario</th>
+                                <th className="px-6 py-4">Perfil General</th>
                                 <th className="px-6 py-4 text-center text-indigo-600 bg-indigo-50/20">AF</th>
                                 <th className="px-6 py-4 text-center text-indigo-600 bg-indigo-50/20">AM</th>
                                 <th className="px-6 py-4 text-center text-indigo-600 bg-indigo-50/20">AE</th>
@@ -249,6 +250,11 @@ export function TestRFAI() {
                                             <span className="text-[10px] font-medium text-slate-400 mt-0.5">{email} • {phone}</span>
                                             <span className="text-[10px] text-indigo-500 font-bold mt-1 uppercase italic">{dateFormated}</span>
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 inline-block truncate max-w-[140px]" title={diag.profile || 'Pendiente'}>
+                                            {diag.profile || 'Pendiente'}
+                                        </span>
                                     </td>
                                     <td className="px-4 py-5 text-center">
                                         <span className={`px-3 py-1 rounded-lg text-xs ${valAF > 19 ? 'bg-red-100 border border-red-200 font-black text-red-600' : 'bg-slate-100 font-bold text-slate-700'}`}>{valAF}</span>
@@ -299,7 +305,7 @@ export function TestRFAI() {
                             })}
                             {paginatedDiagnostics.length === 0 && (
                                 <tr>
-                                    <td colSpan={10} className="p-16 text-center text-slate-400 font-bold">
+                                    <td colSpan={11} className="p-16 text-center text-slate-400 font-bold">
                                         <MessageSquare className="w-12 h-12 text-slate-200 mx-auto mb-4" />
                                         No hay diagnósticos registrados para mostrar
                                     </td>
