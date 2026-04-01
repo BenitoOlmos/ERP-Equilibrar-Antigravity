@@ -24,6 +24,7 @@ import {
   Archive,
   Heart,
   MessageCircle,
+  Mail,
   BookOpen,
   MapPin,
   FileText,
@@ -84,6 +85,7 @@ const navGroups = [
       { path: '/crm', label: 'CRM', icon: Target },
       { path: '/ventas', label: 'Ventas', icon: ShoppingCart },
       { path: '/cotizaciones', label: 'Cotizaciones', icon: ClipboardList },
+      { path: '/correos-masivos', label: 'Correos Masivos', icon: Mail },
     ]
   },
   {
@@ -198,7 +200,7 @@ export default function Sidebar() {
         '/agenda', '/directorio', '/fichas-clinicas', '/crm', 
         '/servicios', '/programas', '/tratamientos', '/cursos', 
         '/productos', '/bodega',
-        '/ventas', '/cotizaciones', '/pagos', '/cuentas-cobrar', '/facturacion', 
+        '/ventas', '/cotizaciones', '/correos-masivos', '/pagos', '/cuentas-cobrar', '/facturacion', 
         '/usuarios', '/sucursales', 
         '/test-rfai', '/editor-web', '/noticias-web', '/servicios-web'
       ].includes(item.path || '');

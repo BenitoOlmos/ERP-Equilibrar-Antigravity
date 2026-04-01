@@ -15,6 +15,7 @@ import dbRoutes from './routes/db.routes';
 import adminRoutes from './routes/admin.routes';
 import productRoutes from './routes/products.routes';
 import crmRoutes from './routes/crm.routes';
+import mailingRoutes from './routes/mailing.routes';
 import studentRoutes from './routes/student.routes';
 import statsRoutes from './routes/stats.routes';
 import branchesRoutes from './routes/branches.routes';
@@ -36,6 +37,7 @@ const apiRouter = express.Router();
 // 1. Auth & CRM
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/crm', crmRoutes);
+apiRouter.use('/mailing', mailingRoutes);
 
 // 2. Student Platform Endpoints (Courses UI)
 apiRouter.use('/', studentRoutes);

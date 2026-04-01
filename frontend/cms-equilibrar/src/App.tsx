@@ -9,6 +9,7 @@ import {
   CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat
 } from './pages';
 import Directorio from './pages/Directorio';
+import { MassMailing } from './pages/MassMailing';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
               <Route path="ajustes" element={<Ajustes />} />
               <Route path="crm" element={<CRM />} />
               <Route path="ventas" element={<Ventas />} />
+              <Route path="correos-masivos" element={<MassMailing />} />
               <Route path="pacientes" element={<Pacientes />} />
               <Route path="directorio" element={<Directorio />} />
               <Route path="fichas-clinicas" element={<FichasClinicas />} />
