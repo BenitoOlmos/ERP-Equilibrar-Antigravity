@@ -121,6 +121,21 @@ export default function Pacientes() {
     return fullName.includes(term) || emailStr.includes(term);
   });
 
+  const handleUpdateWeek = async (weekNum: number) => {
+     if (!selectedPatient) return;
+     try {
+         const newWeek = Math.max(1, weekNum);
+         await axios.put(`/api/data/users/${selectedPatient.id}`, { currentWeek: newWeek });
+         
+         const updated = { ...selectedPatient, currentWeek: newWeek };
+         setSelectedPatient(updated);
+         setPatients(patients.map(p => p.id === selectedPatient.id ? updated : p));
+     } catch (err) {
+         console.error('Error updating week', err);
+         alert('No se pudo actualizar el progreso del paciente.');
+     }
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-theme(spacing.20))] overflow-hidden">
       
@@ -231,16 +246,40 @@ export default function Pacientes() {
                  </div>
                  
                  {selectedServiceId && (
-                   <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                      {[1,2,3,4].map(wNum => (
-                         <button
-                            key={wNum}
-                            onClick={() => setSelectedWeek(wNum)}
-                            className={`px-4 py-1.5 rounded-full text-xs font-bold shrink-0 transition-colors ${selectedWeek === wNum ? 'bg-indigo-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}
-                         >
-                            Semana {wNum}
-                         </button>
-                      ))}
+                   <div className="flex flex-col gap-3">
+                     <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                        {[1,2,3,4,5,6,7,8,9,10,11,12].slice(0, Math.max(...(patientPrograms.find(p => p.id === selectedServiceId)?.modules || []).map((m: any) => m.weekNumber || 1), 4)).map(wNum => (
+                           <button
+                              key={wNum}
+                              onClick={() => setSelectedWeek(wNum)}
+                              className={`px-4 py-1.5 rounded-full text-xs font-bold shrink-0 transition-colors ${selectedWeek === wNum ? 'bg-indigo-500 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}
+                           >
+                              Semana {wNum}
+                           </button>
+                        ))}
+                     </div>
+                     
+                     {selectedWeek && (
+                       <div className="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 mt-2">
+                          <div className="flex items-center gap-2">
+                             {selectedWeek > (selectedPatient.currentWeek || 1) ? (
+                                <span className="flex items-center gap-1.5 text-xs font-bold text-slate-500"><div className="w-2 h-2 rounded-full bg-slate-300"></div> Bloqueada para el paciente</span>
+                             ) : (
+                                <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Habilitada (Actualmente en Sem {(selectedPatient.currentWeek || 1)})</span>
+                             )}
+                          </div>
+                          
+                          {selectedWeek > (selectedPatient.currentWeek || 1) ? (
+                              <button onClick={() => handleUpdateWeek(selectedWeek)} className="text-[10px] font-black uppercase tracking-wider bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-1.5 rounded-lg transition-colors border border-emerald-200 flex items-center gap-1">
+                                 Habilitar Semana
+                              </button>
+                          ) : (
+                              <button onClick={() => handleUpdateWeek(selectedWeek - 1)} className="text-[10px] font-black uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg transition-colors border border-rose-200 flex items-center gap-1">
+                                 Bloquear Semana
+                              </button>
+                          )}
+                       </div>
+                     )}
                    </div>
                  )}
               </div>
