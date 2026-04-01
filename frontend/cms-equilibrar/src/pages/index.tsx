@@ -25,3 +25,5 @@ export { default as FichasClinicas } from './FichasClinicas';
 export { CuentasCobrar } from './CuentasCobrar';
 export { CuentasPagar } from './CuentasPagar';
 export { Tesoreria } from './Tesoreria';
+export { TrabajadoresPlanta } from './TrabajadoresPlanta';
+export { Honorarios } from './Honorarios';

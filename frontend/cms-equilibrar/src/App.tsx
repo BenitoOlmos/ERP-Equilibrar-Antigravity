@@ -7,7 +7,7 @@ import {
   Resumen, Agenda, Servicios, Programas, Tratamientos, 
   Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard, ClientProgress,
   CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat,
-  CuentasCobrar, CuentasPagar, Tesoreria
+  CuentasCobrar, CuentasPagar, Tesoreria, TrabajadoresPlanta, Honorarios
 } from './pages';
 import Directorio from './pages/Directorio';
 import { MassMailing } from './pages/MassMailing';
@@ -37,6 +37,8 @@ function App() {
               <Route path="cuentas-cobrar" element={<CuentasCobrar />} />
               <Route path="cuentas-pagar" element={<CuentasPagar />} />
               <Route path="tesoreria" element={<Tesoreria />} />
+              <Route path="rrhh-planta" element={<TrabajadoresPlanta />} />
+              <Route path="rrhh-honorarios" element={<Honorarios />} />
               <Route path="test-rfai" element={<TestRFAI />} />
               <Route path="db" element={<DB />} />
               <Route path="ajustes" element={<Ajustes />} />

@@ -102,9 +102,9 @@ export function CuentasCobrar() {
                       <td className="p-4 pr-6 text-center">
                          <button 
                             onClick={() => markAsPaid(r.id)}
-                            className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center w-full gap-2 transition-colors"
+                            className="bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center w-full gap-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group"
                          >
-                            <CheckCircle2 className="w-4 h-4"/> Marcar Pagado
+                            <CheckCircle2 className="w-4 h-4 transition-transform duration-300 group-hover:scale-125"/> Marcar Pagado
                          </button>
                       </td>
                    </tr>

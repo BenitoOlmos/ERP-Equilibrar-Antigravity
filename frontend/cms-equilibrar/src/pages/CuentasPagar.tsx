@@ -160,9 +160,9 @@ export function CuentasPagar() {
             ) : (
                <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {suppliers.map(s => (
-                     <div key={s.id} className="p-6 rounded-2xl border-2 border-slate-100 hover:border-slate-200 bg-slate-50/30 transition-all flex flex-col">
+                     <div key={s.id} className="p-6 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50/80 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 hover:-translate-y-1 group flex flex-col">
                         <div className="flex items-start justify-between mb-4">
-                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${s.type==='EMPLOYEE'?'bg-indigo-100 text-indigo-500':s.type==='UTILITY'?'bg-blue-100 text-blue-500':s.type==='INDIRECT_PROFESSIONAL'?'bg-amber-100 text-amber-500':'bg-slate-200 text-slate-500'}`}>
+                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 ${s.type==='EMPLOYEE'?'bg-indigo-100 text-indigo-500':s.type==='UTILITY'?'bg-blue-100 text-blue-500':s.type==='INDIRECT_PROFESSIONAL'?'bg-amber-100 text-amber-500':'bg-slate-200 text-slate-500'}`}>
                               {s.type === 'EMPLOYEE' || s.type === 'INDIRECT_PROFESSIONAL' ? <UserPlus className="w-6 h-6"/> : <Building2 className="w-6 h-6"/>}
                            </div>
                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 bg-white px-2 py-1 rounded shadow-sm border border-slate-100">

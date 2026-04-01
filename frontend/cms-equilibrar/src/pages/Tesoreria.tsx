@@ -43,18 +43,18 @@ export function Tesoreria() {
 
       {/* SUPER DASHBOARD */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mb-4"><TrendingUp className="w-6 h-6"/></div>
+         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-emerald-200 group">
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"><TrendingUp className="w-6 h-6"/></div>
             <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Ingresos Reales Brutos</p>
             <h2 className="text-3xl font-black text-slate-800">${cashflow.summary.totalIncome.toLocaleString()}</h2>
          </div>
-         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
-            <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mb-4"><TrendingDown className="w-6 h-6"/></div>
+         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-rose-200 group">
+            <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3"><TrendingDown className="w-6 h-6"/></div>
             <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Egresos Consolidados</p>
             <h2 className="text-3xl font-black text-slate-800">${cashflow.summary.totalExpense.toLocaleString()}</h2>
          </div>
-         <div className={`p-6 rounded-3xl border-2 flex flex-col ${isPositive ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-400 text-white shadow-lg shadow-emerald-500/30' : 'bg-gradient-to-br from-rose-500 to-rose-600 border-rose-400 text-white shadow-lg shadow-rose-500/30'}`}>
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-4"><Activity className="w-6 h-6"/></div>
+         <div className={`p-6 rounded-3xl border-2 flex flex-col transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 group ${isPositive ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-400 text-white shadow-emerald-500/30' : 'bg-gradient-to-br from-rose-500 to-rose-600 border-rose-400 text-white shadow-rose-500/30'}`}>
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"><Activity className="w-6 h-6"/></div>
             <p className="text-xs font-black uppercase tracking-widest text-white/80 mb-1">Flujo Neto Retenido</p>
             <h2 className="text-4xl font-black">${netTotal.toLocaleString()}</h2>
          </div>

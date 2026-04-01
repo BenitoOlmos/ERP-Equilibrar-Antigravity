@@ -22,6 +22,7 @@ import branchesRoutes from './routes/branches.routes';
 import clinicalRoutes from './routes/clinical.routes';
 import messagesRoutes from './routes/messages.routes';
 import notificationsRoutes from './routes/notifications.routes';
+import hrRoutes from './routes/hr.routes';
 
 dotenv.config();
 
@@ -65,6 +66,7 @@ dataRouter.use('/stats', statsRoutes);
 dataRouter.use('/clinical', clinicalRoutes);
 dataRouter.use('/messages', messagesRoutes);
 apiRouter.use('/data', dataRouter);
+apiRouter.use('/hr', hrRoutes);
 
 // Mount master API router
 app.use('/api', apiRouter);

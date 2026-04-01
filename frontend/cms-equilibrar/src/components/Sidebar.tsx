@@ -29,7 +29,8 @@ import {
   MapPin,
   FileText,
   Contact,
-  FolderOpen
+  FolderOpen,
+  FileSignature
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -91,9 +92,18 @@ const navGroups = [
     title: 'Finanzas',
     icon: Wallet,
     items: [
-      { path: '/pagos', label: 'Pagos', icon: CreditCard },
+      { path: '/tesoreria', label: 'Tesorería y Flujo de Caja', icon: Activity },
+      { path: '/pagos', label: 'Pagos e Ingresos', icon: CreditCard },
       { path: '/cuentas-cobrar', label: 'Cuentas por Cobrar', icon: Wallet },
-      { path: '/facturacion', label: 'Facturación / Boletas', icon: FileText },
+      { path: '/cuentas-pagar', label: 'Cuentas por Pagar', icon: FileText },
+    ]
+  },
+  {
+    title: 'Recursos Humanos',
+    icon: Users,
+    items: [
+      { path: '/rrhh-planta', label: 'Nómina y Planta', icon: Briefcase },
+      { path: '/rrhh-honorarios', label: 'Profesionales Indirectos', icon: FileSignature },
     ]
   },
   {
