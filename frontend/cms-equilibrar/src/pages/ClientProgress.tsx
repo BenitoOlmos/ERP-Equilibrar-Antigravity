@@ -182,6 +182,7 @@ export default function ClientProgress() {
    const [currentWeek, setCurrentWeek] = useState(1);
    const [openWeek, setOpenWeek] = useState(1);
    const [expandedMod, setExpandedMod] = useState<string | null>(null);
+   const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
    const [nextAppointment, setNextAppointment] = useState<any>(null);
    const [loading, setLoading] = useState(true);
 
@@ -528,35 +529,70 @@ export default function ClientProgress() {
                                                                                <MessageCircle className="w-5 h-5 text-[#0097B2]" /> Transcribe tus Registros Personales
                                                                              </h4>
                                                                              
-                                                                             {/* Real History */}
-                                                                             <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto px-2 custom-scrollbar">
-                                                                               {bitacoraLogs.length === 0 ? (
-                                                                                  <div className="text-center py-4 text-xs font-bold text-slate-400">Sin registros en esta semana. Escribe tu primera reflexión.</div>
-                                                                               ) : (
-                                                                                 bitacoraLogs.map((log: any, idx: number) => (
-                                                                                    <div key={idx} className="flex flex-col gap-3">
-                                                                                      {/* Mensaje del Paciente */}
-                                                                                      <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-100 dark:border-slate-700 ml-4 md:ml-8 relative">
-                                                                                        <div className="absolute top-4 -left-4 w-3 h-3 bg-slate-200 rounded-full dark:bg-slate-600"></div>
-                                                                                        <div className="text-sm text-slate-700 dark:text-slate-300 quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
-                                                                                        <div className="text-[10px] text-slate-400 mt-2 text-right">
-                                                                                          Tú • {new Date(log.timestamp).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                                                                                        </div>
-                                                                                      </div>
-                                                                                      
-                                                                                      {/* Respuesta del Especialista */}
-                                                                                      {log.response && (
-                                                                                        <div className="bg-indigo-50/50 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800 mr-4 md:mr-8 relative">
-                                                                                          <div className="absolute top-4 -right-4 w-3 h-3 bg-indigo-200 rounded-full dark:bg-indigo-700"></div>
-                                                                                          <div className="text-sm text-indigo-900 dark:text-indigo-200 quill-content pl-8 opacity-90" dangerouslySetInnerHTML={{ __html: log.response }}></div>
-                                                                                          <div className="text-[10px] text-indigo-400 mt-2 flex items-center gap-1">
-                                                                                            <span className="font-bold">{log.specialist?.name || 'Especialista Clínico'}</span> • {new Date(log.respondedAt).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                                                                                          </div>
-                                                                                        </div>
-                                                                                      )}
-                                                                                    </div>
-                                                                                 ))
-                                                                               )}
+                                                                             {/* Real History Accordions */}
+                                                                             <div className="space-y-3 mb-6 max-h-[400px] overflow-y-auto px-1 custom-scrollbar">
+                                                                               {(() => {
+                                                                                  const filteredLogs = bitacoraLogs.filter((log: any) => !log.content?.includes("Cuestionario de Autoevaluación"));
+                                                                                  if (filteredLogs.length === 0) {
+                                                                                      return <div className="text-center py-4 text-xs font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded-xl">Sin registros en esta semana. Escribe tu primera reflexión.</div>;
+                                                                                  }
+                                                                                  
+                                                                                  return filteredLogs.map((log: any, idx: number) => {
+                                                                                     const isLogExpanded = expandedLogId === (log.id || idx.toString());
+                                                                                     return (
+                                                                                         <div key={log.id || idx} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm transition-all hover:border-[#0097B2]/30">
+                                                                                             <button 
+                                                                                                onClick={() => setExpandedLogId(isLogExpanded ? null : (log.id || idx.toString()))} 
+                                                                                                className="w-full px-4 py-3 flex items-center justify-between text-left focus:outline-none hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                                                                                             >
+                                                                                                 <div className="flex items-center gap-3">
+                                                                                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${log.response ? 'bg-indigo-100 text-indigo-600' : 'bg-[#0097B2]/10 text-[#0097B2]'}`}>
+                                                                                                         <FileText className="w-4 h-4" />
+                                                                                                     </div>
+                                                                                                     <div>
+                                                                                                         <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                                                                                                             Bitácora • {new Date(log.timestamp).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                                                                                         </p>
+                                                                                                         <p className="text-[10px] text-slate-500 font-medium">
+                                                                                                             {new Date(log.timestamp).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })} • {log.response ? <span className="text-indigo-500 font-bold tracking-wide">CON RESPUESTA</span> : 'Enviado'}
+                                                                                                         </p>
+                                                                                                     </div>
+                                                                                                 </div>
+                                                                                                 {isLogExpanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+                                                                                             </button>
+                                                                                             
+                                                                                             {isLogExpanded && (
+                                                                                                 <div className="p-4 bg-slate-50/50 dark:bg-slate-800/80 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-4 animate-fade-in">
+                                                                                                     {/* Mensaje del Paciente */}
+                                                                                                     <div className="flex flex-col gap-1.5 pl-2">
+                                                                                                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Tu Registro:</span>
+                                                                                                        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative mr-6 md:mr-10">
+                                                                                                          <div className="absolute top-4 -left-[5px] w-2 h-2 bg-white border-l border-b border-slate-200 rotate-45 dark:bg-slate-800 dark:border-slate-700"></div>
+                                                                                                          <div className="text-sm text-slate-700 dark:text-slate-300 quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
+                                                                                                        </div>
+                                                                                                     </div>
+                                                                                                      
+                                                                                                     {/* Respuesta del Especialista */}
+                                                                                                     {log.response && (
+                                                                                                       <div className="flex flex-col gap-1.5 items-end pr-2 mt-2">
+                                                                                                         <div className="flex items-center gap-1.5">
+                                                                                                            <span className="text-[10px] font-black uppercase text-indigo-500 tracking-wider">Respuesta Clínica:</span>
+                                                                                                         </div>
+                                                                                                         <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800 shadow-sm relative ml-6 md:ml-10 w-full">
+                                                                                                           <div className="absolute top-4 -right-[5px] w-2 h-2 bg-indigo-50 border-r border-t border-indigo-100 rotate-45 dark:bg-indigo-900/20 dark:border-indigo-800"></div>
+                                                                                                           <div className="text-sm text-indigo-900 dark:text-indigo-200 quill-content opacity-95" dangerouslySetInnerHTML={{ __html: log.response }}></div>
+                                                                                                           <div className="text-[10px] text-indigo-400/80 mt-3 pt-3 border-t border-indigo-100/50 dark:border-indigo-800/50 text-right font-medium">
+                                                                                                             {log.specialist?.name || 'Especialista Clínico'} • {new Date(log.respondedAt).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                                                                           </div>
+                                                                                                         </div>
+                                                                                                       </div>
+                                                                                                     )}
+                                                                                                 </div>
+                                                                                             )}
+                                                                                         </div>
+                                                                                     );
+                                                                                  });
+                                                                               })()}
                                                                              </div>
                                                                              
                                                                              <div className="flex flex-col gap-3">
