@@ -231,3 +231,104 @@ export const updateContactGroups = async (req: Request, res: Response): Promise<
         res.status(500).json({ error: 'Failed to update contact groups', details: error.message });
     }
 };
+
+export const getTemplates = async (req: Request, res: Response): Promise<void> => {
+    try {
+        let templates = await prisma.mailingTemplate.findMany({
+            orderBy: { createdAt: 'asc' }
+        });
+
+        // Auto-Seed if empty
+        if (templates.length === 0) {
+            const defaultTemplates = [
+                {
+                    title: "Recordatorio Test", description: "Invitación a completar evaluación emocional.", iconName: "PenTool", colorClass: "bg-amber-50 text-amber-600",
+                    subject: "🧠 ¿Cómo estás hoy? Completa tu test de bienestar, {{nombre}}",
+                    content: `<img src="https://placehold.co/600x200/f8fafc/94a3b8?text=Reemplazar+Imagen+Hero" alt="Hero" width="100%" /> 
+<h2 style="color: #4f46e5;">Hola {{nombre}},</h2>
+<p>Hace unos días te enviamos una invitación para realizar tu test de bienestar emocional y aún no hemos recibido tu respuesta.</p>
+<p>Conocer tu estado actual es el primer paso para una vida plena. El test solo toma 5 minutos.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/test" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Realizar Test Ahora</a>
+</p>
+<br/>
+<p style="color: #64748b; font-style: italic;">"Cuidar de tu mente es la mejor inversión que puedes hacer."</p>
+<p>Atentamente,<br><strong>Tu equipo de Bienestar</strong></p>`
+                },
+                {
+                    title: "Contratar Servicio", description: "Propuesta de valor y planes premium.", iconName: "PenTool", colorClass: "bg-emerald-50 text-emerald-600",
+                    subject: "🚀 {{nombre}}, impulsa tu crecimiento con nuestros planes",
+                    content: `<h2 style="color: #059669;">Tu evolución no tiene límites</h2>
+<p>Hola {{nombre}}, hemos notado tu compromiso con tu crecimiento personal. Por eso, queremos invitarte a dar el siguiente paso.</p>
+<br/>
+<p><strong>Nuestros Planes Premium:</strong> Accede a sesiones personalizadas y herramientas exclusivas para potenciar tu proceso.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/planes" style="background-color: #166534; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Ver Planes Disponibles</a>
+</p>
+<br/>
+<p>Estamos listos para acompañarte en este viaje. ¿Hablamos?</p>`
+                },
+                {
+                    title: "Escuchar Podcast", description: "Novedades y contenido en audio.", iconName: "PenTool", colorClass: "bg-indigo-50 text-indigo-600",
+                    subject: "🎧 Nuevo Episodio: Superando la ansiedad con {{nombre}}",
+                    content: `<img src="https://placehold.co/600x200/1e293b/ffffff?text=Nuevo+Episodio" alt="Podcast Hero" width="100%" /> 
+<h2 style="color: #1e293b; text-align: center;">¡Nuevo Podcast Disponible!</h2>
+<p style="text-align: center;">En el episodio de hoy hablamos sobre herramientas prácticas para gestionar el estrés diario. ¡Algo que te interesará mucho, {{nombre}}!</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://spotify.com/podcast" style="background-color: #1DB954; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">ESCUCHAR EN SPOTIFY</a>
+</p>
+<br/>
+<p style="text-align: center; color: #94a3b8;">También disponible en Apple Podcasts y YouTube.</p>`
+                }
+            ];
+
+            for (const t of defaultTemplates) {
+                await prisma.mailingTemplate.create({ data: t });
+            }
+            templates = await prisma.mailingTemplate.findMany({ orderBy: { createdAt: 'asc' } });
+        }
+
+        res.json(templates);
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to fetch templates', details: error.message });
+    }
+};
+
+export const saveTemplate = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { title, description, subject, content, iconName, colorClass } = req.body;
+        const template = await prisma.mailingTemplate.create({
+            data: { title, description, subject, content, iconName, colorClass }
+        });
+        res.json(template);
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to save template', details: error.message });
+    }
+};
+
+export const updateTemplate = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const { title, description, subject, content, iconName, colorClass } = req.body;
+        const template = await prisma.mailingTemplate.update({
+            where: { id },
+            data: { title, description, subject, content, iconName, colorClass }
+        });
+        res.json(template);
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to update template', details: error.message });
+    }
+};
+
+export const deleteTemplate = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        await prisma.mailingTemplate.delete({ where: { id } });
+        res.json({ success: true });
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to delete template', details: error.message });
+    }
+};

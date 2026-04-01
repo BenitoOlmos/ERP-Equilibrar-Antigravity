@@ -529,3 +529,16 @@ model MailingGroup {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 }
+
+model MailingTemplate {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  subject     String
+  content     String
+  iconName    String?  @default("PenTool")
+  colorClass  String?  @default("bg-slate-50 text-slate-600")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

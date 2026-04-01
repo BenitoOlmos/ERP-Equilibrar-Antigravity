@@ -25,6 +25,16 @@ interface MailingContact {
     groups: MailingGroup[];
 }
 
+interface MailingTemplate {
+    id: string;
+    title: string;
+    description: string | null;
+    subject: string;
+    content: string;
+    iconName: string | null;
+    colorClass: string | null;
+}
+
 export function MassMailing() {
     const [step, setStep] = useState<number>(1);
     const [rawList, setRawList] = useState<string>('');
@@ -53,61 +63,17 @@ export function MassMailing() {
     const [taggingContact, setTaggingContact] = useState<MailingContact | null>(null);
     const [selectedTagsForContact, setSelectedTagsForContact] = useState<string[]>([]);
 
-    const EMAIL_TEMPLATES = useMemo(() => [
-        {
-            title: "Recordatorio Test", desc: "Invitación a completar evaluación emocional.",
-            icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.25 21v-2.25a3.75 3.75 0 0 1 7.5 0V21"></path><path d="M9 10h.01"></path><path d="M15 10h.01"></path><path d="M12 2a8 8 0 0 0-8 8c0 1.5 1 3.5 1 5a3 3 0 0 1-3 3h16a3 3 0 0 1-3-3c0-1.5 1-3.5 1-5a8 8 0 0 0-8-8z"></path></svg>,
-            colorClass: "bg-amber-50 text-amber-600",
-            subject: "🧠 ¿Cómo estás hoy? Completa tu test de bienestar, {{nombre}}",
-            content: `<img src="https://placehold.co/600x200/f8fafc/94a3b8?text=Reemplazar+Imagen+Hero" alt="Hero" width="100%" /> 
-<h2 style="color: #4f46e5;">Hola {{nombre}},</h2>
-<p>Hace unos días te enviamos una invitación para realizar tu test de bienestar emocional y aún no hemos recibido tu respuesta.</p>
-<p>Conocer tu estado actual es el primer paso para una vida plena. El test solo toma 5 minutos.</p>
-<br/>
-<p style="text-align: center;">
-  <a href="https://tusitio.com/test" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Realizar Test Ahora</a>
-</p>
-<br/>
-<p style="color: #64748b; font-style: italic;">"Cuidar de tu mente es la mejor inversión que puedes hacer."</p>
-<p>Atentamente,<br><strong>Tu equipo de Bienestar</strong></p>`
-        },
-        {
-            title: "Contratar Servicio", desc: "Propuesta de valor y planes premium.",
-            icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>,
-            colorClass: "bg-emerald-50 text-emerald-600",
-            subject: "🚀 {{nombre}}, impulsa tu crecimiento con nuestros planes",
-            content: `<h2 style="color: #059669;">Tu evolución no tiene límites</h2>
-<p>Hola {{nombre}}, hemos notado tu compromiso con tu crecimiento personal. Por eso, queremos invitarte a dar el siguiente paso.</p>
-<br/>
-<p><strong>Nuestros Planes Premium:</strong> Accede a sesiones personalizadas y herramientas exclusivas para potenciar tu proceso.</p>
-<br/>
-<p style="text-align: center;">
-  <a href="https://tusitio.com/planes" style="background-color: #166534; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Ver Planes Disponibles</a>
-</p>
-<br/>
-<p>Estamos listos para acompañarte en este viaje. ¿Hablamos?</p>`
-        },
-        {
-            title: "Escuchar Podcast", desc: "Novedades y contenido en audio.",
-            icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>,
-            colorClass: "bg-indigo-50 text-indigo-600",
-            subject: "🎧 Nuevo Episodio: Superando la ansiedad con {{nombre}}",
-            content: `<img src="https://placehold.co/600x200/1e293b/ffffff?text=Nuevo+Episodio" alt="Podcast Hero" width="100%" /> 
-<h2 style="color: #1e293b; text-align: center;">¡Nuevo Podcast Disponible!</h2>
-<p style="text-align: center;">En el episodio de hoy hablamos sobre herramientas prácticas para gestionar el estrés diario. ¡Algo que te interesará mucho, {{nombre}}!</p>
-<br/>
-<p style="text-align: center;">
-  <a href="https://spotify.com/podcast" style="background-color: #1DB954; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">ESCUCHAR EN SPOTIFY</a>
-</p>
-<br/>
-<p style="text-align: center; color: #94a3b8;">También disponible en Apple Podcasts y YouTube.</p>`
-        }
-    ], []);
+    // Templates State
+    const [templates, setTemplates] = useState<MailingTemplate[]>([]);
+    const [isSavingTemplate, setIsSavingTemplate] = useState(false);
+    const [newTemplateTitle, setNewTemplateTitle] = useState('');
+    const [templateToUpdateId, setTemplateToUpdateId] = useState<string | null>(null);
 
     const handleApplyTemplate = (idx: number) => {
-        setSubject(EMAIL_TEMPLATES[idx].subject);
-        setHtmlContent(EMAIL_TEMPLATES[idx].content);
+        setSubject(templates[idx].subject);
+        setHtmlContent(templates[idx].content);
         setActiveTemplate(idx);
+        setTemplateToUpdateId(templates[idx].id);
     };
 
     React.useEffect(() => {
@@ -116,12 +82,14 @@ export function MassMailing() {
 
     const fetchData = async () => {
         try {
-            const [gRes, cRes] = await Promise.all([
+            const [gRes, cRes, tRes] = await Promise.all([
                 axios.get('/api/mailing/groups'),
-                axios.get('/api/mailing/contacts' + (selectedFilterGroup ? `?groupId=${selectedFilterGroup}` : ''))
+                axios.get('/api/mailing/contacts' + (selectedFilterGroup ? `?groupId=${selectedFilterGroup}` : '')),
+                axios.get('/api/mailing/templates')
             ]);
             setGroups(gRes.data);
             setRecipients(cRes.data);
+            setTemplates(tRes.data);
         } catch (error) {
             console.error('Error fetching mailing data:', error);
         }
@@ -167,6 +135,62 @@ export function MassMailing() {
             fetchData();
         } catch (e) { 
             alert('Error actualizando etiquetas'); 
+        }
+    };
+
+    const saveTemplate = async () => {
+        if (!newTemplateTitle.trim() || !subject || !htmlContent) return;
+        try {
+            await axios.post('/api/mailing/templates', {
+                title: newTemplateTitle,
+                description: "Plantilla personalizada",
+                subject,
+                content: htmlContent,
+                iconName: "PenTool",
+                colorClass: "bg-slate-50 text-slate-600"
+            });
+            setIsSavingTemplate(false);
+            setNewTemplateTitle('');
+            fetchData();
+        } catch (error) {
+            console.error('Error saving template', error);
+            alert('Error al guardar la plantilla');
+        }
+    };
+
+    const updateTemplate = async () => {
+        if (!templateToUpdateId || !subject || !htmlContent) return;
+        try {
+            await axios.put(`/api/mailing/templates/${templateToUpdateId}`, {
+                title: templates.find(t => t.id === templateToUpdateId)?.title || "Plantilla Actualizada",
+                description: templates.find(t => t.id === templateToUpdateId)?.description,
+                subject,
+                content: htmlContent,
+                iconName: templates.find(t => t.id === templateToUpdateId)?.iconName || "PenTool",
+                colorClass: templates.find(t => t.id === templateToUpdateId)?.colorClass || "bg-slate-50 text-slate-600"
+            });
+            fetchData();
+            alert('Plantilla actualizada exitosamente');
+        } catch (error) {
+            console.error('Error updating template', error);
+            alert('Error al actualizar la plantilla');
+        }
+    };
+
+    const deleteTemplate = async (id: string) => {
+        if (!confirm('¿Estás seguro de eliminar esta plantilla de diseño de la base de datos?')) return;
+        try {
+            await axios.delete(`/api/mailing/templates/${id}`);
+            if (templateToUpdateId === id) {
+                setTemplateToUpdateId(null);
+                setSubject('');
+                setHtmlContent('');
+                setActiveTemplate(null);
+            }
+            fetchData();
+        } catch (error) {
+            console.error('Error deleting template', error);
+            alert('Error al eliminar la plantilla');
         }
     };
 
@@ -639,6 +663,28 @@ export function MassMailing() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Modal Añadir Plantilla Visual */}
+                        {isSavingTemplate && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsSavingTemplate(false)}></div>
+                                <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in flex flex-col">
+                                    <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                                        <h3 className="text-lg font-extrabold text-slate-800">Guardar Plantilla</h3>
+                                        <button onClick={() => setIsSavingTemplate(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5"/></button>
+                                    </div>
+                                    <div className="p-6">
+                                        <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest pl-1">Nombre de Plantilla</label>
+                                        <input type="text" placeholder="Ej: Especial Navidad" value={newTemplateTitle} onChange={e => setNewTemplateTitle(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:bg-white outline-none transition-all text-sm font-bold text-slate-800" autoFocus />
+                                    </div>
+                                    <div className="p-6 pt-0">
+                                        <button onClick={saveTemplate} disabled={!newTemplateTitle.trim()} className="w-full bg-indigo-600 disabled:bg-slate-400 text-white font-bold py-3 rounded-xl transition-colors">
+                                            Crear en Base de Datos
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -651,23 +697,32 @@ export function MassMailing() {
                                 <p className="text-[10px] text-slate-500">Selecciona o comienza de cero.</p>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-                                {EMAIL_TEMPLATES.map((tpl, i) => (
-                                    <button 
-                                        key={i} 
-                                        onClick={() => handleApplyTemplate(i)}
-                                        className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${activeTemplate === i ? 'border-indigo-500 bg-white shadow-md' : 'border-slate-100 bg-white hover:border-indigo-200 hover:bg-slate-50'}`}
-                                    >
-                                        <div className="flex items-start gap-3">
+                                {templates.map((tpl, i) => (
+                                    <div key={tpl.id} className={`group relative w-full p-4 rounded-2xl border-2 text-left transition-all ${activeTemplate === i ? 'border-indigo-500 bg-white shadow-md' : 'border-slate-100 bg-white hover:border-indigo-200 hover:bg-slate-50'}`}>
+                                        <button 
+                                            onClick={() => handleApplyTemplate(i)}
+                                            className="flex items-start gap-3 w-full"
+                                        >
                                             <div className={`p-2 rounded-xl ${tpl.colorClass}`}>
-                                                {tpl.icon}
+                                                <PenTool className="w-4 h-4"/>
                                             </div>
-                                            <div>
-                                                <h4 className="font-bold text-slate-800 text-sm">{tpl.title}</h4>
-                                                <p className="text-[11px] text-slate-500 mt-0.5 leading-tight">{tpl.desc}</p>
+                                            <div className="flex-1">
+                                                <h4 className="font-bold text-slate-800 text-sm truncate pr-6">{tpl.title}</h4>
+                                                <p className="text-[11px] text-slate-500 mt-0.5 leading-tight">{tpl.description}</p>
                                             </div>
-                                        </div>
-                                    </button>
+                                        </button>
+                                        <button 
+                                            onClick={async (e) => { e.stopPropagation(); await deleteTemplate(tpl.id); }} 
+                                            className="absolute top-4 right-4 text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                                            title="Eliminar plantilla"
+                                        >
+                                            <Trash2 className="w-4 h-4"/>
+                                        </button>
+                                    </div>
                                 ))}
+                                {templates.length === 0 && (
+                                    <div className="text-center p-4 text-slate-400 text-sm">No hay plantillas disponibles.</div>
+                                )}
                             </div>
                         </aside>
 
@@ -675,8 +730,20 @@ export function MassMailing() {
                         <div className="flex-1 flex flex-col min-w-0 bg-white">
                             <div className="p-6 border-b border-slate-100 flex-shrink-0 bg-slate-50/30">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-lg font-black text-slate-800">Redactar Mensaje</h2>
-                                    <p className="text-[11px] text-slate-500 italic">💡 Inserta <code className="text-indigo-600 font-bold bg-indigo-50 px-1 rounded">{`{{nombre}}`}</code> para personalizar.</p>
+                                    <div>
+                                        <h2 className="text-lg font-black text-slate-800">Redactar Mensaje</h2>
+                                        <p className="text-[11px] text-slate-500 italic mt-1">💡 Inserta <code className="text-indigo-600 font-bold bg-indigo-50 px-1 rounded">{`{{nombre}}`}</code> para personalizar.</p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => setIsSavingTemplate(true)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg transition-colors flex items-center gap-2">
+                                            <FolderOpen className="w-3.5 h-3.5"/> Guardar como Plantilla
+                                        </button>
+                                        {templateToUpdateId && (
+                                            <button onClick={() => updateTemplate()} className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-lg transition-colors flex items-center gap-2">
+                                                <CheckCircle2 className="w-3.5 h-3.5"/> Actualizar Plantilla Actual
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="relative group">
                                     <label className="absolute left-4 top-1.5 text-[9px] font-black text-indigo-400 uppercase tracking-widest transition-all group-focus-within:text-indigo-600">Asunto del Correo</label>
