@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { MessageSquare, Search, Download, Bot, Settings2 } from 'lucide-react';
+import { MessageSquare, Search, Download, Settings2, Trash, X } from 'lucide-react';
 
 export function TestRFAI() {
   const [diagnostics, setDiagnostics] = useState<any[]>([]);
@@ -13,6 +13,22 @@ export function TestRFAI() {
      r: true, ita: true, re: true, ids: true, interpretacion: true, perfil: true, estado: true
   });
   const [showColMenu, setShowColMenu] = useState(false);
+
+  // Edit State
+  const [editingDiag, setEditingDiag] = useState<any>(null);
+  const [editFormData, setEditFormData] = useState({af:0, am:0, ae:0, r:0, ita:0, re:0, idsE:0});
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+          await axios.put(`/api/crm/diagnostics/${editingDiag.id}`, editFormData);
+          setEditingDiag(null);
+          fetchDiagnostics();
+      } catch (err) {
+          console.error(err);
+          alert('Error actualizando test');
+      }
+  };
 
   const fetchDiagnostics = () => {
     setLoading(true);
@@ -102,9 +118,6 @@ export function TestRFAI() {
           <p className="text-sm sm:text-base text-slate-500 mt-1 sm:mt-2">Bandeja de diagnósticos guardados desde la Web RFAI.</p>
         </div>
         <div className="flex flex-wrap gap-2 md:space-x-3 md:gap-0">
-           <button className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 flex-1 md:flex-none justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold flex items-center transition-all">
-             <Bot className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Auto-Perfilador
-           </button>
            <button onClick={handleExportCSV} className="bg-slate-900 text-white hover:bg-slate-800 flex-1 md:flex-none justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold flex items-center shadow-lg shadow-slate-900/20 transition-all">
              <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Exportar CSV
            </button>
@@ -162,6 +175,7 @@ export function TestRFAI() {
                         {visibleCols.interpretacion && <th className="p-4 font-black max-w-xs whitespace-normal min-w-[200px]">Interpretación</th>}
                         {visibleCols.perfil && <th className="p-4 font-black max-w-xs whitespace-normal min-w-[200px]">Perfil General</th>}
                         {visibleCols.estado && <th className="p-4 font-black">ESTADO</th>}
+                        <th className="p-4 font-black text-center">ACCIONES</th>
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -217,6 +231,35 @@ export function TestRFAI() {
           )}
         </div>
       </div>
+
+      {editingDiag && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingDiag(null)} />
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="text-xl font-black text-slate-800 tracking-tight">Editar Diagnóstico</h3>
+              <button onClick={() => setEditingDiag(null)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"><X className="w-5 h-5" /></button>
+            </div>
+            <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+               <div className="grid grid-cols-2 gap-4">
+                 {[
+                   { id: 'af', label: 'Activación F.' }, { id: 'am', label: 'Activación M.' }, { id: 'ae', label: 'Activación E.' },
+                   { id: 'r', label: 'Regulación' }, { id: 'ita', label: 'Carga Int.' }, { id: 're', label: 'Reg. eq' }, { id: 'idsE', label: 'Índice (IDS-E)' }
+                 ].map(fld => (
+                   <div key={fld.id}>
+                     <label className="block text-xs font-bold text-slate-500 mb-1">{fld.label}</label>
+                     <input type="number" required value={(editFormData as any)[fld.id]} onChange={e => setEditFormData({...editFormData, [fld.id]: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold outline-none focus:border-indigo-500" />
+                   </div>
+                 ))}
+               </div>
+               <div className="pt-4 flex justify-end gap-3">
+                 <button type="button" onClick={() => setEditingDiag(null)} className="px-5 py-2.5 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
+                 <button type="submit" className="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors shadow-lg shadow-indigo-600/20">Guardar Cambios</button>
+               </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
