@@ -6,7 +6,8 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { 
   Resumen, Agenda, Servicios, Programas, Tratamientos, 
   Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard, ClientProgress,
-  CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat
+  CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat,
+  CuentasCobrar, CuentasPagar, Tesoreria
 } from './pages';
 import Directorio from './pages/Directorio';
 import { MassMailing } from './pages/MassMailing';
@@ -33,6 +34,9 @@ function App() {
               <Route path="usuarios" element={<Usuarios />} />
               <Route path="sucursales" element={<Sucursales />} />
               <Route path="pagos" element={<Pagos />} />
+              <Route path="cuentas-cobrar" element={<CuentasCobrar />} />
+              <Route path="cuentas-pagar" element={<CuentasPagar />} />
+              <Route path="tesoreria" element={<Tesoreria />} />
               <Route path="test-rfai" element={<TestRFAI />} />
               <Route path="db" element={<DB />} />
               <Route path="ajustes" element={<Ajustes />} />

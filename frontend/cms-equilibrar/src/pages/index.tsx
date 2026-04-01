@@ -22,3 +22,6 @@ export { default as ClientDashboard } from './ClientDashboard';
 export { default as ClientProgress } from './ClientProgress';
 export { default as Pacientes } from './Pacientes';
 export { default as FichasClinicas } from './FichasClinicas';
+export { CuentasCobrar } from './CuentasCobrar';
+export { CuentasPagar } from './CuentasPagar';
+export { Tesoreria } from './Tesoreria';

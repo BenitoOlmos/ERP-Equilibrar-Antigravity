@@ -222,4 +222,37 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+import {
+    getReceivables,
+    markReceivablePaid,
+    getSuppliers,
+    createSupplier,
+    updateSupplier,
+    deleteSupplier,
+    getExpenses,
+    createExpense,
+    updateExpense,
+    deleteExpense,
+    getCashFlow
+} from '../controllers/finance.controller';
+
+// Receivables (Cuentas por Cobrar)
+router.get('/receivables/list', getReceivables);
+router.put('/receivables/:id/pay', markReceivablePaid);
+
+// Suppliers (Proveedores)
+router.get('/suppliers/list', getSuppliers);
+router.post('/suppliers/create', createSupplier);
+router.put('/suppliers/:id', updateSupplier);
+router.delete('/suppliers/:id', deleteSupplier);
+
+// Expenses (Cuentas por Pagar)
+router.get('/expenses/list', getExpenses);
+router.post('/expenses/create', createExpense);
+router.put('/expenses/:id', updateExpense);
+router.delete('/expenses/:id', deleteExpense);
+
+// Cashflow (Tesorería)
+router.get('/cashflow/summary', getCashFlow);
+
 export default router;
