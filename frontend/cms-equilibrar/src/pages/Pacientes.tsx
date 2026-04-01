@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Users, Search, Activity, BookOpen, MessageCircle, UserCircle, Phone, Mail, Headphones, Video } from 'lucide-react';
-
+import { useAuth } from '../context/AuthContext';
 export default function Pacientes() {
   const [patients, setPatients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,35 +57,42 @@ export default function Pacientes() {
       return results;
   };
 
+  const { user } = useAuth();
+
   const fetchPatients = () => {
     setLoading(true);
     Promise.all([
       axios.get('/api/data/users'),
       axios.get('/api/data/payments'),
-      axios.get('/api/data/payments/catalog')
+      axios.get('/api/data/appointments')
     ])
-      .then(([resUsers, resFinance, resCatalog]) => {
+      .then(([resUsers, resFinance, resAppts]) => {
         const payments = resFinance.data || [];
-        const catalog = resCatalog.data || { programs: [], treatments: [], courses: [] };
-        
-        // Valid concepts correspond strictly to Programs, Treatments, and Courses
-        const validConcepts = [
-          ...(catalog.programs || []).map((p: any) => p.title),
-          ...(catalog.treatments || []).map((p: any) => p.name),
-          ...(catalog.courses || []).map((c: any) => c.title)
-        ];
+        const appointments = resAppts.data || [];
 
-        // Ensure users only qualify if their payment concept matches a premium package
+        // Users who have at least one successfully completed payment
         const validPaymentUserIds = new Set(
           payments
-            .filter((p: any) => p.status === 'COMPLETED' && p.concept && validConcepts.includes(p.concept))
+            .filter((p: any) => p.status === 'COMPLETED')
             .map((p: any) => p.userId)
         );
 
-        const clientUsers = resUsers.data.filter((u: any) => 
-          ['CLIENT', 'Cliente', 'USER', 'CLIENTE'].includes(u.role) && 
-          validPaymentUserIds.has(u.id)
+        // Map Specialist's assigned clients if role is Specialist
+        const specialistClientIds = new Set(
+          appointments
+            .filter((a: any) => a.specialistId === user?.id)
+            .map((a: any) => a.clientId)
         );
+        
+        const isRestrictedRole = user?.role === 'ESPECIALISTA' || user?.role === 'Especialista';
+
+        const clientUsers = resUsers.data.filter((u: any) => {
+           const isClient = ['CLIENT', 'Cliente', 'USER', 'CLIENTE'].includes(u.role);
+           const hasPayment = validPaymentUserIds.has(u.id);
+           const isAssigned = isRestrictedRole ? specialistClientIds.has(u.id) : true;
+           
+           return isClient && hasPayment && isAssigned;
+        });
         
         setPatients(clientUsers);
         if (clientUsers.length > 0) {
@@ -96,7 +103,7 @@ export default function Pacientes() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchPatients(); }, []);
+  useEffect(() => { fetchPatients(); }, [user]);
 
   const filteredPatients = patients.filter(p => {
     const fullName = `${p.profile?.firstName || ''} ${p.profile?.lastName || ''} ${p.name || ''}`.toLowerCase();
