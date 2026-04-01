@@ -154,7 +154,7 @@ export function TestRFAI() {
            </div>
         </div>
 
-        <div className="flex-1 overflow-x-auto overflow-y-auto bg-slate-50/30 custom-scrollbar relative">
+        <div className="flex-1 min-h-0 overflow-auto bg-slate-50/30 custom-scrollbar relative">
           {loading ? (
              <div className="flex justify-center items-center h-full"><div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" /></div>
           ) : (
@@ -171,7 +171,7 @@ export function TestRFAI() {
                         {visibleCols.r && <th className="p-4 font-black text-center text-emerald-500 bg-emerald-50/30">Regulación (R)</th>}
                         {visibleCols.ita && <th className="p-4 font-black text-center text-emerald-500 bg-emerald-50/30">Carga Interna (ITA)</th>}
                         {visibleCols.re && <th className="p-4 font-black text-center text-emerald-500 bg-emerald-50/30">Regulación eq (Re)</th>}
-                        {visibleCols.ids && <th className="p-4 font-black text-center text-rose-500 bg-rose-50/30">Índice (IDS-E)</th>}
+                        {visibleCols.ids && <th className="p-4 font-black text-center text-slate-500 bg-slate-50/30">Índice (IDS-E)</th>}
                         {visibleCols.interpretacion && <th className="p-4 font-black max-w-xs whitespace-normal min-w-[200px]">Interpretación</th>}
                         {visibleCols.perfil && <th className="p-4 font-black max-w-xs whitespace-normal min-w-[200px]">Perfil General</th>}
                         {visibleCols.estado && <th className="p-4 font-black">ESTADO</th>}
@@ -194,7 +194,7 @@ export function TestRFAI() {
                            {visibleCols.r && <td className={`p-4 text-center ${Number(diag.r) < 16 ? 'bg-red-50 text-red-700 font-black border-l-2 border-red-500 shadow-inner' : 'bg-emerald-50/10'}`}><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100">{diag.r}</span></td>}
                            {visibleCols.ita && <td className="p-4 text-center bg-emerald-50/10"><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100 font-bold text-slate-600">{diag.ita}</span></td>}
                            {visibleCols.re && <td className="p-4 text-center bg-emerald-50/10"><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100 font-bold text-slate-600">{diag.re}</span></td>}
-                           {visibleCols.ids && <td className="p-4 text-center bg-rose-50/10 font-black text-rose-600"><span className="inline-block px-3 py-1 bg-rose-100 text-rose-700 rounded-lg shadow-sm border border-rose-200">{diag.idsE ?? diag.ids_e}</span></td>}
+                           {visibleCols.ids && <td className="p-4 text-center bg-slate-50/10"><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100 font-bold text-slate-600">{diag.idsE ?? diag.ids_e}</span></td>}
                            {visibleCols.interpretacion && <td className="p-4 text-xs max-w-xs whitespace-normal">{diag.interpretation}</td>}
                            {visibleCols.perfil && <td className="p-4 text-xs max-w-xs whitespace-normal text-slate-500">{diag.profile}</td>}
                            {visibleCols.estado && (
