@@ -39,8 +39,9 @@ export default function Directorio() {
   const filteredPatients = patients.filter(p => {
     const fullName = `${p.profile?.firstName || ''} ${p.profile?.lastName || ''} ${p.name || ''}`.toLowerCase();
     const emailStr = (p.email || '').toLowerCase();
-    const term = searchTerm.toLowerCase();
-    return fullName.includes(term) || emailStr.includes(term);
+    const terms = searchTerm.toLowerCase().split(/\s+/).filter(Boolean);
+    if (terms.length === 0) return true;
+    return terms.every(t => fullName.includes(t) || emailStr.includes(t));
   });
 
   return (

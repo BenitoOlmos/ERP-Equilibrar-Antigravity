@@ -24,7 +24,12 @@ export default function Chat() {
     if (searchTerm.trim() === '') {
         setFilteredPatients(patients);
     } else {
-        setFilteredPatients(patients.filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase())));
+        const terms = searchTerm.toLowerCase().split(/\s+/).filter(Boolean);
+        setFilteredPatients(patients.filter(p => {
+            const nameStr = (p.name || '').toLowerCase();
+            const emailStr = (p.email || '').toLowerCase();
+            return terms.every(t => nameStr.includes(t) || emailStr.includes(t));
+        }));
     }
   }, [searchTerm, patients]);
 

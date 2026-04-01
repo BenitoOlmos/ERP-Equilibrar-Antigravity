@@ -138,7 +138,13 @@ export default function Bitacoras() {
       }
   };
 
-  const filteredPatients = patients.filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredPatients = patients.filter(p => {
+    const terms = searchTerm.toLowerCase().split(/\s+/).filter(Boolean);
+    if (terms.length === 0) return true;
+    const nameStr = (p.name || '').toLowerCase();
+    const emailStr = (p.email || '').toLowerCase();
+    return terms.every(t => nameStr.includes(t) || emailStr.includes(t));
+  });
 
   // Filtrar bitácoras para la semana seleccionada, excluyendo cuestionarios
   const displayedBitacoras = bitacoras.filter(log => 
