@@ -59,21 +59,48 @@ export function MassMailing() {
             icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.25 21v-2.25a3.75 3.75 0 0 1 7.5 0V21"></path><path d="M9 10h.01"></path><path d="M15 10h.01"></path><path d="M12 2a8 8 0 0 0-8 8c0 1.5 1 3.5 1 5a3 3 0 0 1-3 3h16a3 3 0 0 1-3-3c0-1.5 1-3.5 1-5a8 8 0 0 0-8-8z"></path></svg>,
             colorClass: "bg-amber-50 text-amber-600",
             subject: "🧠 ¿Cómo estás hoy? Completa tu test de bienestar, {{nombre}}",
-            content: `<div style="font-family: sans-serif; color: #334155;"><div style="background-color: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; margin-bottom: 20px; padding: 20px; text-align: center; height: 200px;"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg><span style="font-weight: bold; margin-top: 10px;">Imagen Hero (600x250)</span><span style="font-size: 12px;">Reemplazar imagen arriba</span></div><h2 style="color: #4f46e5; font-size: 24px; margin-bottom: 20px;">Hola {{nombre}},</h2><p style="font-size: 16px; line-height: 1.6;">Hace unos días te enviamos una invitación para realizar tu test de bienestar emocional y aún no hemos recibido tu respuesta.</p><p style="font-size: 16px; line-height: 1.6;">Conocer tu estado actual es el primer paso para una vida más plena. El test solo toma 5 minutos.</p><div style="margin: 35px 0; text-align: center;"><a href="https://tusitio.com/test" style="background: #4f46e5; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block;">Realizar Test Ahora</a></div><p style="font-size: 14px; color: #64748b; font-style: italic;">"Cuidar de tu mente es la mejor inversión que puedes hacer."</p><hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;"><p style="font-size: 14px;">Atentamente,<br><strong>Tu equipo de Bienestar</strong></p></div>`
+            content: `<img src="https://placehold.co/600x200/f8fafc/94a3b8?text=Reemplazar+Imagen+Hero" alt="Hero" width="100%" /> 
+<h2 style="color: #4f46e5;">Hola {{nombre}},</h2>
+<p>Hace unos días te enviamos una invitación para realizar tu test de bienestar emocional y aún no hemos recibido tu respuesta.</p>
+<p>Conocer tu estado actual es el primer paso para una vida plena. El test solo toma 5 minutos.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/test" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Realizar Test Ahora</a>
+</p>
+<br/>
+<p style="color: #64748b; font-style: italic;">"Cuidar de tu mente es la mejor inversión que puedes hacer."</p>
+<p>Atentamente,<br><strong>Tu equipo de Bienestar</strong></p>`
         },
         {
             title: "Contratar Servicio", desc: "Propuesta de valor y planes premium.",
             icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>,
             colorClass: "bg-emerald-50 text-emerald-600",
             subject: "🚀 {{nombre}}, impulsa tu crecimiento con nuestros planes",
-            content: `<div style="font-family: sans-serif; color: #334155;"><h2 style="color: #059669; font-size: 24px; margin-bottom: 20px;">Tu evolución no tiene límites</h2><p style="font-size: 16px; line-height: 1.6;">Hola {{nombre}}, hemos notado tu compromiso con tu crecimiento personal. Por eso, queremos invitarte a dar el siguiente paso.</p><div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 25px; border-radius: 20px; margin: 25px 0;"><h3 style="margin-top: 0; color: #166534;">Nuestros Planes Premium</h3><p>Accede a sesiones personalizadas y herramientas exclusivas para potenciar tu proceso.</p><div style="margin-top: 20px; text-align: center;"><a href="https://tusitio.com/planes" style="background: #166534; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block;">Ver Planes Disponibles</a></div></div><p style="font-size: 16px;">Estamos listos para acompañarte en este viaje. ¿Hablamos?</p></div>`
+            content: `<h2 style="color: #059669;">Tu evolución no tiene límites</h2>
+<p>Hola {{nombre}}, hemos notado tu compromiso con tu crecimiento personal. Por eso, queremos invitarte a dar el siguiente paso.</p>
+<br/>
+<p><strong>Nuestros Planes Premium:</strong> Accede a sesiones personalizadas y herramientas exclusivas para potenciar tu proceso.</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://tusitio.com/planes" style="background-color: #166534; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">Ver Planes Disponibles</a>
+</p>
+<br/>
+<p>Estamos listos para acompañarte en este viaje. ¿Hablamos?</p>`
         },
         {
             title: "Escuchar Podcast", desc: "Novedades y contenido en audio.",
             icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>,
             colorClass: "bg-indigo-50 text-indigo-600",
             subject: "🎧 Nuevo Episodio: Superando la ansiedad con {{nombre}}",
-            content: `<div style="font-family: sans-serif; color: #334155; text-align: center;"><h2 style="color: #1e293b; font-size: 26px; margin-bottom: 20px;">¡Nuevo Podcast Disponible!</h2><p style="font-size: 16px; max-width: 500px; margin: 0 auto 30px auto;">En el episodio de hoy hablamos sobre herramientas prácticas para gestionar el estrés diario. ¡Algo que te interesará mucho, {{nombre}}!</p><div style="margin-bottom: 35px;"><a href="https://spotify.com/podcast" style="background: #1DB954; color: white; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: bold; letter-spacing: 1px; display: inline-block;">ESCUCHAR EN SPOTIFY</a></div><p style="font-size: 12px; color: #94a3b8;">También disponible en Apple Podcasts y YouTube.</p></div>`
+            content: `<img src="https://placehold.co/600x200/1e293b/ffffff?text=Nuevo+Episodio" alt="Podcast Hero" width="100%" /> 
+<h2 style="color: #1e293b; text-align: center;">¡Nuevo Podcast Disponible!</h2>
+<p style="text-align: center;">En el episodio de hoy hablamos sobre herramientas prácticas para gestionar el estrés diario. ¡Algo que te interesará mucho, {{nombre}}!</p>
+<br/>
+<p style="text-align: center;">
+  <a href="https://spotify.com/podcast" style="background-color: #1DB954; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold;">ESCUCHAR EN SPOTIFY</a>
+</p>
+<br/>
+<p style="text-align: center; color: #94a3b8;">También disponible en Apple Podcasts y YouTube.</p>`
         }
     ], []);
 
