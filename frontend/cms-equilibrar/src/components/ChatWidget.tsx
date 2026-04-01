@@ -17,25 +17,36 @@ export default function ChatWidget() {
         return null;
     }
 
-    const loadConversation = async () => {
-        setLoading(true);
+    const loadConversation = async (silent = false) => {
+        if (!silent) setLoading(true);
         try {
             const res = await axios.get(`/api/data/messages/history/${user?.id}`);
-            // The endpoint returns ALL messages ordered by DESC
-            // We want to display them ASC (oldest first at top, newest at bottom)
-            setMessages(res.data.reverse());
-            setTimeout(scrollToBottom, 200);
+            const newMessages = res.data.reverse();
+            setMessages(prev => {
+                // Solo auto-scroleamos si detectamos que entraron nuevos mensajes
+                if (prev.length !== newMessages.length) {
+                    setTimeout(scrollToBottom, 200);
+                }
+                return newMessages;
+            });
         } catch (e) {
             console.error("Error al cargar historial de chat", e);
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
     useEffect(() => {
+        let interval: ReturnType<typeof setInterval>;
         if (isOpen) {
             loadConversation();
+            interval = setInterval(() => {
+                loadConversation(true);
+            }, 5000); // Poll every 5 seconds
         }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
         // eslint-disable-next-line
     }, [isOpen]);
 

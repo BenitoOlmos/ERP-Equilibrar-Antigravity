@@ -59,15 +59,32 @@ export default function Chat() {
       .finally(() => setLoading(false));
   };
 
-  const loadConversation = async (patientId: string) => {
+  const loadConversation = async (patientId: string, silent = false) => {
     try {
         const res = await axios.get(`/api/data/messages/history/${patientId}`);
-        setMessages(res.data.reverse());
-        setTimeout(scrollToBottom, 200);
+        const newMessages = res.data.reverse();
+        setMessages(prev => {
+            if (prev.length !== newMessages.length) {
+                setTimeout(scrollToBottom, 200);
+            }
+            return newMessages;
+        });
     } catch (e) {
         console.error("Error cargando conversación", e);
     }
   };
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (selectedPatient) {
+       interval = setInterval(() => {
+          loadConversation(selectedPatient.id, true);
+       }, 5000);
+    }
+    return () => {
+       if (interval) clearInterval(interval);
+    };
+  }, [selectedPatient]);
 
   const handleSelectPatient = (patient: any) => {
     setSelectedPatient(patient);
