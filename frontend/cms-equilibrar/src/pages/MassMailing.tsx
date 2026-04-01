@@ -494,7 +494,7 @@ export function MassMailing() {
                                                                     ) : (
                                                                         <span className="text-xs text-slate-400 italic">Sin etiquetas</span>
                                                                     )}
-                                                                    <button onClick={() => handleOpenTaggingModal(rec)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                                                                    <button onClick={() => handleOpenTaggingModal(rec)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 bg-slate-50 border border-slate-200 rounded-lg transition-colors" title="Editar Etiquetas">
                                                                         <Edit2 className="w-4 h-4" />
                                                                     </button>
                                                                 </div>
