@@ -397,7 +397,7 @@ export function MassMailing() {
                                         </div>
                                         <div className="space-y-1 mt-2">
                                             {groups.map(g => (
-                                                <div key={g.id} onClick={() => setSelectedFilterGroup(g.id)} className={`group-item flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-sm transition-all ${selectedFilterGroup === g.id ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600 hover:bg-slate-50'}`}>
+                                                <div key={g.id} onClick={() => setSelectedFilterGroup(g.id)} className={`group group-item flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-sm transition-all ${selectedFilterGroup === g.id ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600 hover:bg-slate-50'}`}>
                                                     <div className="flex items-center gap-3">
                                                         <FolderOpen className={`w-4 h-4 ${g.color?.split(' ')[1] || 'text-indigo-400'}`}/>
                                                         <span>{g.name}</span>
@@ -406,7 +406,7 @@ export function MassMailing() {
                                                         {g._count?.contacts !== undefined && (
                                                             <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">{g._count.contacts}</span>
                                                         )}
-                                                        <button onClick={(e) => handleDeleteGroup(e, g.id)} className="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1 rounded transition-colors hidden group-[.group-item]:block">
+                                                        <button onClick={(e) => handleDeleteGroup(e, g.id)} className="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1 rounded transition-colors hidden group-hover:block">
                                                             <Trash2 className="w-3.5 h-3.5" />
                                                         </button>
                                                     </div>
