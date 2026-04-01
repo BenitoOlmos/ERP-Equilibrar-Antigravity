@@ -174,10 +174,10 @@ export function TestRFAI() {
                            {visibleCols.name && <td className="p-4 font-black text-slate-800">{diag.user?.profile?.firstName || diag.user?.name || 'Vació'} {diag.user?.profile?.lastName || ''}</td>}
                            {visibleCols.email && <td className="p-4 text-xs font-medium text-slate-500">{diag.user?.email || '[Sin Correo]'}</td>}
                            {visibleCols.phone && <td className="p-4 text-xs font-medium text-slate-500">{diag.user?.phone || diag.phone || '[Sin Teléfono]'}</td>}
-                           {visibleCols.af && <td className="p-4 text-center bg-indigo-50/10">{diag.af}</td>}
-                           {visibleCols.am && <td className="p-4 text-center bg-indigo-50/10">{diag.am}</td>}
-                           {visibleCols.ae && <td className="p-4 text-center bg-indigo-50/10">{diag.ae}</td>}
-                           {visibleCols.r && <td className="p-4 text-center bg-emerald-50/10">{diag.r}</td>}
+                           {visibleCols.af && <td className={`p-4 text-center ${Number(diag.af) > 19 ? 'bg-red-100 text-red-700 font-black' : 'bg-indigo-50/10'}`}>{diag.af}</td>}
+                           {visibleCols.am && <td className={`p-4 text-center ${Number(diag.am) > 19 ? 'bg-red-100 text-red-700 font-black' : 'bg-indigo-50/10'}`}>{diag.am}</td>}
+                           {visibleCols.ae && <td className={`p-4 text-center ${Number(diag.ae) > 19 ? 'bg-red-100 text-red-700 font-black' : 'bg-indigo-50/10'}`}>{diag.ae}</td>}
+                           {visibleCols.r && <td className={`p-4 text-center ${Number(diag.r) < 16 ? 'bg-red-100 text-red-700 font-black' : 'bg-emerald-50/10'}`}>{diag.r}</td>}
                            {visibleCols.ita && <td className="p-4 text-center bg-emerald-50/10">{diag.ita}</td>}
                            {visibleCols.re && <td className="p-4 text-center bg-emerald-50/10">{diag.re}</td>}
                            {visibleCols.ids && <td className="p-4 text-center bg-rose-50/10 font-black text-rose-600">{diag.idsE ?? diag.ids_e}</td>}
