@@ -23,6 +23,10 @@ export function MassMailing() {
     const [subject, setSubject] = useState<string>('');
     const [htmlContent, setHtmlContent] = useState<string>('<p>Hola {{nombre}}!</p><br/><p>Escribe tu mensaje aquí...</p>');
     
+    const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+    const [manualName, setManualName] = useState('');
+    const [manualEmail, setManualEmail] = useState('');
+
     const [testEmail, setTestEmail] = useState('');
     const [isTesting, setIsTesting] = useState(false);
     const [activeTemplate, setActiveTemplate] = useState<number | null>(null);
@@ -96,6 +100,28 @@ export function MassMailing() {
         } else {
             alert('No se encontraron correos electrónicos válidos en el texto. Revisa el formato.');
         }
+    };
+
+    const handleAddManualContact = () => {
+        if (!manualEmail.includes('@') || !manualEmail.includes('.')) {
+            alert('Por favor inserta un correo electrónico válido.');
+            return;
+        }
+        setRecipients(prev => [...prev, { name: manualName || 'Paciente', email: manualEmail.trim() }]);
+        setIsManualModalOpen(false);
+        setManualName('');
+        setManualEmail('');
+    };
+
+    const downloadDemoCSV = () => {
+        const csvContent = "data:text/csv;charset=utf-8,Nombre Completo,Correo Electrónico\nJuan Perez,juan.perez@gmail.com\nMaria Sanchez,m.sanchez@empresa.cl\n";
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "plantilla_contactos_erp.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const handleTestSend = async () => {
@@ -212,7 +238,14 @@ export function MassMailing() {
                                 </div>
                             </div>
                             
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <button onClick={downloadDemoCSV} className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-all border border-slate-200 lg:border-none">
+                                    <Download className="w-4 h-4"/> <span className="hidden sm:inline">Descargar Demo</span>
+                                </button>
+                                <button onClick={() => setIsManualModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-200 transition-all border border-slate-200">
+                                    <PlusCircle className="w-4 h-4"/> <span className="hidden sm:inline">Añadir Manual</span>
+                                </button>
+
                                 {recipients.length > 0 && (
                                     <button onClick={() => setStep(2)} className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 shadow-md transition-all animate-fade-in">
                                         Diseñar Campaña <ArrowRight className="w-4 h-4"/>
@@ -298,12 +331,15 @@ export function MassMailing() {
                                     </div>
                                 </div>
 
-                                <div className="flex-1 overflow-auto p-6">
+                                <div className="flex-1 overflow-auto p-6 relative">
                                     {recipients.length === 0 ? (
                                         <div className="h-full flex flex-col items-center justify-center text-slate-400">
                                             <Database className="w-16 h-16 mb-4 text-slate-200" />
                                             <p className="font-bold">No hay contactos cargados.</p>
-                                            <p className="text-sm mt-1">Haz clic en Importar Lista para comenzar.</p>
+                                            <p className="text-sm mt-1 mb-4">Haz clic en Importar Lista o Añade a mano para comenzar.</p>
+                                            <button onClick={() => setIsManualModalOpen(true)} className="px-5 py-2 bg-indigo-50 text-indigo-600 font-bold rounded-xl hover:bg-indigo-100 flex items-center gap-2 transition-colors">
+                                                <PlusCircle className="w-4 h-4" /> Registrar Manualmente
+                                            </button>
                                         </div>
                                     ) : (
                                         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in pb-16">
@@ -385,6 +421,33 @@ export function MassMailing() {
                                         <button onClick={processDatabase} disabled={!rawList.trim()} className="px-6 py-2.5 bg-indigo-600 disabled:bg-slate-400 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
                                             Procesar y Montar {rawList ? `(${rawList.split(/\n/).filter(x => x.trim() !== '').length})` : ''} <ArrowRight className="w-4 h-4"/>
                                         </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Modal Añadir Manual */}
+                        {isManualModalOpen && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsManualModalOpen(false)}></div>
+                                <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in flex flex-col">
+                                    <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                        <h3 className="text-xl font-extrabold text-slate-800">Añadir Contacto</h3>
+                                        <button onClick={() => setIsManualModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5"/></button>
+                                    </div>
+                                    <div className="p-6 flex flex-col gap-5">
+                                        <div>
+                                            <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest pl-1">Nombre (Opcional)</label>
+                                            <input type="text" placeholder="Ej: Gerardo Martinez" value={manualName} onChange={e => setManualName(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:bg-white outline-none transition-all text-sm font-bold text-slate-800" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest pl-1">Correo Electrónico</label>
+                                            <input type="email" placeholder="gerardo@empresa.com" value={manualEmail} onChange={e => setManualEmail(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:bg-white outline-none transition-all text-sm font-bold text-slate-800" />
+                                        </div>
+                                    </div>
+                                    <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0">
+                                        <button onClick={() => setIsManualModalOpen(false)} className="px-6 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-all">Cancelar</button>
+                                        <button onClick={handleAddManualContact} disabled={!manualEmail} className="px-6 py-2.5 bg-indigo-600 disabled:bg-slate-400 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-md transition-all">Añadir a la Tabla</button>
                                     </div>
                                 </div>
                             </div>
