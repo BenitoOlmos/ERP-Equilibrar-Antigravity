@@ -37,6 +37,22 @@ router.get('/catalog', async (req, res) => {
   }
 });
 
+router.get('/catalog-all', async (req, res) => {
+  try {
+    // Fetches all items, ignoring isActive restriction, purely for validation purposes
+    const [programs, courses, rfaiPrograms] = await Promise.all([
+      prisma.program.findMany(),
+      prisma.course.findMany(),
+      prisma.rFAIService.findMany()
+    ]);
+
+    res.json({ programs: rfaiPrograms, treatments: programs, courses });
+  } catch (error) {
+    console.error('Error fetching all catalog:', error);
+    res.status(500).json({ error: 'Failed to fetch all catalog' });
+  }
+});
+
 async function processInternalExpenses(concept: string, status: string, userId: string, paymentId: string) {
   if (status !== 'COMPLETED' || !concept) return;
   const existing = await prisma.payment.findFirst({ where: { concept: { contains: `(Ref: ${paymentId})` } } });

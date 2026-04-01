@@ -64,16 +64,25 @@ export default function Pacientes() {
     Promise.all([
       axios.get('/api/data/users'),
       axios.get('/api/data/payments'),
-      axios.get('/api/data/appointments')
+      axios.get('/api/data/appointments'),
+      axios.get('/api/data/payments/catalog-all')
     ])
-      .then(([resUsers, resFinance, resAppts]) => {
+      .then(([resUsers, resFinance, resAppts, resCatalogAll]) => {
         const payments = resFinance.data || [];
         const appointments = resAppts.data || [];
+        const catalogAll = resCatalogAll.data || { programs: [], treatments: [], courses: [] };
 
-        // Users who have at least one successfully completed payment
+        // Valid concepts include ALL historical Programs, Treatments, and Courses
+        const validConcepts = [
+          ...(catalogAll.programs || []).map((p: any) => p.title),
+          ...(catalogAll.treatments || []).map((p: any) => p.name),
+          ...(catalogAll.courses || []).map((c: any) => c.title)
+        ];
+
+        // Users who have at least one successfully completed payment FOR A VALID PROGRAM/TREATMENT
         const validPaymentUserIds = new Set(
           payments
-            .filter((p: any) => p.status === 'COMPLETED')
+            .filter((p: any) => p.status === 'COMPLETED' && p.concept && validConcepts.includes(p.concept))
             .map((p: any) => p.userId)
         );
 
