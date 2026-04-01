@@ -125,7 +125,7 @@ export default function Pacientes() {
      if (!selectedPatient) return;
      try {
          const newWeek = Math.max(1, weekNum);
-         await axios.put(`/api/data/users/${selectedPatient.id}`, { currentWeek: newWeek });
+         await axios.put(`/api/data/users/${selectedPatient.id}/week`, { currentWeek: newWeek });
          
          const updated = { ...selectedPatient, currentWeek: newWeek };
          setSelectedPatient(updated);

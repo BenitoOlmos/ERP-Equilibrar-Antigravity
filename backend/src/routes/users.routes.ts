@@ -86,6 +86,21 @@ router.delete('/:id', async (req, res) => {
   } catch(e: any) { console.error(e); res.status(500).json({error: 'Failed to delete user'}); }
 });
 
+router.put('/:id/week', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { currentWeek } = req.body;
+    const user = await prisma.user.update({
+      where: { id },
+      data: { currentWeek: Number(currentWeek) }
+    });
+    res.json(user);
+  } catch(e: any) {
+    console.error('Error updating week:', e);
+    res.status(500).json({ error: 'Failed to update user week' });
+  }
+});
+
 // GET /api/data/users/:id/programs - Fetch purchased programs via Payments
 router.get('/:id/programs', async (req, res) => {
   try {
