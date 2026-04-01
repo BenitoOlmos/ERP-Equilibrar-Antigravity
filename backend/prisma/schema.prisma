@@ -22,11 +22,16 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Notification Tracking
+  lastViewedRFAIAt      DateTime?
+  lastViewedBitacorasAt DateTime?
+  lastViewedChatAt      DateTime?
+
   profile Profile? // From agenda
 
   // Agenda Relations
-  appointmentsAsClient     Appointment[] @relation("ClientAppointments")
-  appointmentsAsSpecialist Appointment[] @relation("SpecialistAppointments")
+  appointmentsAsClient     Appointment[]   @relation("ClientAppointments")
+  appointmentsAsSpecialist Appointment[]   @relation("SpecialistAppointments")
   agendaServices           AgendaService[] @relation("ServiceSpecialist")
   payments                 Payment[]
 
@@ -35,12 +40,12 @@ model User {
   clinicalRecordsAsSpecialist ClinicalRecord[] @relation("SpecialistClinicalRecords")
 
   // RFAI Relations
-  completedWeeks   UserCompletedWeek[]
-  evaluations      WeeklyEvaluation[]
-  audioLogs        AudioLog[]
-  activityProgress ActivityProgress[]
-  bitacoraLogs     BitacoraLog[] @relation("UserBitacoras")
-  specialistBitacoras BitacoraLog[] @relation("SpecialistBitacora")
+  completedWeeks      UserCompletedWeek[]
+  evaluations         WeeklyEvaluation[]
+  audioLogs           AudioLog[]
+  activityProgress    ActivityProgress[]
+  bitacoraLogs        BitacoraLog[]       @relation("UserBitacoras")
+  specialistBitacoras BitacoraLog[]       @relation("SpecialistBitacora")
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
@@ -100,8 +105,8 @@ model AgendaService {
   price       Float
   isActive    Boolean @default(true)
 
-  branchId    String? // Sede
-  branch      Branch? @relation(fields: [branchId], references: [id])
+  branchId String? // Sede
+  branch   Branch? @relation(fields: [branchId], references: [id])
 
   specialistId String? // Especialista
   specialist   User?   @relation("ServiceSpecialist", fields: [specialistId], references: [id])
@@ -163,7 +168,7 @@ model Appointment {
   status      String  @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED, NO_SHOW
   notes       String?
 
-  payment Payment?
+  payment        Payment?
   clinicalRecord ClinicalRecord?
 
   // RFAI specific fields
@@ -212,26 +217,26 @@ model AppSettings {
 }
 
 model ClinicalRecord {
-  id            String   @id @default(uuid())
+  id            String       @id @default(uuid())
   clientId      String
-  client        User     @relation("ClientClinicalRecords", fields: [clientId], references: [id], onDelete: Cascade)
+  client        User         @relation("ClientClinicalRecords", fields: [clientId], references: [id], onDelete: Cascade)
   specialistId  String
-  specialist    User     @relation("SpecialistClinicalRecords", fields: [specialistId], references: [id], onDelete: Cascade)
-  appointmentId String?  @unique
+  specialist    User         @relation("SpecialistClinicalRecords", fields: [specialistId], references: [id], onDelete: Cascade)
+  appointmentId String?      @unique
   appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
 
-  date          DateTime @default(now())
-  reason        String?  
-  anamnesis     String?  
-  diagnosis     String?  
-  treatment     String?  
-  evolution     String?  
-  observations  String?  
-  
-  isSigned      Boolean  @default(false)
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  date         DateTime @default(now())
+  reason       String?
+  anamnesis    String?
+  diagnosis    String?
+  treatment    String?
+  evolution    String?
+  observations String?
+
+  isSigned Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([clientId])
   @@index([specialistId])
@@ -325,17 +330,17 @@ model ActivityProgress {
 }
 
 model BitacoraLog {
-  id            String    @id @default(uuid())
-  userId        String
-  weekNumber    Int
-  content       String
-  timestamp     DateTime  @default(now())
+  id         String   @id @default(uuid())
+  userId     String
+  weekNumber Int
+  content    String
+  timestamp  DateTime @default(now())
 
   // Respuestas Clínicas
-  specialistId  String?
-  specialist    User?     @relation("SpecialistBitacora", fields: [specialistId], references: [id], onDelete: SetNull)
-  response      String?
-  respondedAt   DateTime?
+  specialistId String?
+  specialist   User?     @relation("SpecialistBitacora", fields: [specialistId], references: [id], onDelete: SetNull)
+  response     String?
+  respondedAt  DateTime?
 
   user User @relation("UserBitacoras", fields: [userId], references: [id], onDelete: Cascade)
 }

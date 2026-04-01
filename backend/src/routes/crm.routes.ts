@@ -116,7 +116,7 @@ router.post('/diagnostics', async (req, res) => {
                     name: fullName,
                     phone: phone || null,
                     passwordHash: hashedPassword,
-                    role: 'USER', // Web Prospect
+                    role: 'Cliente', // Web Prospect now has full client portal access
                     isActive: true
                 }
             });

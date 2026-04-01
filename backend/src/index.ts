@@ -20,6 +20,7 @@ import statsRoutes from './routes/stats.routes';
 import branchesRoutes from './routes/branches.routes';
 import clinicalRoutes from './routes/clinical.routes';
 import messagesRoutes from './routes/messages.routes';
+import notificationsRoutes from './routes/notifications.routes';
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ apiRouter.use('/crm', crmRoutes);
 
 // 2. Student Platform Endpoints (Courses UI)
 apiRouter.use('/', studentRoutes);
+apiRouter.use('/notifications', notificationsRoutes);
 
 // 3. Admin / Unified Dashboard (Master endpoints)
 const masterRouter = express.Router();

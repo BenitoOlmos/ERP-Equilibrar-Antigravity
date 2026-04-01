@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { 
   LayoutDashboard, 
   Calendar,
@@ -140,6 +141,46 @@ export default function Sidebar() {
     'Ajustes': false,
   });
 
+  const [notifications, setNotifications] = useState({ rfaiCount: 0, bitacoraCount: 0, chatCount: 0 });
+  const location = useLocation();
+
+  useEffect(() => {
+     if (!user || user.role === 'Cliente') return; // Don't poll for basic clients
+     
+     const fetchNotifications = async () => {
+         try {
+             const res = await axios.get(`/api/notifications/${user.id}`);
+             setNotifications(res.data);
+         } catch (e) {
+             console.error('Error fetching notifications API');
+         }
+     };
+
+     fetchNotifications();
+     const interval = setInterval(fetchNotifications, 60000);
+     return () => clearInterval(interval);
+  }, [user]);
+
+  // Handle immediate mark as viewed when entering a route
+  useEffect(() => {
+     if (!user || user.role === 'Cliente') return;
+     const path = location.pathname;
+     
+     let section = '';
+     if (path === '/test-rfai' && notifications.rfaiCount > 0) section = 'RFAI';
+     else if (path === '/bitacoras' && notifications.bitacoraCount > 0) section = 'BITACORAS';
+     else if (path === '/chat' && notifications.chatCount > 0) section = 'CHAT';
+
+     if (section) {
+         axios.post(`/api/notifications/${user.id}/viewed`, { section }).then(() => {
+             // Optimistically clear the local count
+             if (section === 'RFAI') setNotifications(p => ({...p, rfaiCount: 0}));
+             if (section === 'BITACORAS') setNotifications(p => ({...p, bitacoraCount: 0}));
+             if (section === 'CHAT') setNotifications(p => ({...p, chatCount: 0}));
+         }).catch(console.error);
+     }
+  }, [location.pathname, user]);
+
   const toggleGroup = (title: string) => {
     setExpandedGroups(prev => ({
       ...prev,
@@ -219,15 +260,32 @@ export default function Sidebar() {
                           key={item.path}
                           to={item.path!}
                           className={({ isActive }) =>
-                            `flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group ${
+                            `flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group ${
                               isActive
                                 ? 'bg-gradient-to-r from-[#00A89C]/20 to-[#00A89C]/5 text-[#00A89C] border border-[#00A89C]/20 translate-x-2 shadow-md hover:translate-x-3'
                                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60 hover:translate-x-2 outline-none'
                             }`
                           }
                         >
-                          <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                          <span>{item.label}</span>
+                          <div className="flex items-center space-x-3">
+                              <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                              <span>{item.label}</span>
+                          </div>
+                          {item.path === '/test-rfai' && notifications.rfaiCount > 0 && (
+                              <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg shadow-red-500/20 animate-pulse">
+                                  {notifications.rfaiCount}
+                              </span>
+                          )}
+                          {item.path === '/bitacoras' && notifications.bitacoraCount > 0 && (
+                              <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg shadow-red-500/20 animate-pulse">
+                                  {notifications.bitacoraCount}
+                              </span>
+                          )}
+                          {item.path === '/chat' && notifications.chatCount > 0 && (
+                              <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg shadow-red-500/20 animate-pulse">
+                                  {notifications.chatCount}
+                              </span>
+                          )}
                         </NavLink>
                       );
                     })}
