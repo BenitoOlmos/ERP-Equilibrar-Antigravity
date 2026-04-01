@@ -370,7 +370,13 @@ export default function Ventas() {
                             <input type="text" autoFocus placeholder="Escribe para filtrar..." value={clientSearch} onChange={e => setClientSearch(e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-[#00A89C] font-semibold" />
                           </div>
                           <div className="overflow-y-auto w-full custom-scrollbar">
-                             {users.filter(u => u.role !== 'ADMIN' && u.role !== 'COORDINATOR' && u.role !== 'SPECIALIST').filter(c => ((c.name||'') + (c.email||'') + (c.profile?.firstName||'')).toLowerCase().includes(clientSearch.toLowerCase())).map(c => (
+                             {users.filter(u => u.role !== 'ADMIN' && u.role !== 'COORDINATOR' && u.role !== 'SPECIALIST').filter(c => {
+    const term = clientSearch.toLowerCase();
+    return (c.name || '').toLowerCase().includes(term) || 
+           (c.email || '').toLowerCase().includes(term) || 
+           (c.profile?.documentId || '').toLowerCase().includes(term) || 
+           (c.phone || '').includes(term);
+}).slice(0, 30).map(c => (
                                 <button type="button" key={c.id} onClick={() => { setUserId(c.id); setShowClientDrop(false); }} className="w-full text-left px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-[#00A89C]/10 hover:text-[#00A89C] transition-colors border-b border-slate-50 last:border-0 hover:z-10 relative">
                                    {c.name || (c.profile?.firstName + ' ' + (c.profile?.lastName||''))} <span className="text-xs text-slate-400 opacity-70">({c.email})</span>
                                 </button>
