@@ -188,13 +188,13 @@ export function TestRFAI() {
                            {visibleCols.name && <td className="p-4 font-black text-slate-800">{diag.user?.profile?.firstName || diag.user?.name || 'Vació'} {diag.user?.profile?.lastName || ''}</td>}
                            {visibleCols.email && <td className="p-4 text-xs font-medium text-slate-500">{diag.user?.email || '[Sin Correo]'}</td>}
                            {visibleCols.phone && <td className="p-4 text-xs font-medium text-slate-500">{diag.user?.phone || diag.phone || '[Sin Teléfono]'}</td>}
-                           {visibleCols.af && <td className={`p-4 text-center ${Number(diag.af) > 19 ? 'bg-red-100 text-red-700 font-black' : 'bg-indigo-50/10'}`}>{diag.af}</td>}
-                           {visibleCols.am && <td className={`p-4 text-center ${Number(diag.am) > 19 ? 'bg-red-100 text-red-700 font-black' : 'bg-indigo-50/10'}`}>{diag.am}</td>}
-                           {visibleCols.ae && <td className={`p-4 text-center ${Number(diag.ae) > 19 ? 'bg-red-100 text-red-700 font-black' : 'bg-indigo-50/10'}`}>{diag.ae}</td>}
-                           {visibleCols.r && <td className={`p-4 text-center ${Number(diag.r) < 16 ? 'bg-red-100 text-red-700 font-black' : 'bg-emerald-50/10'}`}>{diag.r}</td>}
-                           {visibleCols.ita && <td className="p-4 text-center bg-emerald-50/10">{diag.ita}</td>}
-                           {visibleCols.re && <td className="p-4 text-center bg-emerald-50/10">{diag.re}</td>}
-                           {visibleCols.ids && <td className="p-4 text-center bg-rose-50/10 font-black text-rose-600">{diag.idsE ?? diag.ids_e}</td>}
+                           {visibleCols.af && <td className={`p-4 text-center ${Number(diag.af) > 19 ? 'bg-red-50 text-red-700 font-black border-l-2 border-red-500 shadow-inner' : 'bg-indigo-50/10'}`}><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100">{diag.af}</span></td>}
+                           {visibleCols.am && <td className={`p-4 text-center ${Number(diag.am) > 19 ? 'bg-red-50 text-red-700 font-black border-l-2 border-red-500 shadow-inner' : 'bg-indigo-50/10'}`}><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100">{diag.am}</span></td>}
+                           {visibleCols.ae && <td className={`p-4 text-center ${Number(diag.ae) > 19 ? 'bg-red-50 text-red-700 font-black border-l-2 border-red-500 shadow-inner' : 'bg-indigo-50/10'}`}><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100">{diag.ae}</span></td>}
+                           {visibleCols.r && <td className={`p-4 text-center ${Number(diag.r) < 16 ? 'bg-red-50 text-red-700 font-black border-l-2 border-red-500 shadow-inner' : 'bg-emerald-50/10'}`}><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100">{diag.r}</span></td>}
+                           {visibleCols.ita && <td className="p-4 text-center bg-emerald-50/10"><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100 font-bold text-slate-600">{diag.ita}</span></td>}
+                           {visibleCols.re && <td className="p-4 text-center bg-emerald-50/10"><span className="inline-block px-3 py-1 bg-white rounded-lg shadow-sm border border-slate-100 font-bold text-slate-600">{diag.re}</span></td>}
+                           {visibleCols.ids && <td className="p-4 text-center bg-rose-50/10 font-black text-rose-600"><span className="inline-block px-3 py-1 bg-rose-100 text-rose-700 rounded-lg shadow-sm border border-rose-200">{diag.idsE ?? diag.ids_e}</span></td>}
                            {visibleCols.interpretacion && <td className="p-4 text-xs max-w-xs whitespace-normal">{diag.interpretation}</td>}
                            {visibleCols.perfil && <td className="p-4 text-xs max-w-xs whitespace-normal text-slate-500">{diag.profile}</td>}
                            {visibleCols.estado && (
@@ -216,7 +216,13 @@ export function TestRFAI() {
                                  </select>
                               </td>
                            )}
-                        </tr>
+                            <td className="p-4 text-center">
+                               <div className="flex items-center justify-center gap-2">
+                                 <button title="Editar Diagnóstico" onClick={() => { setEditingDiag(diag); setEditFormData({af: diag.af||0, am: diag.am||0, ae: diag.ae||0, r: diag.r||0, ita: diag.ita||0, re: diag.re||0, idsE: diag.idsE ?? diag.ids_e ?? 0}); }} className="p-2 bg-white text-indigo-500 hover:text-white hover:bg-indigo-500 rounded-xl transition-all shadow-sm border border-slate-200"><Settings2 className="w-4 h-4" /></button>
+                                 <button title="Eliminar" onClick={async () => { if(confirm('¿Seguro que deseas eliminar este diagnóstico permanentemente?')){ await axios.delete('/api/crm/diagnostics/' + diag.id); fetchDiagnostics(); } }} className="p-2 bg-white text-rose-500 hover:text-white hover:bg-rose-500 rounded-xl transition-all shadow-sm border border-slate-200"><Trash className="w-4 h-4" /></button>
+                               </div>
+                            </td>
+                         </tr>
                      )})}
                      {filteredDiagnostics.length === 0 && (
                         <tr>
