@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import { transporter } from '../utils/mailer';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 // Envío de prueba a un solo correo
 export const sendTestEmail = async (req: Request, res: Response): Promise<void> => {
@@ -78,4 +81,115 @@ export const sendBulkEmails = async (req: Request, res: Response): Promise<void>
     }
 
     console.log(`[Mailing Engine] Ráfaga completada. Éxito: ${successCount}, Fallos: ${failCount}`);
+};
+
+// ==========================================
+// PERSISTENT MAILING CRM CRUD
+// ==========================================
+
+export const getGroups = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const groups = await prisma.mailingGroup.findMany({
+            include: {
+                _count: {
+                    select: { contacts: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(groups);
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to fetch groups', details: error.message });
+    }
+};
+
+export const createGroup = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { name, color } = req.body;
+        if (!name) {
+            res.status(400).json({ error: 'El nombre del grupo es obligatorio.' });
+            return;
+        }
+
+        const group = await prisma.mailingGroup.create({
+            data: {
+                name,
+                color: color || 'bg-indigo-50 text-indigo-600'
+            }
+        });
+
+        res.json(group);
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to create group', details: error.message });
+    }
+};
+
+// Importar lista de correos y asignarlos a un grupo si se especifica
+export const importContacts = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { contacts, groupId } = req.body; // contacts: {email, name}[]
+
+        if (!Array.isArray(contacts) || contacts.length === 0) {
+            res.status(400).json({ error: 'Petición inválida, sin contactos.' });
+            return;
+        }
+
+        let importedCount = 0;
+
+        for (const c of contacts) {
+            // Upsert the contact
+            const contact = await prisma.mailingContact.upsert({
+                where: { email: c.email },
+                update: {
+                    name: c.name || undefined, // Update name if provided, else keep existing
+                },
+                create: {
+                    email: c.email,
+                    name: c.name
+                }
+            });
+
+            // If a group is provided, link the contact to the group
+            if (groupId) {
+                await prisma.mailingContact.update({
+                    where: { id: contact.id },
+                    data: {
+                        groups: {
+                            connect: { id: groupId }
+                        }
+                    }
+                });
+            }
+            
+            importedCount++;
+        }
+
+        res.json({ message: 'Importación exitosa.', count: importedCount });
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to import contacts', details: error.message });
+    }
+};
+
+export const getContacts = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { groupId } = req.query;
+
+        const filter = groupId ? {
+            groups: {
+                some: { id: String(groupId) }
+            }
+        } : {};
+
+        const contacts = await prisma.mailingContact.findMany({
+            where: filter,
+            include: {
+                groups: true
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        res.json(contacts);
+    } catch (error: any) {
+        res.status(500).json({ error: 'Failed to fetch contacts', details: error.message });
+    }
 };

@@ -10,16 +10,33 @@ import {
     ChevronLeft, ChevronRight, X, Info
 } from 'lucide-react';
 
-interface Recipient {
+interface MailingGroup {
+    id: string;
+    name: string;
+    color: string | null;
+    _count?: { contacts: number };
+}
+
+interface MailingContact {
+    id: string;
     email: string;
-    name?: string;
+    name: string | null;
+    source: string | null;
+    groups: MailingGroup[];
 }
 
 export function MassMailing() {
     const [step, setStep] = useState<number>(1);
     const [rawList, setRawList] = useState<string>('');
-    const [recipients, setRecipients] = useState<Recipient[]>([]);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    
+    // Persistent CRM State
+    const [groups, setGroups] = useState<MailingGroup[]>([]);
+    const [recipients, setRecipients] = useState<MailingContact[]>([]);
+    const [selectedFilterGroup, setSelectedFilterGroup] = useState<string | null>(null);
+    const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+    const [newGroupName, setNewGroupName] = useState('');
+
     const [subject, setSubject] = useState<string>('');
     const [htmlContent, setHtmlContent] = useState<string>('<p>Hola {{nombre}}!</p><br/><p>Escribe tu mensaje aquí...</p>');
     
@@ -61,19 +78,47 @@ export function MassMailing() {
         setActiveTemplate(idx);
     };
 
+    React.useEffect(() => {
+        fetchData();
+    }, [selectedFilterGroup]);
+
+    const fetchData = async () => {
+        try {
+            const [gRes, cRes] = await Promise.all([
+                axios.get('/api/mailing/groups'),
+                axios.get('/api/mailing/contacts' + (selectedFilterGroup ? `?groupId=${selectedFilterGroup}` : ''))
+            ]);
+            setGroups(gRes.data);
+            setRecipients(cRes.data);
+        } catch (error) {
+            console.error('Error fetching mailing data:', error);
+        }
+    };
+
+    const handleCreateGroup = async () => {
+        if (!newGroupName.trim()) return;
+        try {
+            await axios.post('/api/mailing/groups', { name: newGroupName });
+            setNewGroupName('');
+            setIsCreatingGroup(false);
+            fetchData();
+        } catch (error) {
+            alert('Error al crear grupo.');
+        }
+    };
+
     // Bulk logic
     const [isSendingBulk, setIsSendingBulk] = useState(false);
     const [bulkSuccess, setBulkSuccess] = useState(false);
 
     // Step 1: Processing the DB
-    const processDatabase = () => {
+    const processDatabase = async () => {
         const lines = rawList.split(/\r?\n/);
-        const parsed: Recipient[] = [];
+        const parsed: {email: string, name: string}[] = [];
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         lines.forEach(line => {
             if (!line.trim()) return;
-            // Support formats: "email@domain.com" OR "John Doe, email@domain.com"
             const parts = line.split(',');
             if (parts.length === 1) {
                 const email = parts[0].trim();
@@ -85,32 +130,47 @@ export function MassMailing() {
                 if (emailRegex.test(possibleEmail)) {
                     parsed.push({ email: possibleEmail, name: possibleName || 'Paciente' });
                 } else if (emailRegex.test(parts[0].trim())) {
-                    // Reversed: email, name
                     parsed.push({ email: parts[0].trim(), name: parts.slice(1).join(' ').trim() || 'Paciente' });
                 }
             }
         });
 
-        // Deduplicate by email
         const unique = Array.from(new Map(parsed.map(item => [item.email.toLowerCase(), item])).values());
 
-        setRecipients(unique);
         if (unique.length > 0) {
-            setIsImportModalOpen(false);
+            try {
+                await axios.post('/api/mailing/contacts/import', {
+                    contacts: unique,
+                    groupId: selectedFilterGroup
+                });
+                setIsImportModalOpen(false);
+                setRawList('');
+                fetchData();
+            } catch (error) {
+                alert('No se pudo guardar la lista en el CRM.');
+            }
         } else {
             alert('No se encontraron correos electrónicos válidos en el texto. Revisa el formato.');
         }
     };
 
-    const handleAddManualContact = () => {
+    const handleAddManualContact = async () => {
         if (!manualEmail.includes('@') || !manualEmail.includes('.')) {
             alert('Por favor inserta un correo electrónico válido.');
             return;
         }
-        setRecipients(prev => [...prev, { name: manualName || 'Paciente', email: manualEmail.trim() }]);
-        setIsManualModalOpen(false);
-        setManualName('');
-        setManualEmail('');
+        try {
+            await axios.post('/api/mailing/contacts/import', {
+                contacts: [{ email: manualEmail.trim(), name: manualName || 'Paciente' }],
+                groupId: selectedFilterGroup
+            });
+            setIsManualModalOpen(false);
+            setManualName('');
+            setManualEmail('');
+            fetchData();
+        } catch (error) {
+            alert('Error al guardar el contacto.');
+        }
     };
 
     const downloadDemoCSV = () => {
@@ -263,44 +323,49 @@ export function MassMailing() {
                                 <div className="p-4 border-b border-slate-100">
                                     <div className="flex items-center justify-between mb-4">
                                         <span className="text-xs font-black uppercase tracking-widest text-slate-400">Mis Grupos</span>
-                                        <button className="text-indigo-600 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors">
+                                        <button onClick={() => setIsCreatingGroup(!isCreatingGroup)} className={`p-1.5 rounded-lg transition-colors ${isCreatingGroup ? 'bg-indigo-100 text-indigo-700' : 'text-indigo-600 hover:bg-indigo-50'}`}>
                                             <PlusCircle className="w-4 h-4"/>
                                         </button>
                                     </div>
-                                    <div className="relative">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
-                                        <input type="text" placeholder="Buscar grupo..." className="w-full pl-9 pr-4 py-2 bg-slate-100 border-none rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 outline-none" />
-                                    </div>
+                                    {isCreatingGroup ? (
+                                        <div className="flex gap-2 mb-2">
+                                            <input type="text" placeholder="Nuevo grupo..." value={newGroupName} onChange={e => setNewGroupName(e.target.value)} className="w-full px-3 py-2 bg-slate-100 border-none rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                            <button onClick={handleCreateGroup} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-3 text-xs font-bold transition-colors">Crear</button>
+                                        </div>
+                                    ) : (
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
+                                            <input type="text" placeholder="Buscar grupo..." className="w-full pl-9 pr-4 py-2 bg-slate-100 border-none rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                        </div>
+                                    )}
                                 </div>
 
                                 <nav className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-1">
                                     <div className="space-y-1">
-                                        <div className="group-item flex items-center justify-between p-2.5 bg-indigo-50 text-indigo-700 rounded-xl cursor-pointer font-bold text-sm">
+                                        <div onClick={() => setSelectedFilterGroup(null)} className={`group-item flex items-center justify-between p-2.5 rounded-xl cursor-pointer font-bold text-sm ${selectedFilterGroup === null ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}>
                                             <div className="flex items-center gap-3">
                                                 <Users className="w-4 h-4"/>
-                                                <span>Importación Actual</span>
+                                                <span>Todos los Contactos</span>
                                             </div>
-                                            <span className="bg-indigo-200 px-2 py-0.5 rounded-md text-[10px]">{recipients.length}</span>
                                         </div>
                                     </div>
 
                                     <div className="pt-4 space-y-1">
                                         <div className="flex items-center justify-between px-2 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                                            Categorías Históricas
+                                            Categorías (Etiquetas)
                                         </div>
                                         <div className="space-y-1 mt-2">
-                                            <div className="group-item flex items-center justify-between p-2.5 text-slate-600 hover:bg-slate-50 rounded-xl cursor-pointer text-sm transition-all">
-                                                <div className="flex items-center gap-3">
-                                                    <FolderOpen className="w-4 h-4 text-amber-400"/>
-                                                    <span>Pacientes VIP</span>
+                                            {groups.map(g => (
+                                                <div key={g.id} onClick={() => setSelectedFilterGroup(g.id)} className={`group-item flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-sm transition-all ${selectedFilterGroup === g.id ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600 hover:bg-slate-50'}`}>
+                                                    <div className="flex items-center gap-3">
+                                                        <FolderOpen className={`w-4 h-4 ${g.color?.split(' ')[1] || 'text-indigo-400'}`}/>
+                                                        <span>{g.name}</span>
+                                                    </div>
+                                                    {g._count?.contacts !== undefined && (
+                                                        <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">{g._count.contacts}</span>
+                                                    )}
                                                 </div>
-                                            </div>
-                                            <div className="group-item flex items-center justify-between p-2.5 text-slate-600 hover:bg-slate-50 rounded-xl cursor-pointer text-sm">
-                                                <div className="flex items-center gap-3">
-                                                    <Zap className="w-4 h-4 text-indigo-400"/>
-                                                    <span>Leads Web</span>
-                                                </div>
-                                            </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </nav>
@@ -373,7 +438,15 @@ export function MassMailing() {
                                                                 </span>
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md text-[10px] font-medium">Extraído</span>
+                                                                {rec.groups && rec.groups.length > 0 ? (
+                                                                    <div className="flex flex-wrap gap-1">
+                                                                        {rec.groups.map((g: MailingGroup) => (
+                                                                            <span key={g.id} className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md text-[10px] font-medium">{g.name}</span>
+                                                                        ))}
+                                                                    </div>
+                                                                ) : (
+                                                                    <span className="text-xs text-slate-400 italic">Sin etiquetas</span>
+                                                                )}
                                                             </td>
                                                         </tr>
                                                     ))}
