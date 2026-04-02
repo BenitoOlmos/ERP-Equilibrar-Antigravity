@@ -9,7 +9,17 @@ router.get('/', async (req, res) => {
   const users = await prisma.user.findMany({
     include: { 
         profile: true,
-        _count: { select: { bitacoraLogs: true } }
+        _count: { 
+            select: { 
+                bitacoraLogs: {
+                    where: {
+                        NOT: {
+                            content: { contains: 'Cuestionario de Autoevaluación' }
+                        }
+                    }
+                } 
+            } 
+        }
     },
     orderBy: { createdAt: 'desc' }
   });
