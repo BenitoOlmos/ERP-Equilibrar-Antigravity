@@ -5,15 +5,19 @@ import { GoogleGenAI } from '@google/genai'; // Assuming this imports correctly
 const router = Router();
 const prisma = new PrismaClient();
 
-// Initialize SDK automatically using GEMINI_API_KEY from environment
-const ai = process.env.GEMINI_API_KEY ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : new GoogleGenAI({});
+// Initialize SDK using Vertex AI credentials or regular API Key fallback
+const ai = new GoogleGenAI({
+  vertexai: true, 
+  project: process.env.GOOGLE_CLOUD_PROJECT || 'practical-mason-448013-k8', 
+  location: 'us-central1'
+});
 
 // 1. Diagnostics endpoint
 router.get('/status', async (req: Request, res: Response) => {
     try {
         const diagnostics: any = {
             db: false,
-            apiKey: !!process.env.GEMINI_API_KEY,
+            apiKey: !!process.env.GEMINI_API_KEY || !!process.env.GOOGLE_APPLICATION_CREDENTIALS,
             aiEngine: false,
             geminiVersion: 'gemini-2.5-flash', // Default model
             error: null
