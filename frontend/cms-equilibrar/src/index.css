@@ -9,6 +9,10 @@
 }
 
 @layer components {
+  .quill-content {
+    @apply break-words whitespace-pre-wrap;
+    word-break: break-word;
+  }
   .quill-content ul {
     @apply list-disc pl-5 mb-2;
   }
@@ -16,7 +20,7 @@
     @apply list-decimal pl-5 mb-2;
   }
   .quill-content p {
-    @apply mb-2 last:mb-0 whitespace-normal;
+    @apply mb-2 last:mb-0;
   }
   .quill-content strong, .quill-content b {
     @apply font-bold;
