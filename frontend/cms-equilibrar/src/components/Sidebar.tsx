@@ -45,6 +45,13 @@ const navGroups = [
     ]
   },
   {
+    title: 'Chat',
+    icon: MessageCircle,
+    items: [
+      { path: '/whatsapp', label: 'WhatsApp', icon: MessageCircle }
+    ]
+  },
+  {
     title: 'Gestión',
     icon: ClipboardList,
     items: [

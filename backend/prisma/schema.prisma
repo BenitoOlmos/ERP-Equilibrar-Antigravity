@@ -722,3 +722,31 @@ model VirtualAgent {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+// =======================
+// WHATSAPP META (AI CRM HUB)
+// =======================
+
+model WhatsAppLead {
+  id              String   @id @default(uuid())
+  phone           String   @unique
+  name            String?
+  email           String?
+  isapre          String?
+  requestedHours  String?
+  postSalesNeed   String?
+  status          String   @default("BOT") // "BOT" (IA Activa) | "HUMAN" (Coordinadora Manual) | "RESOLVED"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  messages        WhatsAppMessage[]
+}
+
+model WhatsAppMessage {
+  id         String       @id @default(uuid())
+  leadId     String
+  lead       WhatsAppLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  content    String
+  sender     String       // "USER", "BOT", "ADMIN"
+  createdAt  DateTime     @default(now())
+}

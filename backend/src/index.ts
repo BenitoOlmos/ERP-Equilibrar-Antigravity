@@ -25,6 +25,7 @@ import notificationsRoutes from './routes/notifications.routes';
 import hrRoutes from './routes/hr.routes';
 import virtualAgentRoutes from './routes/virtualAgent.routes';
 import aiRoutes from './routes/ai.routes';
+import whatsappRoutes from './routes/whatsapp.routes';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ const apiRouter = express.Router();
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/crm', crmRoutes);
 apiRouter.use('/mailing', mailingRoutes);
+apiRouter.use('/whatsapp', whatsappRoutes);
 
 // 2. Student Platform Endpoints (Courses UI)
 apiRouter.use('/', studentRoutes);
