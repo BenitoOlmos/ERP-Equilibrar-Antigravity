@@ -118,10 +118,10 @@ const navGroups = [
     ]
   },
   {
-    title: 'Inteligencia Artificial',
+    title: 'Agente Virtual',
     icon: Bot,
     items: [
-      { path: '/web-agente-virtual', label: 'Agente Virtual', icon: Bot },
+      { path: '/web-agente-virtual', label: 'Agentes', icon: Bot },
     ]
   },
   {
