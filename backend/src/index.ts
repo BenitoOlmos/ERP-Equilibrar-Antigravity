@@ -23,6 +23,7 @@ import clinicalRoutes from './routes/clinical.routes';
 import messagesRoutes from './routes/messages.routes';
 import notificationsRoutes from './routes/notifications.routes';
 import hrRoutes from './routes/hr.routes';
+import virtualAgentRoutes from './routes/virtualAgent.routes';
 
 dotenv.config();
 
@@ -50,6 +51,7 @@ masterRouter.use('/rfai-programs', programRoutes);
 masterRouter.use('/treatments', treatmentRoutes);
 masterRouter.use('/courses', courseRoutes);
 masterRouter.use('/branches', branchesRoutes);
+masterRouter.use('/virtual-agents', virtualAgentRoutes);
 masterRouter.use('/', adminRoutes); // Captures /resumen
 apiRouter.use('/master', masterRouter);
 

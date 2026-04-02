@@ -133,6 +133,8 @@ model Program {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  virtualAgent VirtualAgent?
 }
 
 model ProgramService {
@@ -418,6 +420,8 @@ model RFAIService {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  virtualAgent VirtualAgent?
+
   evaluations WeeklyEvaluation[]
   services    RFAIProgramService[]
   modules     Module[]
@@ -543,6 +547,8 @@ model Course {
   services    CourseService[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+
+  virtualAgent VirtualAgent?
 }
 
 model Module {
@@ -692,4 +698,27 @@ model MailingTemplate {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// =======================
+// VIRTUAL AGENT (VERTEX AI)
+// =======================
+
+model VirtualAgent {
+  id              String   @id @default(uuid())
+  systemPrompt    String   
+  welcomeMessage  String?  
+  isActive        Boolean  @default(true)
+  
+  programId       String?  @unique
+  program         Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
+  
+  courseId        String?  @unique
+  course          Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  rfaiServiceId   String?  @unique
+  rfaiService     RFAIService? @relation(fields: [rfaiServiceId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

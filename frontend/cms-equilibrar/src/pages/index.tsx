@@ -27,3 +27,4 @@ export { CuentasPagar } from './CuentasPagar';
 export { Tesoreria } from './Tesoreria';
 export { TrabajadoresPlanta } from './TrabajadoresPlanta';
 export { Honorarios } from './Honorarios';
+export { default as AgenteVirtual } from './AgenteVirtual';

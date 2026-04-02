@@ -30,7 +30,8 @@ import {
   FileText,
   Contact,
   FolderOpen,
-  FileSignature
+  FileSignature,
+  Bot
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -114,6 +115,7 @@ const navGroups = [
       { path: '/web-editor', label: 'Editor de Sitio Web', icon: LayoutDashboard },
       { path: '/web-noticias', label: 'Noticias Web', icon: Activity },
       { path: '/web-servicios', label: 'Servicios Web', icon: Tags },
+      { path: '/web-agente-virtual', label: 'Agente Virtual', icon: Bot },
     ]
   },
   {
