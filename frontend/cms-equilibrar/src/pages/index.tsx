@@ -30,3 +30,4 @@ export { TrabajadoresPlanta } from './TrabajadoresPlanta';
 export { Honorarios } from './Honorarios';
 export { default as AgenteVirtual } from './AgenteVirtual';
 export { default as TestIA } from './TestIA';
+export { default as TestWhatsapp } from './TestWhatsapp';

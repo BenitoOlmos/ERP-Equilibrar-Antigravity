@@ -750,3 +750,12 @@ model WhatsAppMessage {
   sender     String       // "USER", "BOT", "ADMIN"
   createdAt  DateTime     @default(now())
 }
+
+model WhatsAppConfig {
+  id               String   @id @default("default")
+  verifyToken      String?
+  accessToken      String?
+  phoneId          String?
+  isActive         Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+}

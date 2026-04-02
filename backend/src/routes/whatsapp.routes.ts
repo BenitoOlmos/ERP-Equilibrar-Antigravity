@@ -6,15 +6,13 @@ import axios from 'axios';
 const router = Router();
 const prisma = new PrismaClient();
 
-// Token de verificación configurado en el Dashboard de Meta for Developers
-const META_VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || 'equilibrar_meta_token_secreto_2024';
-const META_ACCESS_TOKEN = process.env.META_WHATSAPP_TOKEN || '';
-const META_PHONE_ID = process.env.META_WHATSAPP_PHONE_ID || '';
-
 /**
  * Endpoint GET para la Verificación (Suscripción) obligatoria del Webhook de Meta.
  */
-router.get('/webhook', (req: Request, res: Response): any => {
+router.get('/webhook', async (req: Request, res: Response): Promise<any> => {
+    const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+    const META_VERIFY_TOKEN = config?.verifyToken || 'equilibrar_meta_token_secreto_2024';
+
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
@@ -36,6 +34,10 @@ router.post('/webhook', async (req: Request, res: Response): Promise<any> => {
         
         // Comprobar que sea evento de Meta WhatsApp
         if (body.object === 'whatsapp_business_account') {
+
+            const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+            const META_ACCESS_TOKEN = config?.accessToken;
+            const META_PHONE_ID = config?.phoneId;
             
             for (const entry of body.entry) {
                 const changes = entry.changes;
@@ -133,6 +135,10 @@ router.put('/leads/:id/status', async (req: Request, res: Response) => {
 router.post('/leads/:id/send', async (req: Request, res: Response) => {
     try {
         const { text } = req.body;
+        const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+        const META_ACCESS_TOKEN = config?.accessToken;
+        const META_PHONE_ID = config?.phoneId;
+
         const lead = await prisma.whatsAppLead.findUnique({ where: { id: req.params.id } });
         if(!lead) throw new Error("No lead");
 
@@ -155,6 +161,81 @@ router.post('/leads/:id/send', async (req: Request, res: Response) => {
         res.json(savedMessage);
     } catch (error) {
         res.status(500).json({ error: "Error enviando manual" });
+    }
+});
+
+/**
+ * Endpoint para obtener y configurar tokens
+ */
+router.get('/config', async (req: Request, res: Response) => {
+    try {
+        let config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+        if (!config) {
+            config = await prisma.whatsAppConfig.create({ data: { id: 'default' } });
+        }
+        res.json(config);
+    } catch (error) {
+        res.status(500).json({ error: "Error de config" });
+    }
+});
+
+router.post('/config', async (req: Request, res: Response) => {
+    try {
+        const { verifyToken, accessToken, phoneId } = req.body;
+        const config = await prisma.whatsAppConfig.upsert({
+            where: { id: 'default' },
+            create: { id: 'default', verifyToken, accessToken, phoneId },
+            update: { verifyToken, accessToken, phoneId }
+        });
+        res.json(config);
+    } catch (error) {
+        res.status(500).json({ error: "Error de config" });
+    }
+});
+
+/**
+ * Endpoint de Diagnóstico (Ping al Meta Graph API)
+ */
+router.get('/diagnostics', async (req: Request, res: Response) => {
+    try {
+        const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+        
+        const diagnosticStatus = {
+            webhookActive: true, 
+            vertexEngineStatus: 'CONNECTING',
+            metaGraphStatus: 'CONNECTING',
+            vertexInfo: 'Vertex AI Flash configurado estáticamente por SDK',
+            metaInfo: 'Verificando con Facebook...'
+        };
+
+        if (process.env.GOOGLE_CLOUD_PROJECT) {
+            diagnosticStatus.vertexEngineStatus = 'ONLINE';
+        } else {
+            diagnosticStatus.vertexEngineStatus = 'OFFLINE';
+            diagnosticStatus.vertexInfo = 'Llaves de Google no encontradas';
+        }
+
+        if (!config?.accessToken || !config?.phoneId) {
+            diagnosticStatus.metaGraphStatus = 'OFFLINE';
+            diagnosticStatus.metaInfo = "Tokens no proporcionados. Ingresa las credenciales.";
+            return res.json(diagnosticStatus);
+        }
+
+        try {
+            await axios.get(`https://graph.facebook.com/v19.0/${config.phoneId}`, {
+                headers: { "Authorization": `Bearer ${config.accessToken}` }
+            });
+            diagnosticStatus.metaGraphStatus = 'ONLINE';
+            diagnosticStatus.metaInfo = "Autenticación correcta con Graph API";
+        } catch (facebookError: any) {
+            diagnosticStatus.metaGraphStatus = 'OFFLINE';
+            diagnosticStatus.metaInfo = facebookError.response?.data?.error?.message || "Token inválido o expiró";
+        }
+
+        res.json(diagnosticStatus);
+
+    } catch (error) {
+        res.status(500).json({ error: "Diagnostic error" });
     }
 });
 
