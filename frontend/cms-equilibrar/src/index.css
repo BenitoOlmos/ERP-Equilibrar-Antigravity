@@ -10,15 +10,17 @@
 
 @layer components {
   .quill-content {
-    @apply break-words whitespace-pre-wrap;
-    word-break: break-word !important;
+    @apply whitespace-pre-wrap;
     overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    word-break: normal !important;
     white-space: pre-wrap !important;
     max-width: 100%;
     overflow-x: auto;
   }
   .quill-content *, .quill-content p {
-    @apply break-words whitespace-pre-wrap;
+    @apply whitespace-pre-wrap;
+    overflow-wrap: break-word !important;
     word-wrap: break-word !important;
     word-break: normal !important;
     max-width: 100%;

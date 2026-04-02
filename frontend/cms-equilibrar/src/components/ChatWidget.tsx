@@ -116,7 +116,7 @@ export default function ChatWidget() {
                                         {!isMe && i === 0 && (
                                             <span className="text-xs font-bold text-slate-500 mb-1 ml-1">{msg.sender?.name || 'Clínica Equilibrar'}</span>
                                         )}
-                                        <div className={`max-w-[85%] px-4 py-2.5 text-sm shadow-sm rounded-2xl ${isMe ? 'bg-[#0097B2] text-white rounded-tr-sm' : 'bg-white border border-slate-100 text-slate-800 rounded-tl-sm'}`}>
+                                        <div className={`max-w-[85%] px-4 py-2.5 text-sm shadow-sm rounded-2xl break-words whitespace-pre-wrap ${isMe ? 'bg-[#0097B2] text-white rounded-tr-sm' : 'bg-white border border-slate-100 text-slate-800 rounded-tl-sm'}`}>
                                             {msg.content}
                                         </div>
                                         <span className="text-[10px] text-slate-400 mt-1 px-1">
