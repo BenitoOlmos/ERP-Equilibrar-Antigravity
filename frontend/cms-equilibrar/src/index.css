@@ -10,8 +10,18 @@
 
 @layer components {
   .quill-content {
-    @apply break-words whitespace-pre-wrap;
-    word-break: break-word;
+    @apply break-all whitespace-pre-wrap;
+    word-break: break-all !important;
+    overflow-wrap: anywhere !important;
+    white-space: pre-wrap !important;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .quill-content *, .quill-content p {
+    @apply break-all whitespace-pre-wrap;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    max-width: 100%;
   }
   .quill-content ul {
     @apply list-disc pl-5 mb-2;

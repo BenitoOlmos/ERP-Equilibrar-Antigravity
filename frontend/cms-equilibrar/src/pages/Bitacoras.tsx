@@ -187,17 +187,22 @@ export default function Bitacoras() {
                       onClick={() => handleSelectPatient(p)}
                       className={`w-full text-left p-4 rounded-2xl flex items-center justify-between transition-all group ${selectedPatient?.id === p.id ? 'bg-[#00A89C] text-white shadow-md' : 'hover:bg-slate-50 text-slate-700'}`}
                    >
-                      <div className="flex items-center gap-3 w-[85%]">
-                         <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border-2 ${selectedPatient?.id === p.id ? 'border-white/20 bg-white/10' : 'border-slate-100 bg-white shadow-sm'}`}>
-                             <UserIcon className="w-5 h-5" />
-                         </div>
-                         <div className="truncate">
-                            <h3 className="font-bold text-sm truncate">{p.name || p.email}</h3>
-                            <p className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${selectedPatient?.id === p.id ? 'text-white/80' : 'text-slate-400'}`}>Paciente Activo</p>
-                         </div>
-                      </div>
-                      <ChevronRight className={`w-4 h-4 transition-transform ${selectedPatient?.id === p.id ? 'translate-x-1 opacity-100' : 'opacity-0 group-hover:opacity-100 -translate-x-2'}`} />
-                   </button>
+                       <div className="flex items-center gap-3 w-[85%] relative">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border-2 ${selectedPatient?.id === p.id ? 'border-white/20 bg-white/10' : 'border-slate-100 bg-white shadow-sm'} relative`}>
+                              <UserIcon className="w-5 h-5" />
+                              {p._count?.bitacoraLogs > 0 && (
+                                  <div className="absolute -top-2 -right-2 min-w-[20px] h-5 px-1 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm border-2 border-white animate-pulse">
+                                      {p._count.bitacoraLogs}
+                                  </div>
+                              )}
+                          </div>
+                          <div className="truncate">
+                             <h3 className="font-bold text-sm truncate">{p.name || p.email}</h3>
+                             <p className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${selectedPatient?.id === p.id ? 'text-white/80' : 'text-slate-400'}`}>Paciente Activo</p>
+                          </div>
+                       </div>
+                       <ChevronRight className={`w-4 h-4 transition-transform ${selectedPatient?.id === p.id ? 'translate-x-1 opacity-100' : 'opacity-0 group-hover:opacity-100 -translate-x-2'}`} />
+                    </button>
                 ))
             )}
          </div>

@@ -7,7 +7,10 @@ const prisma = new PrismaClient();
 
 router.get('/', async (req, res) => {
   const users = await prisma.user.findMany({
-    include: { profile: true },
+    include: { 
+        profile: true,
+        _count: { select: { bitacoraLogs: true } }
+    },
     orderBy: { createdAt: 'desc' }
   });
   res.json(users);
