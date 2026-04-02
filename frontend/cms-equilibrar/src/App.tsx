@@ -7,7 +7,7 @@ import {
   Resumen, Agenda, Servicios, Programas, Tratamientos, 
   Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard, ClientProgress,
   CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat,
-  CuentasCobrar, CuentasPagar, Tesoreria, TrabajadoresPlanta, Honorarios, AgenteVirtual
+  CuentasCobrar, CuentasPagar, Tesoreria, TrabajadoresPlanta, Honorarios, AgenteVirtual, TestIA
 } from './pages';
 import Directorio from './pages/Directorio';
 import { MassMailing } from './pages/MassMailing';
@@ -43,6 +43,7 @@ function App() {
               <Route path="web-agente-virtual" element={<AgenteVirtual />} />
               <Route path="db" element={<DB />} />
               <Route path="ajustes" element={<Ajustes />} />
+              <Route path="test-ia" element={<TestIA />} />
               <Route path="crm" element={<CRM />} />
               <Route path="ventas" element={<Ventas />} />
               <Route path="correos-masivos" element={<MassMailing />} />
