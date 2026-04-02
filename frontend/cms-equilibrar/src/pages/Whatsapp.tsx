@@ -117,7 +117,14 @@ export default function Whatsapp() {
                     {leads.map(lead => (
                         <div 
                             key={lead.id} 
-                            onClick={() => setSelectedLead(lead)}
+                            onClick={() => {
+                                setSelectedLead(lead);
+                                if (lead.unreadCount > 0) {
+                                    axios.put(`/api/whatsapp/leads/${lead.id}/read`).catch(console.error);
+                                    // Limpiamos la burbuja visualmente de inmediato
+                                    setLeads(currentLeads => currentLeads.map(l => l.id === lead.id ? { ...l, unreadCount: 0 } : l));
+                                }
+                            }}
                             className={`p-4 border-b border-slate-100 cursor-pointer flex gap-4 transition-colors ${selectedLead?.id === lead.id ? 'bg-emerald-50 relative' : 'hover:bg-slate-50 bg-white'}`}
                         >
                             {selectedLead?.id === lead.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>}
@@ -136,7 +143,14 @@ export default function Whatsapp() {
                                         {new Date(lead.updatedAt).toLocaleTimeString('es-CL', {hour: '2-digit', minute:'2-digit'})}
                                     </span>
                                 </div>
-                                <p className="text-xs text-slate-500 truncate">{lead.phone}</p>
+                                <div className="flex justify-between items-end">
+                                    <p className="text-xs text-slate-500 truncate">{lead.phone}</p>
+                                    {lead.unreadCount > 0 && (
+                                        <span className="bg-[#25D366] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ml-2 shrink-0 animate-pulse">
+                                            {lead.unreadCount}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ))}

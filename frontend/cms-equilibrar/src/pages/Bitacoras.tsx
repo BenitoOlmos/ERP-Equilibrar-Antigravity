@@ -24,7 +24,19 @@ export default function Bitacoras() {
 
   const [expandedLogs, setExpandedLogs] = useState<Record<string, boolean>>({});
 
-  const toggleLog = (logId: string) => {
+  const toggleLog = async (logId: string) => {
+      const isCurrentlyExpanded = !!expandedLogs[logId];
+      if (!isCurrentlyExpanded) {
+          try {
+              await axios.put(`/api/data/users/${selectedPatient.id}/bitacoras/${logId}/read`);
+              setBitacoras(prev => prev.map(log => log.id === logId ? { ...log, isRead: true } : log));
+              
+              // Opcional: update local count for Sidebar sync si quisieras (el intervalo del sidebar lo arreglará eventualmente)
+          } catch(e) {
+              console.error("Failed to mark read", e);
+          }
+      }
+      
       setExpandedLogs(prev => ({
           ...prev,
           [logId]: !prev[logId]
@@ -312,6 +324,9 @@ export default function Bitacoras() {
                                                 <div className="flex items-center gap-2 text-slate-500 hover:text-[#00A89C] transition-colors">
                                                    <BookOpen className="w-4 h-4" /> 
                                                    <span className="text-xs font-bold uppercase tracking-wider">{new Date(log.timestamp).toLocaleString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>
+                                                   {log.isRead === false && (
+                                                       <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full ml-2 animate-bounce">NUEVO</span>
+                                                   )}
                                                    <ChevronDown className={`w-4 h-4 ml-2 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                                                 </div>
                                                 {!log.response && (

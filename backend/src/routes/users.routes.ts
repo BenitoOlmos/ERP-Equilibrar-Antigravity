@@ -13,6 +13,8 @@ router.get('/', async (req, res) => {
             select: { 
                 bitacoraLogs: {
                     where: {
+                        // @ts-ignore
+                        isRead: false,
                         NOT: {
                             content: { contains: 'Cuestionario de Autoevaluación' }
                         }
@@ -233,8 +235,15 @@ router.post('/:id/bitacora/:weekNumber', async (req, res) => {
 router.get('/:id/bitacoras', async (req, res) => {
    try {
        const { id } = req.params;
+       const { unreadOnly } = req.query;
+       const whereClause: any = { userId: id };
+       
+       if (unreadOnly === 'true') {
+           whereClause.isRead = false;
+       }
+       
        const logs = await prisma.bitacoraLog.findMany({
-          where: { userId: id },
+          where: whereClause,
           orderBy: { timestamp: 'desc' },
           include: { specialist: { select: { id: true, name: true } } }
        });
@@ -243,6 +252,21 @@ router.get('/:id/bitacoras', async (req, res) => {
        console.error('Error fetching all bitacoras:', error);
        res.status(500).json({ error: 'Database error' });
    }
+});
+
+// PUT /api/data/users/:id/bitacoras/:logId/read - Mark log as read
+router.put('/:id/bitacoras/:logId/read', async (req, res) => {
+    try {
+        const { logId } = req.params;
+        const log = await (prisma.bitacoraLog as any).update({
+            where: { id: logId },
+            data: { isRead: true }
+        });
+        res.json(log);
+    } catch (error) {
+        console.error('Error marking bitacora as read:', error);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 
 // PUT /api/data/users/:id/bitacoras/:logId/reply - Add specialist reply

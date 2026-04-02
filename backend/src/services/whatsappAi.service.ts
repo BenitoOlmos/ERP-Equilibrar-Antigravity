@@ -29,6 +29,12 @@ export const processWhatsAppMessage = async (phone: string, messageContent: stri
         }
     });
 
+    // Increment unreadCount
+    await (prisma as any).whatsAppLead.update({
+        where: { id: lead.id },
+        data: { unreadCount: { increment: 1 } }
+    });
+
     // Si la coordinadora manual activó la pausa (humano), no respondemos con IA
     if (lead.status === 'HUMAN') {
         return;

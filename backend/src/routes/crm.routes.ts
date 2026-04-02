@@ -200,6 +200,20 @@ router.put('/diagnostics/:id/status', async (req, res) => {
 });
 
 
+router.put('/diagnostics/:id/read', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const diag = await (prisma as any).diagnosticResult.update({
+            where: { id },
+            data: { isRead: true }
+        });
+        res.json(diag);
+    } catch (error) {
+        console.error('Error marking diagnostic read:', error);
+        res.status(500).json({ message: 'Failed to mark read' });
+    }
+});
+
 router.put('/diagnostics/:id', async (req, res) => {
     try {
         const { id } = req.params;

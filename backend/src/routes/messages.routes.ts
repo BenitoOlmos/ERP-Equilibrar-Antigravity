@@ -62,6 +62,25 @@ router.get('/history/:userId', async (req, res) => {
     }
 });
 
+// PUT /api/data/messages/read
+// Marks all messages received by the user from a specific sender as read
+router.put('/read', async (req, res) => {
+    try {
+        const { receiverId, senderId } = req.body;
+        if (!receiverId || !senderId) return res.status(400).json({ error: 'Missing logic' });
+
+        await prisma.message.updateMany({
+            where: { receiverId, senderId, read: false },
+            data: { read: true }
+        });
+        
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Error marking messages as read:", e);
+        res.status(500).json({ error: "Failed to mark as read" });
+    }
+});
+
 // POST /api/data/messages/send
 router.post('/send', async (req, res) => {
     try {

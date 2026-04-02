@@ -79,6 +79,17 @@ export default function Chat() {
     }
   };
 
+  const markConversationAsRead = async (patientId: string) => {
+      try {
+          await axios.put('/api/data/messages/read', {
+              receiverId: user?.id,
+              senderId: patientId
+          });
+      } catch (e) {
+          console.error("Error marcando como leido", e);
+      }
+  };
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (selectedPatient) {
@@ -95,6 +106,7 @@ export default function Chat() {
     setSelectedPatient(patient);
     setMessages([]);
     loadConversation(patient.id);
+    markConversationAsRead(patient.id);
   };
 
   const scrollToBottom = () => {

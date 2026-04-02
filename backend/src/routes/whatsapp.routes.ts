@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
  * Endpoint GET para la Verificación (Suscripción) obligatoria del Webhook de Meta.
  */
 router.get('/webhook', async (req: Request, res: Response): Promise<any> => {
-    const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+    const config = await (prisma as any).whatsAppConfig.findUnique({ where: { id: 'default' } });
     const META_VERIFY_TOKEN = config?.verifyToken || 'equilibrar_meta_token_secreto_2024';
 
     const mode = req.query['hub.mode'];
@@ -35,7 +35,7 @@ router.post('/webhook', async (req: Request, res: Response): Promise<any> => {
         // Comprobar que sea evento de Meta WhatsApp
         if (body.object === 'whatsapp_business_account') {
 
-            const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+            const config = await (prisma as any).whatsAppConfig.findUnique({ where: { id: 'default' } });
             const META_ACCESS_TOKEN = config?.accessToken;
             const META_PHONE_ID = config?.phoneId;
             
@@ -131,11 +131,23 @@ router.put('/leads/:id/status', async (req: Request, res: Response) => {
     }
 });
 
+router.put('/leads/:id/read', async (req: Request, res: Response) => {
+    try {
+        const lead = await (prisma as any).whatsAppLead.update({
+            where: { id: req.params.id },
+            data: { unreadCount: 0 }
+        });
+        res.json(lead);
+    } catch (error) {
+        res.status(500).json({ error: "Error limpiando la burbuja de notificación" });
+    }
+});
+
 // Envia mensaje manual desde el panel
 router.post('/leads/:id/send', async (req: Request, res: Response) => {
     try {
         const { text } = req.body;
-        const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+        const config = await (prisma as any).whatsAppConfig.findUnique({ where: { id: 'default' } });
         const META_ACCESS_TOKEN = config?.accessToken;
         const META_PHONE_ID = config?.phoneId;
 
@@ -169,9 +181,9 @@ router.post('/leads/:id/send', async (req: Request, res: Response) => {
  */
 router.get('/config', async (req: Request, res: Response) => {
     try {
-        let config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+        let config = await (prisma as any).whatsAppConfig.findUnique({ where: { id: 'default' } });
         if (!config) {
-            config = await prisma.whatsAppConfig.create({ data: { id: 'default' } });
+            config = await (prisma as any).whatsAppConfig.create({ data: { id: 'default' } });
         }
         res.json(config);
     } catch (error) {
@@ -182,7 +194,7 @@ router.get('/config', async (req: Request, res: Response) => {
 router.post('/config', async (req: Request, res: Response) => {
     try {
         const { verifyToken, accessToken, phoneId } = req.body;
-        const config = await prisma.whatsAppConfig.upsert({
+        const config = await (prisma as any).whatsAppConfig.upsert({
             where: { id: 'default' },
             create: { id: 'default', verifyToken, accessToken, phoneId },
             update: { verifyToken, accessToken, phoneId }
@@ -198,7 +210,7 @@ router.post('/config', async (req: Request, res: Response) => {
  */
 router.get('/diagnostics', async (req: Request, res: Response) => {
     try {
-        const config = await prisma.whatsAppConfig.findUnique({ where: { id: 'default' } });
+        const config = await (prisma as any).whatsAppConfig.findUnique({ where: { id: 'default' } });
         
         const diagnosticStatus = {
             webhookActive: true, 

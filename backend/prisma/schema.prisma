@@ -22,10 +22,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Notification Tracking
-  lastViewedRFAIAt      DateTime?
-  lastViewedBitacorasAt DateTime?
-  lastViewedChatAt      DateTime?
+  // Removed mass-view tracking columns in favor of granular isRead flags
 
   profile Profile? // From agenda
 
@@ -490,6 +487,7 @@ model BitacoraLog {
   weekNumber Int
   content    String
   timestamp  DateTime @default(now())
+  isRead     Boolean  @default(false)
 
   // Respuestas Clínicas
   specialistId String?
@@ -517,6 +515,7 @@ model DiagnosticResult {
   userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date           DateTime
+  isRead         Boolean  @default(false)
   af             Int
   am             Int
   ae             Int
@@ -736,6 +735,7 @@ model WhatsAppLead {
   requestedHours  String?
   postSalesNeed   String?
   status          String   @default("BOT") // "BOT" (IA Activa) | "HUMAN" (Coordinadora Manual) | "RESOLVED"
+  unreadCount     Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   

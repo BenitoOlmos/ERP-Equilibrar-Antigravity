@@ -23,38 +23,38 @@ router.get('/:userId', async (req: any, res) => {
         let rfaiCount = 0;
         let bitacoraCount = 0;
         let chatCount = 0;
+        let whatsappCount = 0;
 
         // 1. CHAT COUNT (Bandeja de entrada no leída)
-        // Todos los roles pueden ver sus mensajes no leídos
         chatCount = await prisma.message.count({
             where: {
                 receiverId: userId,
-                read: false,
-                ...(user.lastViewedChatAt ? { createdAt: { gt: user.lastViewedChatAt } } : {})
+                read: false
             }
         });
 
-        // 2. RFAI COUNT
-        // Solo Super Admin, Administrador y Coordinador ven notificaciones globales de RFAI
+        // 2. WHATSAPP COUNT (Cualquier administrativo puede verlo, o podemos limitarlo)
         const adminRoles = ['Super Admin', 'Administrador', 'Coordinador'];
         if (adminRoles.includes(user.role)) {
-            rfaiCount = await prisma.diagnosticResult.count({
-                where: {
-                    ...(user.lastViewedRFAIAt ? { createdAt: { gt: user.lastViewedRFAIAt } } : {})
-                }
+            const leadsObj = await (prisma.whatsAppLead as any).aggregate({
+                _sum: { unreadCount: true }
+            });
+            whatsappCount = leadsObj._sum.unreadCount || 0;
+        }
+
+        // 3. RFAI COUNT
+        if (adminRoles.includes(user.role)) {
+            rfaiCount = await (prisma.diagnosticResult as any).count({
+                where: { isRead: false }
             });
         }
 
-        // 3. BITACORAS COUNT
+        // 4. BITACORAS COUNT
         if (adminRoles.includes(user.role)) {
-            // Administrativos ven TODAS las bitácoras nuevas
-            bitacoraCount = await prisma.bitacoraLog.count({
-                where: {
-                    ...(user.lastViewedBitacorasAt ? { timestamp: { gt: user.lastViewedBitacorasAt } } : {})
-                }
+            bitacoraCount = await (prisma.bitacoraLog as any).count({
+                where: { isRead: false }
             });
         } else if (user.role === 'Especialista') {
-            // Especialistas ven solo las bitácoras de los clientes con los que tienen o han tenido cita
             const clientsQuery = await prisma.appointment.findMany({
                 where: { specialistId: userId },
                 select: { clientId: true },
@@ -63,10 +63,10 @@ router.get('/:userId', async (req: any, res) => {
             const clientIds = clientsQuery.map(c => c.clientId).filter(Boolean) as string[];
 
             if (clientIds.length > 0) {
-                bitacoraCount = await prisma.bitacoraLog.count({
+                bitacoraCount = await (prisma.bitacoraLog as any).count({
                     where: {
                         userId: { in: clientIds },
-                        ...(user.lastViewedBitacorasAt ? { timestamp: { gt: user.lastViewedBitacorasAt } } : {})
+                        isRead: false
                     }
                 });
             }
@@ -75,7 +75,8 @@ router.get('/:userId', async (req: any, res) => {
         res.json({
             rfaiCount,
             bitacoraCount,
-            chatCount
+            chatCount,
+            whatsappCount
         });
     } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -95,28 +96,8 @@ router.post('/:userId/viewed', async (req: any, res) => {
         // section can be 'RFAI', 'BITACORAS', 'CHAT'
         const { section } = req.body; 
         
-        const updateData: any = {};
-        const now = new Date();
-
-        if (section === 'RFAI') updateData.lastViewedRFAIAt = now;
-        if (section === 'BITACORAS') updateData.lastViewedBitacorasAt = now;
-        if (section === 'CHAT') {
-            updateData.lastViewedChatAt = now;
-            // Also explicitly mark direct messages as read
-            await prisma.message.updateMany({
-                where: { receiverId: userId, read: false },
-                data: { read: true }
-            });
-        }
-
-        if (Object.keys(updateData).length > 0) {
-            await prisma.user.update({
-                where: { id: userId },
-                data: updateData
-            });
-        }
-
-        res.json({ success: true });
+        // Deprecated: Granular read flags now handle this on each module
+        res.json({ success: true, message: "Use individual endpoints instead" });
     } catch (error) {
         console.error('Error updating notification viewed status:', error);
         res.status(500).json({ message: 'Internal Server Error' });

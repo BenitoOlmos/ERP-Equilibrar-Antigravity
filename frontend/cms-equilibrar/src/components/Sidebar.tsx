@@ -169,7 +169,7 @@ export default function Sidebar() {
     'Ajustes': false,
   });
 
-  const [notifications, setNotifications] = useState({ rfaiCount: 0, bitacoraCount: 0, chatCount: 0 });
+  const [notifications, setNotifications] = useState({ rfaiCount: 0, bitacoraCount: 0, chatCount: 0, whatsappCount: 0 });
   const location = useLocation();
 
   useEffect(() => {
@@ -189,25 +189,8 @@ export default function Sidebar() {
      return () => clearInterval(interval);
   }, [user]);
 
-  // Handle immediate mark as viewed when entering a route
-  useEffect(() => {
-     if (!user || user.role === 'Cliente') return;
-     const path = location.pathname;
-     
-     let section = '';
-     if (path === '/test-rfai' && notifications.rfaiCount > 0) section = 'RFAI';
-     else if (path === '/bitacoras' && notifications.bitacoraCount > 0) section = 'BITACORAS';
-     else if (path === '/chat' && notifications.chatCount > 0) section = 'CHAT';
-
-     if (section) {
-         axios.post(`/api/notifications/${user.id}/viewed`, { section }).then(() => {
-             // Optimistically clear the local count
-             if (section === 'RFAI') setNotifications(p => ({...p, rfaiCount: 0}));
-             if (section === 'BITACORAS') setNotifications(p => ({...p, bitacoraCount: 0}));
-             if (section === 'CHAT') setNotifications(p => ({...p, chatCount: 0}));
-         }).catch(console.error);
-     }
-  }, [location.pathname, user]);
+  // El borrado automático masivo ha sido eliminado por petición del usuario.
+  // Ahora las burbujas desaparecen granularmente al leer cada ítem.
 
   const toggleGroup = (title: string) => {
     setExpandedGroups(prev => ({

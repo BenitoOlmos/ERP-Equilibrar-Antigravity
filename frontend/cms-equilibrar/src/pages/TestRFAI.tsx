@@ -41,6 +41,15 @@ export function TestRFAI() {
       }
   };
 
+  const markAsRead = async (id: string) => {
+      try {
+          await axios.put(`/api/crm/diagnostics/${id}/read`);
+          setDiagnostics(prev => prev.map(d => d.id === id ? { ...d, isRead: true } : d));
+      } catch (e) {
+          console.error("Error marking logic as read:", e);
+      }
+  };
+
   const handleStatusChange = async (id: string, newStatus: string) => {
       try {
           await axios.put(`/api/crm/diagnostics/${id}/status`, { status: newStatus });
@@ -245,8 +254,13 @@ export function TestRFAI() {
                                 return (
                                 <tr key={diag.id} className="row-hover hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-5">
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-black text-slate-800">{name}</span>
+                                        <div className="flex flex-col relative">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-black text-slate-800">{name}</span>
+                                                {diag.isRead === false && (
+                                                    <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full animate-pulse">NUEVO</span>
+                                                )}
+                                            </div>
                                             <span className="text-[10px] font-medium text-slate-400 mt-0.5">{email} • {phone}</span>
                                             <span className="text-[10px] text-indigo-500 font-bold mt-1 uppercase italic">{dateFormated}</span>
                                         </div>
@@ -292,7 +306,7 @@ export function TestRFAI() {
                                     </td>
                                     <td className="px-6 py-5 text-right">
                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button onClick={() => { setEditingDiag(diag); setEditFormData({af: valAF, am: valAM, ae: valAE, r: valR, ita: valITA, re: diag.re||0, idsE: valIDS}); }} className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all" title="Ver/Editar Detalles">
+                                            <button onClick={() => { markAsRead(diag.id); setEditingDiag(diag); setEditFormData({af: valAF, am: valAM, ae: valAE, r: valR, ita: valITA, re: diag.re||0, idsE: valIDS}); }} className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all" title="Ver/Editar Detalles">
                                                 <Eye className="w-4 h-4" />
                                             </button>
                                             <button onClick={async () => { if(confirm('¿Seguro que deseas eliminar este diagnóstico permanentemente?')){ await axios.delete('/api/crm/diagnostics/' + diag.id); fetchDiagnostics(); } }} className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-rose-500 hover:border-rose-200 shadow-sm transition-all" title="Eliminar">
