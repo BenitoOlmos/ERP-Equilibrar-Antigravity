@@ -800,7 +800,7 @@ export function MassMailing() {
                                     <h3 className="text-lg font-black text-slate-800">{subject}</h3>
                                     <p className="text-xs font-semibold text-slate-400 mt-1">De: Equipo Equilibrar</p>
                                 </div>
-                                <div className="p-8 flex-1 overflow-y-auto max-h-[400px] bg-white custom-scrollbar ql-editor" dangerouslySetInnerHTML={{ __html: htmlContent.replace(/\{\{nombre\}\}/gi, 'Francisca (Paciente de Prueba)') }}>
+                                <div className="p-8 flex-1 overflow-y-auto max-h-[400px] bg-white custom-scrollbar ql-editor" dangerouslySetInnerHTML={{ __html: htmlContent.replace(/\{\{nombre\}\}/gi, 'Francisca (Paciente de Prueba)').replace(/&nbsp;/g, ' ') }}>
                                 </div>
                             </div>
 

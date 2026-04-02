@@ -324,7 +324,7 @@ export default function Bitacoras() {
                                             {isExpanded && (
                                                 <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                                                     {/* Contenido del paciente */}
-                                                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 text-sm leading-relaxed mb-6 font-medium quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
+                                                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-slate-700 text-sm leading-relaxed mb-6 font-medium quill-content" dangerouslySetInnerHTML={{ __html: (log.content || '').replace(/&nbsp;/g, ' ') }}></div>
 
                                                     {/* Respuesta u Opción a Responder */}
                                                     {log.response ? (
@@ -336,7 +336,7 @@ export default function Bitacoras() {
                                                                 </div>
                                                                 <h5 className="font-bold text-indigo-900 text-sm">{log.specialist?.name || 'Tú'} <span className="text-indigo-400 font-normal mt-0.5 inline-block">respondió el {new Date(log.respondedAt).toLocaleDateString('es-CL')}</span></h5>
                                                             </div>
-                                                            <div className="text-sm text-indigo-800 pl-8 opacity-90 quill-content" dangerouslySetInnerHTML={{ __html: log.response }}></div>
+                                                            <div className="text-sm text-indigo-800 pl-8 opacity-90 quill-content" dangerouslySetInnerHTML={{ __html: (log.response || '').replace(/&nbsp;/g, ' ') }}></div>
                                                         </div>
                                                     ) : (
                                                         <div className="ml-4 md:ml-8 bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden focus-within:border-[#00A89C] focus-within:ring-2 focus-within:ring-[#00A89C]/20 transition-all flex flex-col">

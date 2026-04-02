@@ -379,7 +379,7 @@ export default function Pacientes() {
                                     ))}
                                  </div>
                                  {parseQuestionnaireHtml(weekMetrics.questionnaireHtml).length === 0 && (
-                                     <div className="quill-content text-base bg-emerald-50/30 p-8 rounded-2xl border border-emerald-100 shadow-inner" dangerouslySetInnerHTML={{ __html: weekMetrics.questionnaireHtml }}></div>
+                                     <div className="quill-content text-base bg-emerald-50/30 p-8 rounded-2xl border border-emerald-100 shadow-inner" dangerouslySetInnerHTML={{ __html: (weekMetrics.questionnaireHtml || '').replace(/&nbsp;/g, ' ') }}></div>
                                  )}
                               </div>
                            ) : (

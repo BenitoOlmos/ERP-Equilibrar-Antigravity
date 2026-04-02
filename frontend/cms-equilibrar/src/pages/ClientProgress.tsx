@@ -568,7 +568,7 @@ export default function ClientProgress() {
                                                                                                         <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Tu Registro:</span>
                                                                                                         <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative mr-6 md:mr-10">
                                                                                                           <div className="absolute top-4 -left-[5px] w-2 h-2 bg-white border-l border-b border-slate-200 rotate-45 dark:bg-slate-800 dark:border-slate-700"></div>
-                                                                                                          <div className="text-sm text-slate-700 dark:text-slate-300 quill-content" dangerouslySetInnerHTML={{ __html: log.content }}></div>
+                                                                                                          <div className="text-sm text-slate-700 dark:text-slate-300 quill-content" dangerouslySetInnerHTML={{ __html: (log.content || '').replace(/&nbsp;/g, ' ') }}></div>
                                                                                                         </div>
                                                                                                      </div>
                                                                                                       
@@ -580,7 +580,7 @@ export default function ClientProgress() {
                                                                                                          </div>
                                                                                                          <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800 shadow-sm relative ml-6 md:ml-10 w-full">
                                                                                                            <div className="absolute top-4 -right-[5px] w-2 h-2 bg-indigo-50 border-r border-t border-indigo-100 rotate-45 dark:bg-indigo-900/20 dark:border-indigo-800"></div>
-                                                                                                           <div className="text-sm text-indigo-900 dark:text-indigo-200 quill-content opacity-95" dangerouslySetInnerHTML={{ __html: log.response }}></div>
+                                                                                                           <div className="text-sm text-indigo-900 dark:text-indigo-200 quill-content opacity-95" dangerouslySetInnerHTML={{ __html: (log.response || '').replace(/&nbsp;/g, ' ') }}></div>
                                                                                                            <div className="text-[10px] text-indigo-400/80 mt-3 pt-3 border-t border-indigo-100/50 dark:border-indigo-800/50 text-right font-medium">
                                                                                                              {log.specialist?.name || 'Especialista Clínico'} • {new Date(log.respondedAt).toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                                                                                                            </div>
