@@ -386,27 +386,36 @@ export default function ClientDashboard() {
                 <article className="portal-card portal-pro-card">
                   <div className="portal-pro-photo portal-photo-1"></div>
                   <div className="portal-pro-body">
-                    <div className="portal-pro-role">Neurociencia Clínica</div>
-                    <h3>Carlos Carrasco</h3>
-                    <p>Patrones, modulación y comprensión técnica arquitectónica.</p>
+                    <div className="portal-pro-role">Psicología Clínica</div>
+                    <h3>Claudio Reyes</h3>
+                    <p>Director Ejecutivo. Lidera el desarrollo clínico del modelo RFAI.</p>
                   </div>
                 </article>
 
                 <article className="portal-card portal-pro-card">
                   <div className="portal-pro-photo portal-photo-2"></div>
                   <div className="portal-pro-body">
-                    <div className="portal-pro-role">Psicología</div>
-                    <h3>Claudio Reyes</h3>
-                    <p>Diseño terapéutico, acompañamiento y base teórica Equilibrar.</p>
+                    <div className="portal-pro-role">Neurociencia</div>
+                    <h3>Carlos Carrasco</h3>
+                    <p>Director de Investigación. Aporta una mirada científica al desarrollo conceptual clínico.</p>
                   </div>
                 </article>
 
                 <article className="portal-card portal-pro-card">
                   <div className="portal-pro-photo portal-photo-3"></div>
                   <div className="portal-pro-body">
-                    <div className="portal-pro-role">Nutrición Ortomolecular</div>
+                    <div className="portal-pro-role">Terapia Somática</div>
                     <h3>Valentín Keller</h3>
-                    <p>Apoyo somático preventivo y regulación sistemática de las bases elementales del cuerpo.</p>
+                    <p>Director del área somática. Integra la dimensión corporal centrada en regulación.</p>
+                  </div>
+                </article>
+                
+                <article className="portal-card portal-pro-card">
+                  <div className="portal-pro-photo portal-photo-4"></div>
+                  <div className="portal-pro-body">
+                    <div className="portal-pro-role">Psiquiatría</div>
+                    <h3>Alan Lama</h3>
+                    <p>Asesor médico. Apoya la comprensión integral de procesos de salud mental y evaluación.</p>
                   </div>
                 </article>
               </div>
