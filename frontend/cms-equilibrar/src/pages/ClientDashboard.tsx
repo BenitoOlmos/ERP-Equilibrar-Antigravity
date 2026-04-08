@@ -256,10 +256,20 @@ export default function ClientDashboard() {
                    <div className="h-full flex flex-col justify-between">
                      <div>
                        <div className="small">Esta semana</div>
-                       <h2>Nuevo contenido en Spotify</h2>
-                       <p>Escucha las regulaciones express de nuestro equipo clínico.</p>
+                       <h2 className="mb-2">Nuevo contenido en Spotify</h2>
+                       <p className="mb-4">Escucha las regulaciones express de nuestro equipo clínico.</p>
                      </div>
-                     <div className="portal-editorial-art"></div>
+                     <div className="portal-editorial-art bg-black">
+                        <iframe 
+                            src="https://open.spotify.com/embed/episode/0k4MQJK6z1YsGpZXyJAA3C?utm_source=generator&theme=0" 
+                            className="w-full h-full absolute inset-0 rounded-[20px]" 
+                            frameBorder="0" 
+                            allowFullScreen 
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                            loading="lazy"
+                            title="Spotify Podcast Equilibrar"
+                        ></iframe>
+                     </div>
                    </div>
                 )}
               </aside>
