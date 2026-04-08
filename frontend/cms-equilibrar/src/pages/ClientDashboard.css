@@ -92,6 +92,7 @@
 .portal-btn{
   display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;
   border-radius:16px;font-size:13px;font-weight:800;white-space:nowrap;transition:transform .18s ease, box-shadow .18s ease; cursor: pointer;
+  border: none; outline: none; font-family: inherit; text-decoration: none; line-height: 1;
 }
 .portal-btn:hover{transform:translateY(-1px)}
 .portal-btn-primary{background:var(--primary);color:#fff;box-shadow:0 12px 24px rgba(83,195,176,.22)}
@@ -249,7 +250,7 @@
   .portal-discover-grid{grid-template-columns:repeat(2,1fr)}
   .portal-section-head{grid-template-columns:1fr auto;align-items:end}
   .portal-service-footer{grid-template-columns:1fr auto;align-items:center}
-  .portal-quick-btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:14px;background:var(--primary);color:#fff;font-size:13px;font-weight:800;box-shadow:0 10px 24px rgba(83,195,176,.22)}
+  .portal-quick-btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:14px;background:var(--primary);color:#fff;font-size:13px;font-weight:800;box-shadow:0 10px 24px rgba(83,195,176,.22); border: none; text-decoration: none;}
   .portal-user-meta{display:block;text-align:right;line-height:1.1}
   .portal-user-meta strong{display:block;font-size:13px;font-weight:800;color:var(--navy)}
   .portal-user-meta span{display:block;margin-top:4px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary-dark);font-weight:800}
@@ -289,11 +290,11 @@
   .portal-hero-editorial p{font-size:13px;max-width:30ch}
   .portal-editorial-art{height:220px}
 
-  .portal-services-scroll,.portal-discover-scroll,.portal-pros-scroll{display:grid;grid-auto-flow:unset;overflow:visible;scroll-snap-type:none}
-  .portal-services-scroll{grid-template-columns:repeat(3,1fr)}
-  .portal-duo-grid{grid-template-columns:.92fr 1.08fr;gap:18px}
-  .portal-discover-grid{grid-template-columns:repeat(4,1fr)}
-  .portal-pros-scroll{grid-template-columns:repeat(3,1fr)}
+  .portal-services-scroll,.portal-discover-scroll,.portal-pros-scroll{display:grid;grid-auto-flow:unset;overflow:visible;scroll-snap-type:none; gap: 18px;}
+  .portal-services-scroll{grid-template-columns:repeat(auto-fit, minmax(280px, 1fr))}
+  .portal-duo-grid{grid-template-columns:.92fr 1.08fr;gap:24px}
+  .portal-discover-grid{grid-template-columns:repeat(auto-fit, minmax(180px, 1fr))}
+  .portal-pros-scroll{grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
   .portal-pro-photo{height:330px}
   .portal-discover-card p,.portal-service-card p,.portal-pro-body p{max-width:none}
 }
