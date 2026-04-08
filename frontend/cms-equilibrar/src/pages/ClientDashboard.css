@@ -293,7 +293,7 @@
   .portal-services-scroll,.portal-discover-scroll,.portal-pros-scroll{display:grid;grid-auto-flow:unset;overflow:visible;scroll-snap-type:none; gap: 18px;}
   .portal-services-scroll{grid-template-columns:repeat(auto-fit, minmax(280px, 1fr))}
   .portal-duo-grid{grid-template-columns:.92fr 1.08fr;gap:24px}
-  .portal-discover-grid{grid-template-columns:repeat(auto-fit, minmax(180px, 1fr))}
+  .portal-discover-scroll{grid-template-columns:repeat(auto-fit, minmax(200px, 1fr))}
   .portal-pros-scroll{grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
   .portal-pro-photo{height:330px}
   .portal-discover-card p,.portal-service-card p,.portal-pro-body p{max-width:none}
