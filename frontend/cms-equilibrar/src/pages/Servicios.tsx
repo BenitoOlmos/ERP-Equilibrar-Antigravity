@@ -25,7 +25,7 @@ export function Servicios() {
        ]);
        setServices(srvRes.data);
        setBranches(branchRes.data);
-       setSpecialists(usersRes.data.filter((u: any) => u.role === 'SPECIALIST'));
+       setSpecialists(usersRes.data.filter((u: any) => u.role && ['SPECIALIST', 'ADMIN'].includes(u.role.toUpperCase())));
     } catch(err) {
        console.error(err);
     } finally {
