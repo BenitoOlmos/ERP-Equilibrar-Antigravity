@@ -187,9 +187,16 @@ router.get('/:id/programs', async (req, res) => {
         include: { service: true }
     });
 
+    // Calculate actual progressive week based on earliest payment
+    const earliestPayment = payments.length > 0 ? payments[0].createdAt : user.createdAt;
+    const diffDays = Math.floor((new Date().getTime() - new Date(earliestPayment).getTime()) / (1000 * 60 * 60 * 24));
+    const computedWeek = Math.max(1, Math.floor(diffDays / 7) + 1);
+
     res.json({
         programs: matchedPrograms,
-        currentWeek: user.currentWeek || 1,
+        currentWeek: user.currentWeek || 0, // 0 usually means Auto
+        computedWeek,
+        programStartDate: earliestPayment,
         nextAppointments
     });
   } catch (error) {

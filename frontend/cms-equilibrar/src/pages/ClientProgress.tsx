@@ -252,8 +252,9 @@ export default function ClientProgress() {
             const matched = pRes.data.programs.find((p: any) => p.id === id);
             if (matched) {
                setProgram(matched);
-               setCurrentWeek(pRes.data.currentWeek || 1);
-               setOpenWeek(pRes.data.currentWeek || 1);
+               const actualWeek = pRes.data.currentWeek === 0 ? pRes.data.computedWeek : pRes.data.currentWeek || 1;
+               setCurrentWeek(actualWeek);
+               setOpenWeek(actualWeek);
                
                // Next Appointment related to user
                if (pRes.data.nextAppointments?.length > 0) {

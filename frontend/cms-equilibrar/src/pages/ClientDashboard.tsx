@@ -77,7 +77,7 @@ export default function ClientDashboard() {
                    const pRes = await axios.get(`/api/data/users/${user.id}/programs`);
                    if (pRes.data && pRes.data.programs?.length > 0) {
                        setActivePrograms(pRes.data.programs);
-                       setCurrentWeek(pRes.data.currentWeek);
+                       setCurrentWeek(pRes.data.currentWeek === 0 ? pRes.data.computedWeek : pRes.data.currentWeek);
                    }
                } catch (ex) {
                    console.error('Programs fetching failed quietly', ex);

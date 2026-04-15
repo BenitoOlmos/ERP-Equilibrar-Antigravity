@@ -99,8 +99,11 @@ export default function Pacientes() {
            const isClient = ['CLIENT', 'Cliente', 'USER', 'CLIENTE'].includes(u.role);
            const hasPayment = validPaymentUserIds.has(u.id);
            const isAssigned = isRestrictedRole ? specialistClientIds.has(u.id) : true;
-           
            return isClient && hasPayment && isAssigned;
+        }).map((u: any) => {
+           const userPayments = payments.filter((p: any) => p.userId === u.id && p.status === 'COMPLETED' && p.concept && validConcepts.includes(p.concept));
+           userPayments.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+           return { ...u, programStartDate: userPayments.length > 0 ? userPayments[0].createdAt : u.createdAt };
         });
         
         setPatients(clientUsers);
@@ -125,7 +128,7 @@ export default function Pacientes() {
   const handleUpdateWeek = async (weekNum: number) => {
      if (!selectedPatient) return;
      try {
-         const newWeek = Math.max(1, weekNum);
+         const newWeek = Math.max(0, weekNum); // 0 is Auto Mode
          await axios.put(`/api/data/users/${selectedPatient.id}/week`, { currentWeek: newWeek });
          
          const updated = { ...selectedPatient, currentWeek: newWeek };
@@ -261,24 +264,78 @@ export default function Pacientes() {
                      </div>
                      
                      {selectedWeek && (
-                       <div className="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 mt-2">
-                          <div className="flex items-center gap-2">
-                             {selectedWeek > (selectedPatient.currentWeek || 1) ? (
-                                <span className="flex items-center gap-1.5 text-xs font-bold text-slate-500"><div className="w-2 h-2 rounded-full bg-slate-300"></div> Bloqueada para el paciente</span>
-                             ) : (
-                                <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Habilitada (Actualmente en Sem {(selectedPatient.currentWeek || 1)})</span>
-                             )}
-                          </div>
-                          
-                          {selectedWeek > (selectedPatient.currentWeek || 1) ? (
-                              <button onClick={() => handleUpdateWeek(selectedWeek)} className="text-[10px] font-black uppercase tracking-wider bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-1.5 rounded-lg transition-colors border border-emerald-200 flex items-center gap-1">
-                                 Habilitar Semana
-                              </button>
-                          ) : (
-                              <button onClick={() => handleUpdateWeek(selectedWeek - 1)} className="text-[10px] font-black uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg transition-colors border border-rose-200 flex items-center gap-1">
-                                 Bloquear Semana
-                              </button>
-                          )}
+                       <div className="flex flex-col gap-2">
+                         <div className="flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 mt-2">
+                            <div className="flex items-center gap-2">
+                               {(() => {
+                                  // Compute dynamic actual week if Auto Mode (0)
+                                  let actualCurrent = selectedPatient.currentWeek;
+                                  if (actualCurrent === 0) {
+                                      const start = new Date(selectedPatient.programStartDate);
+                                      const diffDays = Math.floor((new Date().getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+                                      actualCurrent = Math.max(1, Math.floor(diffDays / 7) + 1);
+                                  }
+                                  
+                                  if (selectedWeek > (actualCurrent || 1)) {
+                                      return <span className="flex items-center gap-1.5 text-xs font-bold text-slate-500"><div className="w-2 h-2 rounded-full bg-slate-300"></div> Bloqueada para el paciente {selectedPatient.currentWeek === 0 ? '(Auto Mode)' : ''}</span>;
+                                  } else {
+                                      return <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Habilitada (Actualmente en Sem {(actualCurrent || 1)})</span>;
+                                  }
+                               })()}
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                                {selectedPatient.currentWeek !== 0 ? (
+                                    <button onClick={() => handleUpdateWeek(0)} className="text-[10px] font-black uppercase tracking-wider bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-lg transition-colors border border-indigo-200 flex items-center gap-1">
+                                       Activar Auto Pase Semanal
+                                    </button>
+                                ) : (
+                                    <button onClick={() => {
+                                        const start = new Date(selectedPatient.programStartDate);
+                                        const diffDays = Math.floor((new Date().getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+                                        handleUpdateWeek(Math.max(1, Math.floor(diffDays / 7) + 1));
+                                    }} className="text-[10px] font-black uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg transition-colors border border-slate-200 flex items-center gap-1">
+                                       Desactivar Auto Pase
+                                    </button>
+                                )}
+                                
+                                {(() => {
+                                    let actualCurrent = selectedPatient.currentWeek;
+                                    if (actualCurrent === 0) {
+                                        const start = new Date(selectedPatient.programStartDate);
+                                        const diffDays = Math.floor((new Date().getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+                                        actualCurrent = Math.max(1, Math.floor(diffDays / 7) + 1);
+                                    }
+                                    
+                                    if (selectedWeek > (actualCurrent || 1)) {
+                                       return (
+                                          <button onClick={() => handleUpdateWeek(selectedWeek)} className="text-[10px] font-black uppercase tracking-wider bg-emerald-50 hover:bg-emerald-100 text-emerald-600 px-3 py-1.5 rounded-lg transition-colors border border-emerald-200 flex items-center gap-1">
+                                             Habilitar Semana
+                                          </button>
+                                       );
+                                    } else {
+                                       return (
+                                          <button onClick={() => handleUpdateWeek(selectedWeek - 1)} className="text-[10px] font-black uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg transition-colors border border-rose-200 flex items-center gap-1">
+                                             Bloquear Semana
+                                          </button>
+                                       );
+                                    }
+                                })()}
+                            </div>
+                         </div>
+                         
+                         <div className="px-4 text-xs font-medium text-slate-500 bg-slate-100 rounded-lg py-2 border border-slate-200 inline-block w-fit">
+                            {(() => {
+                                const startDate = new Date(selectedPatient.programStartDate);
+                                const weekStart = new Date(startDate.getTime() + (selectedWeek - 1) * 7 * 24 * 60 * 60 * 1000);
+                                const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000); // 7 days inclusive duration (e.g. Mon-Sun)
+                                return (
+                                    <>
+                                        <span className="font-bold text-slate-700">Rango de fechas de esta semana:</span> {weekStart.toLocaleDateString()} — {weekEnd.toLocaleDateString()}
+                                    </>
+                                );
+                            })()}
+                         </div>
                        </div>
                      )}
                    </div>
