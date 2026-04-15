@@ -52,7 +52,10 @@ router.get('/:userId', async (req: any, res) => {
         // 4. BITACORAS COUNT
         if (adminRoles.includes(user.role)) {
             bitacoraCount = await (prisma.bitacoraLog as any).count({
-                where: { isRead: false }
+                where: { 
+                    isRead: false,
+                    NOT: { content: { contains: 'Cuestionario de Autoevaluación' } }
+                }
             });
         } else if (user.role === 'Especialista') {
             const clientsQuery = await prisma.appointment.findMany({
@@ -66,7 +69,8 @@ router.get('/:userId', async (req: any, res) => {
                 bitacoraCount = await (prisma.bitacoraLog as any).count({
                     where: {
                         userId: { in: clientIds },
-                        isRead: false
+                        isRead: false,
+                        NOT: { content: { contains: 'Cuestionario de Autoevaluación' } }
                     }
                 });
             }
