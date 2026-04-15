@@ -15,7 +15,7 @@ router.get('/:userId', async (req: any, res) => {
 
         const user = await prisma.user.findUnique({
             where: { id: userId },
-            select: { role: true, lastViewedRFAIAt: true, lastViewedBitacorasAt: true, lastViewedChatAt: true }
+            select: { role: true }
         });
 
         if (!user) return res.status(404).json({ message: 'User not found' });
