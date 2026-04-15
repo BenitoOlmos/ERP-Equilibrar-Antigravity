@@ -206,7 +206,7 @@ export default function Sidebar() {
       if (user.role === 'Administrador') return !['/ajustes', '/db'].includes(item.path || '');
       if (user.role === 'Coordinador') return [
         '/',
-        '/agenda', '/directorio', '/fichas-clinicas', '/crm', 
+        '/agenda', '/directorio', '/fichas-clinicas', '/crm', '/pacientes',
         '/servicios', '/programas', '/tratamientos', '/cursos', 
         '/productos', '/bodega',
         '/ventas', '/correos-masivos', '/pagos', '/cuentas-cobrar', '/facturacion', 
