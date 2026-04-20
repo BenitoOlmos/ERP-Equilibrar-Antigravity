@@ -13,6 +13,7 @@ import ResultRFAI from './pages/ResultRFAI';
 import AudioReprogramacion from './pages/AudioReprogramacion';
 import AudioReactividad from './pages/AudioReactividad';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
+import TeamMemberProfile from './pages/TeamMemberProfile';
 
 // ScrollToTop component to handle scroll reset on route change
 const ScrollToTop = () => {
@@ -123,6 +124,15 @@ const App: React.FC = () => {
           element={
             <Layout>
               <AudioReactividad />
+            </Layout>
+          }
+        />
+        {/* TEAM MEMBERS */}
+        <Route
+          path="/equipo/:slug"
+          element={
+            <Layout>
+              <TeamMemberProfile />
             </Layout>
           }
         />

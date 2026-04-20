@@ -228,7 +228,8 @@ const Home: React.FC = () => {
                     display: flex; align-items: center; justify-content: center;
                     overflow: hidden;
                 }
-                .px-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transform: scale(1.05); animation: kenburns 25s infinite alternate ease-in-out; }
+                .px-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+                .px-hero-video video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); animation: kenburns 25s infinite alternate ease-in-out; }
                 .px-hero-bg {
                     position: absolute; inset: 0; z-index: -1;
                     background: linear-gradient(145deg, rgba(10,28,26,0.95) 0%, rgba(10,28,26,0.7) 40%, rgba(0,168,156,0.2) 100%);
@@ -303,10 +304,9 @@ const Home: React.FC = () => {
                     box-shadow: var(--shadow-sm); transition: all 0.5s; border: 1px solid var(--border-thin);
                 }
                 .px-team-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); }
-                .px-team-photo-wrap { aspect-ratio: 4/5; overflow: hidden; }
-                .px-team-photo { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.8s; }
+                .px-team-photo { width: 100%; aspect-ratio: 4/5; background-size: cover; background-position: center; transition: transform 0.8s; }
                 .px-team-card:hover .px-team-photo { transform: scale(1.08); }
-                .px-team-copy { padding: 24px; }
+                .px-team-copy { padding: 24px; display: flex; flex-direction: column; flex-grow: 1; }
                 .px-team-role { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brand-accent); margin-bottom: 8px; }
                 .px-team-copy h3 { font-size: 20px; margin-bottom: 12px; }
                 .px-team-copy p { font-size: 14px; color: var(--text-muted); margin: 0;}
@@ -511,58 +511,53 @@ const Home: React.FC = () => {
                         </div>
 
                         <div className="px-team-grid">
-                            <article className="px-team-card px-reveal">
-                                <div className="px-team-photo-wrap">
-                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5750.jpg" alt="Claudio Reyes" />
-                                </div>
+                            <article className="px-team-card px-reveal flex flex-col">
+                                <div className="px-team-photo" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5750.jpg')" }}></div>
                                 <div className="px-team-copy">
                                     <div className="px-team-role">Psicología clínica</div>
                                     <h3>Claudio Reyes</h3>
-                                    <p>Evaluación clínica y definición de estrategia terapéutica.</p>
+                                    <p className="mb-4">Evaluación clínica, definición de estrategia terapéutica y conducción del sistema clínico del centro.</p>
+                                    <Link className="px-btn px-btn-secondary mt-auto" to="/equipo/claudio-reyes" style={{ height: '40px', fontSize: '13px', width: '100%' }}>Saber más</Link>
                                 </div>
                             </article>
 
-                            <article className="px-team-card px-reveal px-delay-100">
-                                <div className="px-team-photo-wrap">
-                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5728.jpg" alt="Carlos Carrasco" />
-                                </div>
+                            <article className="px-team-card px-reveal px-delay-100 flex flex-col">
+                                <div className="px-team-photo" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5728.jpg')" }}></div>
                                 <div className="px-team-copy">
                                     <div className="px-team-role">Neurociencia</div>
                                     <h3>Carlos Carrasco</h3>
-                                    <p>Aplicación de neurociencia al bienestar y regulación.</p>
+                                    <p className="mb-4">Aplicación de neurociencia al bienestar, regulación emocional y cambio conductual.</p>
+                                    <Link className="px-btn px-btn-secondary mt-auto" to="/equipo/carlos-carrasco" style={{ height: '40px', fontSize: '13px', width: '100%' }}>Saber más</Link>
                                 </div>
                             </article>
 
-                            <article className="px-team-card px-reveal px-delay-200">
-                                <div className="px-team-photo-wrap">
-                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5664.jpg" alt="Valentín Keller" />
-                                </div>
+                            <article className="px-team-card px-reveal px-delay-200 flex flex-col">
+                                <div className="px-team-photo" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5664.jpg')" }}></div>
                                 <div className="px-team-copy">
-                                    <div className="px-team-role">Trabajo Corporal</div>
+                                    <div className="px-team-role">Trabajo corporal</div>
                                     <h3>Valentín Keller</h3>
-                                    <p>Intervención somática y regulación fisiológica aplicada.</p>
+                                    <p className="mb-4">Intervención corporal, trabajo somático y regulación fisiológica aplicada al proceso terapéutico.</p>
+                                    <Link className="px-btn px-btn-secondary mt-auto" to="/equipo/valentin-keller" style={{ height: '40px', fontSize: '13px', width: '100%' }}>Saber más</Link>
                                 </div>
                             </article>
 
-                            <article className="px-team-card px-reveal px-delay-300">
-                                <div className="px-team-photo-wrap">
-                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/alan-v2.png" alt="Alan Lama" />
-                                </div>
+                            <article className="px-team-card px-reveal px-delay-300 flex flex-col">
+                                <div className="px-team-photo" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/alan-v2.png')", backgroundPosition: "center top" }}></div>
                                 <div className="px-team-copy">
                                     <div className="px-team-role">Psiquiatría</div>
                                     <h3>Alan Lama</h3>
-                                    <p>Evaluación psiquiátrica y apoyo médico integrado.</p>
+                                    <p className="mb-4">Evaluación psiquiátrica y apoyo médico integrados al criterio clínico general del centro.</p>
+                                    <Link className="px-btn px-btn-secondary mt-auto" to="/equipo/alan-lama" style={{ height: '40px', fontSize: '13px', width: '100%' }}>Saber más</Link>
                                 </div>
                             </article>
 
-                            <article className="px-team-card px-reveal px-delay-100">
-                                <div className="px-team-photo-wrap">
-                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/Captura-de-Pantalla-2026-04-19-a-las-08.15.09.png" alt="Daniela Baeza" />
-                                </div>
+                            <article className="px-team-card px-reveal px-delay-100 flex flex-col">
+                                <div className="px-team-photo" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/Captura-de-Pantalla-2026-04-19-a-las-08.15.09.png')", backgroundPosition: "center top" }}></div>
                                 <div className="px-team-copy">
-                                    <div className="px-team-role">Análisis Sistémico</div>
+                                    <div className="px-team-role">Análisis sistémico</div>
                                     <h3>Daniela Baeza</h3>
-                                    <p>Lectura de patrones relacionales y reorganización de dinámicas.</p>
+                                    <p className="mb-4">Lectura de patrones relacionales profundos y reorganización de dinámicas que sostienen el malestar.</p>
+                                    <Link className="px-btn px-btn-secondary mt-auto" to="/equipo/daniela-baeza" style={{ height: '40px', fontSize: '13px', width: '100%' }}>Saber más</Link>
                                 </div>
                             </article>
                         </div>
