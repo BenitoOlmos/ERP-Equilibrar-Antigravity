@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import videoBg from '../assets/videos/video-home-equilibrar.mp4';
 
 const Home: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -420,7 +421,7 @@ const Home: React.FC = () => {
                 <section className="px-hero">
                     <div className="px-hero-video" style={{ pointerEvents: 'none' }}>
                         <video autoPlay={true} muted={true} loop={true} playsInline={true}>
-                            <source src="https://www.origamis.cl/wp-content/uploads/2026/04/video-home-equilibrar.mp4" type="video/mp4" />
+                            <source src={videoBg} type="video/mp4" />
                         </video>
                     </div>
                     <div className="px-hero-bg"></div>
