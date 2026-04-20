@@ -418,8 +418,8 @@ const Home: React.FC = () => {
             <main id="top">
                 {/* HERO SECTION */}
                 <section className="px-hero">
-                    <div className="px-hero-video">
-                        <video autoPlay muted loop playsInline>
+                    <div className="px-hero-video" style={{ pointerEvents: 'none' }}>
+                        <video autoPlay={true} muted={true} loop={true} playsInline={true}>
                             <source src="https://www.origamis.cl/wp-content/uploads/2026/04/video-home-equilibrar.mp4" type="video/mp4" />
                         </video>
                     </div>
