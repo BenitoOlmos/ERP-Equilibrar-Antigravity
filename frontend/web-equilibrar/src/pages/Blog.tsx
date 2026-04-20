@@ -70,66 +70,74 @@ const Blog: React.FC = () => {
                 <section className="bl-section pt-0">
                     <div className="bl-container">
                         <div className="bl-posts">
-                            {/* POST 1 */}
                             <article className="bl-post">
                                 <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/10.png')" }}></div>
                                 <div className="bl-post-body">
-                                    <span className="bl-tag">Regulación emocional</span>
+                                    <span className="bl-tag">Claudio Reyes</span>
                                     <h2>Cuando el problema no es lo que sientes</h2>
                                     <p>
                                         Muchas veces intentamos cambiar emociones sin comprender qué las está generando. 
                                         El problema no es sentir, es cómo está organizado el sistema que produce eso.
                                     </p>
                                     <div style={{ marginTop: '14px' }}>
-                                        <Link className="bl-btn bl-btn-primary" to="#">Leer artículo</Link>
+                                        <Link className="bl-btn bl-btn-primary" to="/blog/problema-no-es-sientas">Leer artículo</Link>
                                     </div>
                                 </div>
                             </article>
 
-                            {/* POST 2 */}
                             <article className="bl-post">
-                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/6.png')" }}></div>
+                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/valentin-taichi.png')" }}></div>
                                 <div className="bl-post-body">
-                                    <span className="bl-tag">Ansiedad</span>
-                                    <h2>Por qué controlar la ansiedad no funciona</h2>
+                                    <span className="bl-tag">Valentín Keller</span>
+                                    <h2>El cuerpo vuelve a vivir las cosas como reales</h2>
                                     <p>
-                                        Intentar controlar la ansiedad suele intensificarla. 
-                                        Lo relevante es comprender qué función cumple y cómo intervenir el sistema que la sostiene.
+                                        Hay vivencias que no se guardan únicamente como recuerdos, sino como patrones corporales. Cuando el cuerpo no baja la alerta, no basta con entender.
                                     </p>
                                     <div style={{ marginTop: '14px' }}>
-                                        <Link className="bl-btn bl-btn-primary" to="#">Leer artículo</Link>
+                                        <Link className="bl-btn bl-btn-primary" to="/blog/el-cuerpo-vuelve">Leer artículo</Link>
                                     </div>
                                 </div>
                             </article>
 
-                            {/* POST 3 */}
                             <article className="bl-post">
                                 <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/mujer-5.png')" }}></div>
                                 <div className="bl-post-body">
-                                    <span className="bl-tag">Sistema clínico</span>
-                                    <h2>Por qué evaluar antes de intervenir</h2>
+                                    <span className="bl-tag">Daniela Baeza</span>
+                                    <h2>Cuando siempre te pasa lo mismo</h2>
                                     <p>
-                                        Intervenir sin evaluación genera ensayo y error. 
-                                        Una buena lectura del caso permite definir mejor el primer paso terapéutico.
+                                        Los patrones que se repiten no son casualidad. 
+                                        Entender su lógica permite intervenir en un nivel relacional más profundo.
                                     </p>
                                     <div style={{ marginTop: '14px' }}>
-                                        <Link className="bl-btn bl-btn-primary" to="#">Leer artículo</Link>
+                                        <Link className="bl-btn bl-btn-primary" to="/blog/siempre-pasa-lo-mismo">Leer artículo</Link>
                                     </div>
                                 </div>
                             </article>
 
-                            {/* POST 4 */}
                             <article className="bl-post">
                                 <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5656.jpg')" }}></div>
                                 <div className="bl-post-body">
-                                    <span className="bl-tag">Relaciones</span>
-                                    <h2>Cuando siempre te pasa lo mismo</h2>
+                                    <span className="bl-tag">Carlos Carrasco</span>
+                                    <h2>Antes de pensar, ya estás decidiendo</h2>
                                     <p>
-                                        Los patrones que se repiten no son casualidad. 
-                                        Entender su lógica permite intervenir en un nivel más profundo.
+                                        El sistema neurológico y corporal están respondiendo mucho antes de que la consciencia logre una interpretación.
                                     </p>
                                     <div style={{ marginTop: '14px' }}>
-                                        <Link className="bl-btn bl-btn-primary" to="#">Leer artículo</Link>
+                                        <Link className="bl-btn bl-btn-primary" to="/blog/antes-de-pensar">Leer artículo</Link>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article className="bl-post">
+                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/10.png')" }}></div>
+                                <div className="bl-post-body">
+                                    <span className="bl-tag">Alan Lama</span>
+                                    <h2>Cuando sostener deja de ser suficiente</h2>
+                                    <p>
+                                        Hay momentos en que el sistema pierde su capacidad de autorregulación. Ahí, la psiquiatría ofrece una herramienta táctica.
+                                    </p>
+                                    <div style={{ marginTop: '14px' }}>
+                                        <Link className="bl-btn bl-btn-primary" to="/blog/sostener-insuficiente">Leer artículo</Link>
                                     </div>
                                 </div>
                             </article>

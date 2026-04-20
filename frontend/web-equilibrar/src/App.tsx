@@ -15,6 +15,11 @@ import AudioReprogramacion from './pages/AudioReprogramacion';
 import AudioReactividad from './pages/AudioReactividad';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import TeamMemberProfile from './pages/TeamMemberProfile';
+import ProblemaNoEsSientas from './pages/blog/ProblemaNoEsSientas';
+import ElCuerpoVuelve from './pages/blog/ElCuerpoVuelve';
+import SiemprePasaLoMismo from './pages/blog/SiemprePasaLoMismo';
+import AntesDePensar from './pages/blog/AntesDePensar';
+import SostenerInsuficiente from './pages/blog/SostenerInsuficiente';
 
 // ScrollToTop component to handle scroll reset on route change
 const ScrollToTop = () => {
@@ -138,6 +143,12 @@ const App: React.FC = () => {
             </Layout>
           }
         />
+        {/* BLOG ARTICLES */}
+        <Route path="/blog/problema-no-es-sientas" element={<Layout><ProblemaNoEsSientas /></Layout>} />
+        <Route path="/blog/el-cuerpo-vuelve" element={<Layout><ElCuerpoVuelve /></Layout>} />
+        <Route path="/blog/siempre-pasa-lo-mismo" element={<Layout><SiemprePasaLoMismo /></Layout>} />
+        <Route path="/blog/antes-de-pensar" element={<Layout><AntesDePensar /></Layout>} />
+        <Route path="/blog/sostener-insuficiente" element={<Layout><SostenerInsuficiente /></Layout>} />
         {/* Add more public routes here */}
       </Routes>
     </Router>
