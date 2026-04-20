@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import videoBg from '../assets/videos/video-home-equilibrar.mp4';
 
 const Home: React.FC = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -227,15 +226,15 @@ const Home: React.FC = () => {
                 .px-hero {
                     position: relative; min-height: 100vh; padding-top: 88px;
                     display: flex; align-items: center; justify-content: center;
-                    overflow: hidden;
+                    overflow: hidden; z-index: 0;
                 }
-                .px-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+                .px-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; }
                 .px-hero-video video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); animation: kenburns 25s infinite alternate ease-in-out; }
                 .px-hero-bg {
-                    position: absolute; inset: 0; z-index: -1;
+                    position: absolute; inset: 0; z-index: 2;
                     background: linear-gradient(145deg, rgba(10,28,26,0.95) 0%, rgba(10,28,26,0.7) 40%, rgba(0,168,156,0.2) 100%);
                 }
-                .px-hero-inner { position: relative; z-index: 1; text-align: center; color: white; max-width: 860px; padding: 40px 0; margin: 0 auto; }
+                .px-hero-inner { position: relative; z-index: 3; text-align: center; color: white; max-width: 860px; padding: 40px 0; margin: 0 auto; }
                 .px-hero-inner h1 { color: white; font-size: clamp(48px, 6vw, 92px); font-weight: 800; letter-spacing: -0.04em; margin-bottom: 24px; text-wrap: balance; }
                 .px-hero-inner p { font-size: clamp(16px, 2vw, 20px); color: rgba(255,255,255,0.85); margin-bottom: 48px; max-width: 640px; margin-inline: auto; font-weight: 300; }
                 .px-hero-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
@@ -378,43 +377,7 @@ const Home: React.FC = () => {
                 }
             `}} />
 
-            {/* HEADER */}
-            <header id="header" className={`px-header ${scrolled ? 'px-scrolled' : ''}`}>
-                <div className="px-container px-nav">
-                    <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); }} className="px-brand">
-                        <img src="https://www.origamis.cl/wp-content/uploads/2026/03/logo-clinica-equilibrar.png" alt="Logo Clínica Equilibrar" />
-                        <div className="px-brand-text">
-                            <strong>Clínica Equilibrar</strong>
-                            <span>Salud mental transdisciplinaria</span>
-                        </div>
-                    </a>
-
-                    <nav className="px-nav-links">
-                        <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')}>Evaluación</a>
-                        <a href="#equipo" onClick={(e) => handleLinkClick(e, 'equipo')}>Equipo</a>
-                        <a href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Propuesta</a>
-                        {/* If /blog is an external URL, use a regular anchor tag. If internal route, we could use Link. */}
-                        <a href="equilibrar_blog.html">Blog</a>
-                    </nav>
-
-                    <div className="px-nav-cta">
-                        <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} className="px-btn px-btn-primary">Agendar evaluación</a>
-                    </div>
-
-                    <button className="px-menu-toggle" onClick={toggleMenu} aria-label="Menu">
-                        {isMenuOpen ? '✕' : '☰'}
-                    </button>
-                </div>
-            </header>
-
-            {/* MOBILE MENU */}
-            <div className={`px-mobile-menu-overlay ${isMenuOpen ? 'px-active' : ''}`}>
-                <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')}>Evaluación</a>
-                <a href="#equipo" onClick={(e) => handleLinkClick(e, 'equipo')}>Equipo Clínico</a>
-                <a href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Propuesta</a>
-                <a href="equilibrar_blog.html">Blog</a>
-                <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} className="px-btn px-btn-primary mt-4" style={{ fontSize: '18px', padding: '0 40px' }}>Agendar ahora</a>
-            </div>
+            {/* HEADER HAS BEEN MOVED OUT TO NAVBAR */}
 
             <main id="top">
                 {/* HERO SECTION */}
