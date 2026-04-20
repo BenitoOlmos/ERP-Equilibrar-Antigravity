@@ -60,7 +60,7 @@ const App: React.FC = () => {
         <Route
           path="/programa-angustia"
           element={
-            <Layout showFooter={false}>
+            <Layout>
               <ProgramDetail slug="programa-angustia" />
             </Layout>
           }
@@ -69,7 +69,7 @@ const App: React.FC = () => {
         <Route
           path="/programa-culpa"
           element={
-            <Layout showFooter={false}>
+            <Layout>
               <ProgramDetail slug="programa-culpa" />
             </Layout>
           }
@@ -78,7 +78,7 @@ const App: React.FC = () => {
         <Route
           path="/programa-irritabilidad"
           element={
-            <Layout showFooter={false}>
+            <Layout>
               <ProgramDetail slug="programa-irritabilidad" />
             </Layout>
           }
