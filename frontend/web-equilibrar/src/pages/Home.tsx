@@ -427,14 +427,11 @@ const Home: React.FC = () => {
                     
                     <div className="px-container">
                         <div className="px-hero-inner px-reveal">
-                            <span className="px-eyebrow" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)', marginBottom: '24px' }}>
-                                Enfoque de Alto Impacto
-                            </span>
-                            <h1>Tratamientos y terapias para cambiar tu vida</h1>
-                            <p>Evaluación inicial estructurada para entender con precisión cómo estás funcionando hoy y definir la intervención clínica más pertinente.</p>
+                            <h1>Tratamientos y terapias para personas que quieren cambiar su vida</h1>
+                            <p>Evaluación inicial para entender cómo estás funcionando hoy y definir la intervención más pertinente.</p>
                             <div className="px-hero-actions">
-                                <a className="px-btn px-btn-primary" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} style={{ backgroundColor: 'var(--brand-accent)' }}>Diagnóstico y Evaluación</a>
-                                <a className="px-btn px-btn-glass" href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Conocer la propuesta</a>
+                                <a className="px-btn px-btn-primary" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} style={{ backgroundColor: 'var(--brand-accent)' }}>Agendar evaluación</a>
+                                <a className="px-btn px-btn-glass" href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Propuesta</a>
                             </div>
                         </div>
                     </div>
