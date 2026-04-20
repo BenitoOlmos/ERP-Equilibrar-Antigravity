@@ -1,1178 +1,635 @@
-import React from 'react';
-
-import logoImg from '../assets/images/logo-clinica-equilibrar.png';
-import rfai1Img from '../assets/images/RFAI-1.png';
-import homeVideo from '../assets/images/home-equilibrar.mp4';
-import claudioImg from '../assets/images/claudio-reyes.png';
-import carlosImg from '../assets/images/carlos-carrasco.png';
-import valentinImg from '../assets/images/valentin-keller.png';
-import alanImg from '../assets/images/alan-lama.png';
-import rfai2Img from '../assets/images/RFAI-2.png';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
-   const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-      e.preventDefault();
-      const element = document.getElementById(id);
-      if (element) {
-         const topOffset = element.getBoundingClientRect().top + window.scrollY - 86; // accounting for 86px fixed topbar
-         window.scrollTo({ top: topOffset, behavior: 'smooth' });
-      }
-   };
-
-   return (
-      <div className="home-wrapper">
-         <style dangerouslySetInnerHTML={{
-            __html: `
-        .home-wrapper {
-          --primary:#0f97b9;
-          --primary-dark:#0a7f9a;
-          --primary-soft:#eaf7fb;
-          --text:#22343a;
-          --text-soft:#667982;
-          --line:#dfecef;
-          --bg:#ffffff;
-          --bg-soft:#f6fbfc;
-          --white:#ffffff;
-          --shadow:0 18px 40px rgba(16, 69, 82, 0.08);
-          --radius-xl:32px;
-          --radius-lg:24px;
-          --radius-md:18px;
-          --max:1180px;
-
-          font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          background: var(--bg);
-          color: var(--text);
-          line-height: 1.55;
-          padding-top: 90px;
-        }
-
-        .home-btn-entrar {
-          background-color: var(--bg-soft);
-          color: var(--primary-dark);
-          border: 1px solid var(--line);
-          padding: 0 16px;
-          font-size: 0.92rem;
-        }
-
-        .home-header-actions {
-          display: flex;
-          gap: 10px;
-          align-items: center;
-        }
-
-        .home-wrapper * {
-          box-sizing:border-box;
-          margin:0;
-          padding:0;
-        }
-
-        .home-wrapper img, .home-wrapper video {
-          display:block;
-          max-width:100%;
-        }
-
-        .home-wrapper img {
-          object-fit:cover;
-        }
-
-        .home-wrapper a {
-          color:inherit;
-          text-decoration:none;
-        }
-
-        .home-wrapper html {
-          scroll-behavior:smooth;
-        }
-
-        .home-container {
-          width:min(92%, var(--max));
-          margin:0 auto;
-        }
-
-        .home-topbar {
-          position:fixed;
-          top:0;
-          left:0;
-          width:100%;
-          z-index:999;
-          background:rgba(10,20,24,.75);
-          backdrop-filter: blur(14px);
-          border-bottom:1px solid rgba(255,255,255,.08);
-        }
-
-        .home-header {
-          min-height:86px;
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          gap:20px;
-        }
-
-        .home-brand {
-          display:flex;
-          align-items:center;
-          gap:14px;
-          min-width:0;
-        }
-
-        .home-brand img {
-          width:54px;
-          height:54px;
-          object-fit:contain;
-          flex-shrink:0;
-        }
-
-        .home-brand-copy strong {
-          display:block;
-          color:#ffffff;
-          font-size:1rem;
-          line-height:1.05;
-        }
-
-        .home-brand-copy span {
-          display:block;
-          margin-top:3px;
-          color:rgba(255,255,255,.82);
-          font-size:.84rem;
-        }
-
-        .home-nav {
-          display:flex;
-          align-items:center;
-          gap:26px;
-        }
-
-        .home-nav a {
-          color:rgba(255,255,255,.88);
-          font-size:.95rem;
-          transition:.2s ease;
-        }
-
-        .home-nav a:hover {
-          color:#ffffff;
-        }
-
-        .home-header-actions {
-          display:flex;
-          align-items:center;
-          gap:12px;
-        }
-
-        .home-btn {
-          display:inline-flex;
-          align-items:center;
-          justify-content:center;
-          min-height:50px;
-          padding:0 22px;
-          border-radius:999px;
-          font-weight:600;
-          font-size:.95rem;
-          transition:.2s ease;
-          border:1px solid transparent;
-          cursor:pointer;
-          white-space:nowrap;
-        }
-
-        .home-btn-primary {
-          background:#ffffff;
-          color:var(--primary-dark);
-          box-shadow:0 12px 26px rgba(0,0,0,.12);
-        }
-
-        .home-btn-primary:hover {
-          transform:translateY(-1px);
-        }
-
-        .home-btn-secondary {
-          background:var(--primary);
-          color:#ffffff;
-          border-color:transparent;
-        }
-
-        .home-btn-secondary:hover {
-          background:var(--primary-dark);
-        }
-
-        .home-hero {
-          position:relative;
-          min-height:100vh;
-          display:flex;
-          align-items:flex-end;
-          overflow:hidden;
-          background:#0b1518;
-        }
-
-        .home-hero-video {
-          position:absolute;
-          inset:0;
-          z-index:1;
-        }
-
-        .home-hero-video video {
-          width:100%;
-          height:100%;
-          object-fit:cover;
-        }
-
-        .home-hero-overlay {
-          position:absolute;
-          inset:0;
-          z-index:2;
-          background:
-            linear-gradient(180deg, rgba(7,17,21,.46) 0%, rgba(7,17,21,.34) 26%, rgba(7,17,21,.62) 72%, rgba(7,17,21,.84) 100%),
-            linear-gradient(90deg, rgba(7,17,21,.55) 0%, rgba(7,17,21,.20) 50%, rgba(7,17,21,.28) 100%);
-        }
-
-        .home-hero-content {
-          position:relative;
-          z-index:3;
-          width:100%;
-          padding:150px 0 72px;
-        }
-
-        .home-hero-inner {
-          max-width:760px;
-        }
-
-        .home-hero h1 {
-          font-size:clamp(3rem, 7vw, 6rem);
-          line-height:.94;
-          letter-spacing:-.06em;
-          max-width:10ch;
-          margin-bottom:18px;
-          color:#ffffff;
-        }
-
-        .home-hero p {
-          font-size:1.12rem;
-          color:rgba(255,255,255,.88);
-          max-width:58ch;
-        }
-
-        .home-hero-actions {
-          display:flex;
-          gap:14px;
-          flex-wrap:wrap;
-          margin-top:30px;
-        }
-
-        .home-section {
-          padding:90px 0;
-        }
-
-        .home-section-head {
-          max-width:760px;
-          margin-bottom:34px;
-        }
-
-        .home-section-head h2 {
-          font-size:clamp(2rem, 4vw, 3.4rem);
-          line-height:1.02;
-          letter-spacing:-.04em;
-          margin-bottom:14px;
-        }
-
-        .home-section-head p {
-          color:var(--text-soft);
-          font-size:1.04rem;
-          max-width:60ch;
-        }
-
-        .home-band {
-          background:var(--bg-soft);
-          border-top:1px solid var(--line);
-          border-bottom:1px solid var(--line);
-        }
-
-        .home-band-grid {
-          display:grid;
-          grid-template-columns:repeat(4,1fr);
-          gap:18px;
-          padding:28px 0;
-        }
-
-        .home-band-item {
-          background:#fff;
-          border:1px solid var(--line);
-          border-radius:20px;
-          padding:20px;
-          box-shadow:var(--shadow);
-        }
-
-        .home-band-item strong {
-          display:block;
-          margin-bottom:6px;
-          color:var(--text);
-          font-size:1rem;
-        }
-
-        .home-band-item span {
-          color:var(--text-soft);
-          font-size:.94rem;
-        }
-
-        .home-how-grid {
-          display:grid;
-          grid-template-columns:repeat(3,1fr);
-          gap:22px;
-        }
-
-        .home-how-card {
-          background:#fff;
-          border:1px solid var(--line);
-          border-radius:26px;
-          padding:28px;
-          box-shadow:var(--shadow);
-          min-height:220px;
-        }
-
-        .home-step {
-          width:42px;
-          height:42px;
-          border-radius:50%;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          background:var(--primary-soft);
-          color:var(--primary-dark);
-          font-weight:700;
-          margin-bottom:18px;
-        }
-
-        .home-how-card h3 {
-          font-size:1.12rem;
-          margin-bottom:10px;
-        }
-
-        .home-how-card p {
-          color:var(--text-soft);
-          font-size:.98rem;
-        }
-
-        .home-split {
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:56px;
-          align-items:center;
-        }
-
-        .home-photo {
-          min-height:540px;
-          border-radius:var(--radius-xl);
-          overflow:hidden;
-          border:1px solid var(--line);
-          background:#fff;
-          box-shadow:var(--shadow);
-          position:relative;
-        }
-
-        .home-photo img {
-          width:100%;
-          height:100%;
-          object-fit:cover;
-        }
-
-        .home-photo::after {
-          content:"";
-          position:absolute;
-          inset:0;
-          background:
-            linear-gradient(180deg, rgba(0,0,0,.01), rgba(0,0,0,.06)),
-            linear-gradient(135deg, rgba(15,151,185,.03), rgba(15,151,185,.01));
-          pointer-events:none;
-        }
-
-        .home-rfai-badge {
-          display:inline-flex;
-          padding:10px 14px;
-          border-radius:16px;
-          background:var(--primary-soft);
-          color:var(--primary-dark);
-          font-weight:700;
-          margin-top:16px;
-          margin-bottom:20px;
-          font-size:.95rem;
-        }
-
-        .home-rfai-grid {
-          display:grid;
-          grid-template-columns:repeat(3,1fr);
-          gap:22px;
-          margin-top:28px;
-        }
-
-        .home-rfai-card {
-          background:#fff;
-          border:1px solid var(--line);
-          border-radius:24px;
-          padding:26px;
-          box-shadow:var(--shadow);
-          min-height:210px;
-        }
-
-        .home-rfai-card h3 {
-          font-size:1.08rem;
-          margin-bottom:10px;
-        }
-
-        .home-rfai-card p {
-          color:var(--text-soft);
-          font-size:.98rem;
-        }
-
-        .home-podcast-box {
-          display:grid;
-          grid-template-columns:.9fr 1.1fr;
-          gap:28px;
-          align-items:center;
-          background:#fff;
-          border:1px solid var(--line);
-          border-radius:32px;
-          padding:26px;
-          box-shadow:var(--shadow);
-        }
-
-        .home-podcast-embed {
-          min-height:auto;
-          border-radius:24px;
-          overflow:hidden;
-          border:1px solid var(--line);
-          background:#f8fbfc;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          padding:14px;
-        }
-
-        .home-podcast-embed iframe {
-          width:100%;
-          height:232px;
-          border:0;
-          border-radius:16px;
-        }
-
-        .home-podcast-copy h2 {
-          font-size:clamp(2rem, 4vw, 3rem);
-          line-height:1.02;
-          letter-spacing:-.04em;
-          margin-bottom:14px;
-        }
-
-        .home-podcast-copy p {
-          color:var(--text-soft);
-          font-size:1.02rem;
-          margin-bottom:14px;
-          max-width:54ch;
-        }
-
-        .home-bullet-list {
-          display:grid;
-          gap:12px;
-          margin:22px 0 28px;
-        }
-
-        .home-bullet {
-          background:var(--bg-soft);
-          border:1px solid var(--line);
-          border-radius:16px;
-          padding:14px 16px;
-          color:var(--primary-dark);
-          font-weight:600;
-          font-size:.96rem;
-        }
-
-        .home-team-grid {
-          display:grid;
-          grid-template-columns:repeat(4,1fr);
-          gap:20px;
-          margin-top:26px;
-        }
-
-        .home-team-card {
-          background:#fff;
-          border:1px solid var(--line);
-          border-radius:26px;
-          overflow:hidden;
-          box-shadow:var(--shadow);
-          min-height:420px;
-          display:flex;
-          flex-direction:column;
-          transition:.2s ease;
-        }
-
-        .home-team-card:hover {
-          transform:translateY(-3px);
-        }
-
-        .home-team-photo {
-          aspect-ratio: 4 / 4.3;
-          overflow:hidden;
-          background:#eef7f9;
-        }
-
-        .home-team-photo img {
-          width:100%;
-          height:100%;
-          object-fit:cover;
-        }
-
-        .home-team-body {
-          padding:22px;
-          display:flex;
-          flex-direction:column;
-          gap:10px;
-          flex:1;
-        }
-
-        .home-team-card h3 {
-          font-size:1.08rem;
-          line-height:1.1;
-        }
-
-        .home-team-role {
-          display:block;
-          color:var(--primary-dark);
-          font-size:.94rem;
-          font-weight:700;
-        }
-
-        .home-team-card p {
-          color:var(--text-soft);
-          font-size:.96rem;
-        }
-
-        .home-wrapper details {
-          margin-top:auto;
-          border-top:1px solid rgba(34,52,58,.08);
-          padding-top:14px;
-        }
-
-        .home-wrapper summary {
-          cursor:pointer;
-          list-style:none;
-          color:var(--primary-dark);
-          font-weight:600;
-          font-size:.95rem;
-        }
-
-        .home-wrapper summary::-webkit-details-marker {
-          display:none;
-        }
-
-        .home-team-more {
-          margin-top:12px;
-          display:grid;
-          gap:10px;
-        }
-
-        .home-team-more p {
-          color:var(--text-soft);
-          font-size:.95rem;
-        }
-
-        .home-testimonials {
-          display:grid;
-          grid-template-columns:repeat(3,1fr);
-          gap:20px;
-        }
-
-        .home-quote {
-          background:#fff;
-          border:1px solid var(--line);
-          border-radius:24px;
-          padding:24px;
-          box-shadow:var(--shadow);
-        }
-
-        .home-quote p {
-          color:var(--text);
-          margin-bottom:10px;
-          font-size:1rem;
-        }
-
-        .home-quote span {
-          color:var(--text-soft);
-          font-size:.92rem;
-        }
-
-        .home-cta {
-          padding:94px 0;
-        }
-
-        .home-cta-box {
-          background:linear-gradient(135deg, var(--primary), var(--primary-dark));
-          border-radius:34px;
-          padding:0;
-          color:#fff;
-          box-shadow:0 24px 60px rgba(12, 80, 96, 0.18);
-          overflow:hidden;
-          position:relative;
-        }
-
-        .home-cta-grid {
-          display:grid;
-          grid-template-columns:1.05fr .95fr;
-          gap:0;
-          align-items:stretch;
-        }
-
-        .home-cta-copy {
-          padding:46px;
-        }
-
-        .home-cta-copy h2 {
-          font-size:clamp(2rem, 4vw, 3.6rem);
-          line-height:.98;
-          letter-spacing:-.04em;
-          max-width:10ch;
-          margin-bottom:14px;
-        }
-
-        .home-cta-copy p {
-          color:rgba(255,255,255,.92);
-          max-width:56ch;
-          font-size:1.04rem;
-          margin-bottom:26px;
-        }
-
-        .home-cta-actions {
-          display:flex;
-          flex-wrap:wrap;
-          gap:14px;
-        }
-
-        .home-cta-box .home-btn-primary {
-          background:#fff;
-          color:var(--primary-dark);
-          box-shadow:none;
-        }
-
-        .home-cta-box .home-btn-secondary {
-          background:transparent;
-          color:#fff;
-          border-color:rgba(255,255,255,.34);
-        }
-
-        .home-cta-box .home-btn-secondary:hover {
-          background:rgba(255,255,255,.1);
-        }
-
-        .home-cta-image {
-          min-height:100%;
-          background:#0a7f9a;
-        }
-
-        .home-cta-image img {
-          width:100%;
-          height:100%;
-          object-fit:cover;
-          display:block;
-        }
-
-        .home-footer {
-          padding:28px 0 40px;
-          border-top:1px solid rgba(34,52,58,.06);
-          background:#fff;
-        }
-
-        .home-footer-row {
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          gap:18px;
-          flex-wrap:wrap;
-        }
-
-        .home-footer-row p,
-        .home-footer-row a {
-          color:var(--text-soft);
-          font-size:.94rem;
-        }
-
-        .home-footer-links {
-          display:flex;
-          gap:16px;
-          flex-wrap:wrap;
-        }
-
-        @media (max-width: 1080px){
-          .home-hero-grid,
-          .home-split,
-          .home-podcast-box,
-          .home-cta-grid {
-            grid-template-columns:1fr;
-          }
-
-          .home-band-grid,
-          .home-how-grid,
-          .home-rfai-grid,
-          .home-team-grid,
-          .home-testimonials {
-            grid-template-columns:1fr 1fr;
-          }
-
-          .home-hero-media,
-          .home-photo,
-          .home-podcast-embed {
-            min-height:auto;
-          }
-
-          .home-cta-image {
-            min-height:360px;
-          }
-        }
-
-        @media (max-width: 760px){
-          .home-nav {
-            display:none;
-          }
-
-          .home-band-grid,
-          .home-how-grid,
-          .home-rfai-grid,
-          .home-team-grid,
-          .home-testimonials {
-            grid-template-columns:1fr;
-          }
-
-          .home-hero-actions,
-          .home-cta-actions {
-            flex-direction:column;
-            align-items:stretch;
-          }
-
-          .home-header-actions {
-            flex-direction:row !important;
-            gap:6px !important;
-          }
-
-          .home-header-actions .home-btn {
-            height:36px;
-            padding:0 12px;
-            font-size:0.82rem;
-          }
-
-          .home-btn-entrar-txt {
-            display:none;
-          }
-
-          .home-btn {
-            width:100%;
-          }
-
-          .home-hero {
-            min-height:auto;
-            padding-top:110px;
-          }
-
-          .home-hero h1 {
-            max-width:none;
-          }
-
-          .home-brand-copy span {
-            display:none;
-          }
-
-          .home-cta-copy {
-            padding:28px;
-          }
-        }
-        `
-         }} />
-
-         <div className="home-topbar">
-            <header className="home-container home-header">
-               <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); }} className="home-brand" aria-label="Centro Clínico Equilibrar">
-                  <img src={logoImg} alt="Logo Centro Clínico Equilibrar" />
-                  <div className="home-brand-copy">
-                     <strong>Centro Clínico Equilibrar</strong>
-                     <span>Psicología clínica y modelo RFAI</span>
-                  </div>
-               </a>
-
-               <nav className="home-nav">
-                  <a href="#test" onClick={(e) => handleScrollTo(e, 'test')}>Test</a>
-                  <a href="#rfai" onClick={(e) => handleScrollTo(e, 'rfai')}>RFAI</a>
-                  <a href="#podcast" onClick={(e) => handleScrollTo(e, 'podcast')}>Podcast</a>
-                  <a href="#equipo" onClick={(e) => handleScrollTo(e, 'equipo')}>Equipo</a>
-                  <a href="#contacto" onClick={(e) => handleScrollTo(e, 'contacto')}>Contacto</a>
-               </nav>
-
-               <div className="home-header-actions">
-                  <a className="home-btn home-btn-primary" href="#/test-rfai">Hacer test</a>
-                  <a className="home-btn home-btn-entrar" href="https://login.clinicaequilibrar.cl/" target="_blank" rel="noopener noreferrer">
-                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                     <span className="home-btn-entrar-txt" style={{ marginLeft: '6px' }}>Entrar</span>
-                  </a>
-               </div>
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 40) {
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        
+        // Intersection Observer for scroll reveal
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -80px 0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('px-reveal-active');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const revealElements = document.querySelectorAll('.px-reveal');
+        revealElements.forEach(el => observer.observe(el));
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            observer.disconnect();
+        };
+    }, []);
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+        if (!isMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    };
+
+    const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+        e.preventDefault();
+        if (isMenuOpen) toggleMenu();
+        const element = document.getElementById(targetId);
+        if (element) {
+            const yOffset = -80; 
+            const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    };
+
+    return (
+        <div className="home-premium-container">
+            <style dangerouslySetInnerHTML={{__html: `
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600;700;800;900&display=swap');
+
+                .home-premium-container {
+                    /* Brand Colors */
+                    --brand-900: #0a1c1a;
+                    --brand-800: #102e29;
+                    --brand-700: #173f38;
+                    --brand-accent: #00A89C;
+                    --brand-light: #e0f6f4;
+                    
+                    /* Neutrals */
+                    --bg-page: #f9fcfb;
+                    --surface-white: #ffffff;
+                    --surface-muted: #f1f5f4;
+                    
+                    /* Text */
+                    --text-main: #14211f;
+                    --text-muted: #5e706c;
+                    
+                    /* Structural */
+                    --border-thin: rgba(0, 168, 156, 0.15);
+                    --container-max: 1240px;
+                    
+                    /* Radii & Shadows */
+                    --radius-2xl: 32px;
+                    --radius-xl: 24px;
+                    --radius-lg: 16px;
+                    --radius-full: 999px;
+                    --shadow-sm: 0 4px 14px rgba(0, 168, 156, 0.05);
+                    --shadow-md: 0 12px 32px rgba(20, 33, 31, 0.08);
+                    --shadow-lg: 0 24px 56px rgba(0, 168, 156, 0.12);
+                    --shadow-hover: 0 32px 64px rgba(0, 168, 156, 0.18);
+
+                    font-family: 'Inter', sans-serif;
+                    background-color: var(--bg-page);
+                    color: var(--text-main);
+                    line-height: 1.6;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                    overflow-x: hidden;
+                    width: 100%;
+                }
+
+                .home-premium-container h1, 
+                .home-premium-container h2, 
+                .home-premium-container h3, 
+                .home-premium-container h4 {
+                    font-family: 'Outfit', sans-serif;
+                    color: var(--brand-900);
+                    line-height: 1.1;
+                    letter-spacing: -0.03em;
+                    margin: 0;
+                }
+                
+                .home-premium-container img, 
+                .home-premium-container video { 
+                    max-width: 100%; height: auto; display: block; 
+                }
+                
+                .home-premium-container a { 
+                    text-decoration: none; color: inherit; 
+                }
+
+                .px-container {
+                    width: min(calc(100% - 40px), var(--container-max));
+                    margin: 0 auto;
+                }
+                
+                .px-section { padding: 120px 0; }
+                
+                /* Buttons */
+                .px-btn {
+                    display: inline-flex; align-items: center; justify-content: center;
+                    height: 52px; padding: 0 36px; border-radius: var(--radius-full);
+                    font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
+                    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                    cursor: pointer; border: 1px solid transparent; white-space: nowrap;
+                }
+                
+                .px-btn-primary {
+                    background: var(--brand-900); color: white !important;
+                    box-shadow: 0 12px 24px rgba(10, 28, 26, 0.15);
+                }
+                .px-btn-primary:hover {
+                    background: var(--brand-accent);
+                    box-shadow: 0 16px 32px rgba(0, 168, 156, 0.3);
+                    transform: translateY(-3px);
+                }
+                
+                .px-btn-secondary {
+                    background: var(--surface-white); color: var(--text-main);
+                    border-color: var(--border-thin);
+                }
+                .px-btn-secondary:hover {
+                    color: var(--brand-accent) !important; border-color: var(--brand-accent);
+                    box-shadow: var(--shadow-sm); transform: translateY(-2px);
+                }
+                
+                .px-btn-glass {
+                    background: rgba(255, 255, 255, 0.08); color: white !important;
+                    backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+                .px-btn-glass:hover {
+                    background: rgba(255, 255, 255, 0.16); transform: translateY(-2px);
+                }
+                
+                .px-eyebrow {
+                    display: inline-flex; align-items: center; gap: 8px;
+                    padding: 8px 16px; border-radius: var(--radius-full);
+                    background: var(--brand-light); color: var(--brand-accent);
+                    font-size: 12px; font-weight: 800; letter-spacing: 0.1em;
+                    text-transform: uppercase; margin-bottom: 20px;
+                }
+
+                .px-section-head { text-align: center; max-width: 720px; margin: 0 auto 72px; }
+                .px-section-head h2 { font-size: clamp(36px, 5vw, 64px); margin-bottom: 20px; text-wrap: balance; }
+                .px-section-head p { font-size: 18px; color: var(--text-muted); font-weight: 400; text-wrap: balance; margin: 0;}
+
+                /* Scroll Reveal */
+                .px-reveal {
+                    opacity: 0; transform: translateY(40px);
+                    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .px-reveal.px-reveal-active { opacity: 1; transform: translateY(0); }
+                .px-delay-100 { transition-delay: 100ms; }
+                .px-delay-200 { transition-delay: 200ms; }
+                .px-delay-300 { transition-delay: 300ms; }
+
+                /* Header */
+                .px-header {
+                    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+                    background: rgba(249, 252, 251, 0.6);
+                    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                    border-bottom: 1px solid transparent; transition: all 0.4s ease;
+                }
+                .px-header.px-scrolled {
+                    background: rgba(255, 255, 255, 0.95);
+                    border-bottom: 1px solid var(--border-thin);
+                    box-shadow: 0 4px 32px rgba(0,0,0,0.03);
+                }
+                .px-nav { height: 88px; display: flex; align-items: center; justify-content: space-between; }
+                
+                .px-brand { display: flex; align-items: center; gap: 14px; }
+                .px-brand img { width: 48px; height: 48px; border-radius: 12px; object-fit: contain; }
+                .px-brand-text { display: flex; flex-direction: column; justify-content: center; }
+                .px-brand-text strong { font-size: 20px; font-weight: 800; line-height: 1.1; }
+                .px-brand-text span { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brand-accent); }
+                
+                .px-nav-links { display: flex; gap: 40px; }
+                .px-nav-links a { font-size: 14px; font-weight: 600; color: var(--text-muted); position: relative; transition: color 0.3s; }
+                .px-nav-links a:hover { color: var(--brand-accent); }
+                .px-nav-links a::after {
+                    content: ''; position: absolute; bottom: -6px; left: 0; width: 0; height: 2px;
+                    background: var(--brand-accent); transition: width 0.3s ease; border-radius: 2px;
+                }
+                .px-nav-links a:hover::after { width: 100%; }
+
+                .px-menu-toggle { display: none; background: none; border: none; font-size: 24px; color: var(--brand-900); cursor: pointer; }
+
+                /* Hero */
+                .px-hero {
+                    position: relative; min-height: 100vh; padding-top: 88px;
+                    display: flex; align-items: center; justify-content: center;
+                    overflow: hidden;
+                }
+                .px-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transform: scale(1.05); animation: kenburns 25s infinite alternate ease-in-out; }
+                .px-hero-bg {
+                    position: absolute; inset: 0; z-index: -1;
+                    background: linear-gradient(145deg, rgba(10,28,26,0.95) 0%, rgba(10,28,26,0.7) 40%, rgba(0,168,156,0.2) 100%);
+                }
+                .px-hero-inner { position: relative; z-index: 1; text-align: center; color: white; max-width: 860px; padding: 40px 0; margin: 0 auto; }
+                .px-hero-inner h1 { color: white; font-size: clamp(48px, 6vw, 92px); font-weight: 800; letter-spacing: -0.04em; margin-bottom: 24px; text-wrap: balance; }
+                .px-hero-inner p { font-size: clamp(16px, 2vw, 20px); color: rgba(255,255,255,0.85); margin-bottom: 48px; max-width: 640px; margin-inline: auto; font-weight: 300; }
+                .px-hero-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+                @keyframes kenburns { 0% { transform: scale(1.05); } 100% { transform: scale(1.15) translate(-1%, -1%); } }
+
+                /* Split Card Intro */
+                .px-intro-wrap { margin-top: -80px; position: relative; z-index: 10; padding: 0 20px; }
+                .px-split-card {
+                    background: var(--surface-white); border-radius: var(--radius-2xl);
+                    box-shadow: var(--shadow-lg); border: 1px solid var(--border-thin);
+                    display: grid; grid-template-columns: 1.1fr 1fr; overflow: hidden;
+                    max-width: var(--container-max); margin: 0 auto;
+                }
+                .px-split-content { padding: 80px 60px; display: flex; flex-direction: column; justify-content: center; }
+                .px-split-content h3 { font-size: clamp(32px, 3.5vw, 48px); margin-bottom: 20px; text-wrap: balance; }
+                .px-split-content p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; }
+                .px-split-image { background-size: cover; background-position: center; min-height: 480px; clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%); }
+
+                /* Eval Grid */
+                .px-eval-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+                .px-eval-card {
+                    background: var(--surface-white); border-radius: var(--radius-xl);
+                    padding: 48px 40px; border: 1px solid var(--border-thin);
+                    box-shadow: var(--shadow-sm); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                    display: flex; flex-direction: column; position: relative; overflow: hidden;
+                }
+                .px-eval-card::before {
+                    content: ''; position: absolute; inset: 0; z-index: 0;
+                    background: radial-gradient(circle at top right, rgba(0, 168, 156, 0.05) 0%, transparent 70%);
+                    opacity: 0; transition: opacity 0.5s;
+                }
+                .px-eval-card:hover { transform: translateY(-12px); box-shadow: var(--shadow-hover); border-color: rgba(0, 168, 156, 0.3); }
+                .px-eval-card:hover::before { opacity: 1; }
+                
+                .px-eval-icon {
+                    width: 72px; height: 72px; border-radius: 20px;
+                    background: var(--brand-light); color: var(--brand-accent);
+                    display: flex; align-items: center; justify-content: center;
+                    font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800;
+                    margin-bottom: 32px; transition: all 0.5s; position: relative; z-index: 1;
+                }
+                .px-eval-card:hover .px-eval-icon {
+                    background: var(--brand-accent); color: white; transform: rotate(-8deg) scale(1.1);
+                    box-shadow: 0 12px 24px rgba(0, 168, 156, 0.3);
+                }
+                
+                .px-eval-card h3 { font-size: 28px; margin-bottom: 16px; position: relative; z-index: 1; }
+                .px-eval-card p { color: var(--text-muted); margin-bottom: 32px; flex-grow: 1; font-size: 15px; position: relative; z-index: 1; }
+                
+                .px-mini-list { padding: 0; margin: 0 0 40px 0; list-style: none; display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+                .px-mini-list li { display: flex; align-items: center; gap: 14px; font-size: 15px; font-weight: 600; color: var(--brand-900); }
+                .px-mini-list li::before {
+                    content: ''; width: 6px; height: 6px; border-radius: 50%;
+                    background: var(--brand-accent); flex-shrink: 0;
+                }
+                .px-eval-card .px-btn { width: 100%; position: relative; z-index: 1; }
+                
+                .px-highlight-card { border: 2px solid var(--brand-accent); }
+                .px-highlight-card .px-eval-icon { background: var(--brand-900); color: white; }
+
+                /* Team */
+                .px-bg-soft { background-color: var(--surface-muted); }
+                .px-team-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+                .px-team-card {
+                    background: var(--surface-white); border-radius: var(--radius-lg); overflow: hidden;
+                    box-shadow: var(--shadow-sm); transition: all 0.5s; border: 1px solid var(--border-thin);
+                }
+                .px-team-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); }
+                .px-team-photo-wrap { aspect-ratio: 4/5; overflow: hidden; }
+                .px-team-photo { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.8s; }
+                .px-team-card:hover .px-team-photo { transform: scale(1.08); }
+                .px-team-copy { padding: 24px; }
+                .px-team-role { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brand-accent); margin-bottom: 8px; }
+                .px-team-copy h3 { font-size: 20px; margin-bottom: 12px; }
+                .px-team-copy p { font-size: 14px; color: var(--text-muted); margin: 0;}
+
+                /* Duo Strip */
+                .px-duo-card {
+                    border-radius: var(--radius-2xl); overflow: hidden; min-height: 540px;
+                    display: flex; align-items: flex-end; position: relative;
+                    background-size: cover; background-position: center; box-shadow: var(--shadow-lg);
+                }
+                .px-duo-overlay {
+                    position: absolute; inset: 0;
+                    background: linear-gradient(0deg, rgba(10,28,26,0.95) 0%, rgba(10,28,26,0.4) 50%, transparent 100%);
+                }
+                .px-duo-copy { position: relative; z-index: 1; padding: 60px; max-width: 600px; color: white; }
+                .px-duo-copy h3 { color: white; font-size: clamp(36px, 4vw, 56px); margin-bottom: 20px; }
+                .px-duo-copy p { font-size: 18px; color: rgba(255,255,255,0.8); margin: 0; }
+
+                /* Dark Section */
+                .px-dark-section { background: var(--brand-900); color: white; position: relative; overflow: hidden; }
+                .px-dark-section .px-section-head h2 { color: white; }
+                .px-dark-section .px-eyebrow { background: rgba(0, 168, 156, 0.15); }
+                
+                .px-knowledge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+                .px-knowledge-card {
+                    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06);
+                    border-radius: var(--radius-2xl); overflow: hidden; transition: all 0.4s;
+                }
+                .px-knowledge-card:hover { background: rgba(255, 255, 255, 0.06); transform: translateY(-8px); border-color: rgba(0, 168, 156, 0.3); }
+                .px-knowledge-media { width: 100%; aspect-ratio: 16/10; background-size: cover; background-position: center; }
+                .px-knowledge-content { padding: 48px; }
+                .px-knowledge-content h3 { color: white; font-size: 32px; margin-bottom: 16px; }
+                .px-knowledge-content p { font-size: 16px; color: rgba(255, 255, 255, 0.6); margin-bottom: 32px; max-width: 440px; }
+
+                /* Footer */
+                .px-footer {
+                    background: #050e0d; padding: 80px 0 60px; text-align: center;
+                    color: rgba(255,255,255,0.4); font-size: 14px;
+                }
+                .px-footer-logo { filter: grayscale(1) brightness(2); opacity: 0.3; margin: 0 auto 32px; width: 56px; }
+
+                /* Mobile Menu */
+                .px-mobile-menu-overlay {
+                    position: fixed; inset: 0; background: rgba(249, 252, 251, 0.98);
+                    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                    z-index: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 32px;
+                    opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+                }
+                .px-mobile-menu-overlay.px-active { opacity: 1; pointer-events: auto; }
+                .px-mobile-menu-overlay a { font-family: 'Outfit', sans-serif; font-size: 36px; font-weight: 800; color: var(--brand-900); }
+                
+                @media (max-width: 1024px) {
+                    .px-team-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+                    .px-eval-grid { grid-template-columns: 1fr; gap: 24px; }
+                    .px-knowledge-grid { grid-template-columns: 1fr; gap: 24px; }
+                    .px-split-card { grid-template-columns: 1fr; }
+                    .px-split-image { clip-path: none; min-height: 320px; }
+                    .px-duo-copy { padding: 40px; }
+                }
+                @media (max-width: 768px) {
+                    .px-nav-links, .px-nav-cta { display: none; }
+                    .px-menu-toggle { display: block; z-index: 100; position: relative; }
+                    .px-section { padding: 80px 0; }
+                    .px-hero-inner h1 { font-size: 44px; }
+                    .px-team-grid { grid-template-columns: 1fr; }
+                    .px-split-content { padding: 40px 24px; }
+                    .px-intro-wrap { padding: 0 16px; margin-top: -40px; }
+                }
+            `}} />
+
+            {/* HEADER */}
+            <header id="header" className={`px-header ${scrolled ? 'px-scrolled' : ''}`}>
+                <div className="px-container px-nav">
+                    <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); }} className="px-brand">
+                        <img src="https://www.origamis.cl/wp-content/uploads/2026/03/logo-clinica-equilibrar.png" alt="Logo Clínica Equilibrar" />
+                        <div className="px-brand-text">
+                            <strong>Clínica Equilibrar</strong>
+                            <span>Salud mental transdisciplinaria</span>
+                        </div>
+                    </a>
+
+                    <nav className="px-nav-links">
+                        <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')}>Evaluación</a>
+                        <a href="#equipo" onClick={(e) => handleLinkClick(e, 'equipo')}>Equipo</a>
+                        <a href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Propuesta</a>
+                        {/* If /blog is an external URL, use a regular anchor tag. If internal route, we could use Link. */}
+                        <a href="equilibrar_blog.html">Blog</a>
+                    </nav>
+
+                    <div className="px-nav-cta">
+                        <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} className="px-btn px-btn-primary">Agendar evaluación</a>
+                    </div>
+
+                    <button className="px-menu-toggle" onClick={toggleMenu} aria-label="Menu">
+                        {isMenuOpen ? '✕' : '☰'}
+                    </button>
+                </div>
             </header>
-         </div>
 
-         <main id="top">
-            <section className="home-hero">
-               <div className="home-hero-video">
-                  <video
-                     autoPlay
-                     muted
-                     loop
-                     playsInline
-                     preload="metadata"
-                     poster={rfai1Img}
-                  >
-                     <source src={homeVideo} type="video/mp4" />
-                  </video>
-               </div>
-
-               <div className="home-hero-overlay"></div>
-
-               <div className="home-hero-content">
-                  <div className="home-container">
-                     <div className="home-hero-inner">
-                        <h1>Comprende tu patrón emocional con mayor claridad</h1>
-
-                        <p>
-                           Una primera lectura clínica para entender cómo está funcionando tu mente hoy,
-                           identificar la lógica de tu malestar actual y conocer si RFAI puede ayudarte.
-                        </p>
-
-                        <div className="home-hero-actions">
-                           <a className="home-btn home-btn-primary" href="#/test-rfai">Hacer test</a>
-                           <a className="home-btn home-btn-secondary" href="#/rfai">Conocer RFAI</a>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </section>
-
-            <section className="home-band">
-               <div className="home-container home-band-grid">
-                  <div className="home-band-item">
-                     <strong>Una forma simple de evaluar</strong>
-                     <span>Una manera clara de comenzar a comprender lo que estás viviendo.</span>
-                  </div>
-                  <div className="home-band-item">
-                     <strong>Lectura inicial</strong>
-                     <span>Una síntesis breve de tu patrón emocional actual.</span>
-                  </div>
-                  <div className="home-band-item">
-                     <strong>Modelo RFAI</strong>
-                     <span>Una metodología clínica orientada al cambio profundo.</span>
-                  </div>
-                  <div className="home-band-item">
-                     <strong>Acompañamiento integral</strong>
-                     <span>Un enfoque sostenido por un equipo transdisciplinario.</span>
-                  </div>
-               </div>
-            </section>
-
-            <section className="home-section" id="test">
-               <div className="home-container">
-                  <div className="home-section-head">
-                     <h2>Cómo funciona</h2>
-                     <p>
-                        La experiencia fue pensada para que puedas comenzar con claridad, sin presión y con una orientación inicial realmente útil.
-                     </p>
-                  </div>
-
-                  <div className="home-how-grid">
-                     <article className="home-how-card">
-                        <div className="home-step">1</div>
-                        <h3>Haz el test</h3>
-                        <p>
-                           Responde una evaluación breve que observa activación emocional, activación racional, activación fisiológica y regulación.
-                        </p>
-                     </article>
-
-                     <article className="home-how-card">
-                        <div className="home-step">2</div>
-                        <h3>Recibe una lectura inicial</h3>
-                        <p>
-                           Conoce cómo está funcionando tu patrón emocional actual y obtén una primera orientación más clara.
-                        </p>
-                     </article>
-
-                     <article className="home-how-card">
-                        <div className="home-step">3</div>
-                        <h3>Descubre si RFAI puede ayudarte</h3>
-                        <p>
-                           Accede a una propuesta clínica orientada a intervenir patrones automáticos y abrir nuevas formas de respuesta.
-                        </p>
-                     </article>
-                  </div>
-               </div>
-            </section>
-
-            <section className="home-section" id="rfai">
-               <div className="home-container home-split">
-                  <div>
-                     <div className="home-section-head" style={{ marginBottom: 0 }}>
-                        <h2>RFAI es una metodología clínica orientada al cambio profundo</h2>
-                        <p>
-                           RFAI organiza el proceso terapéutico para intervenir patrones emocionales automáticos,
-                           comprender su origen y facilitar nuevas formas de regulación y respuesta.
-                        </p>
-                     </div>
-
-                     <div className="home-rfai-badge">RFAI = Reprogramación Focalizada de Alto Impacto</div>
-
-                     <div className="home-hero-actions" style={{ marginTop: '22px' }}>
-                        <a className="home-btn home-btn-primary" href="#/rfai">
-                           Conocer RFAI
-                        </a>
-                        <a className="home-btn home-btn-secondary" style={{ backgroundColor: '#0f97b9', color: '#fff', border: '1px solid transparent', backdropFilter: 'none' }} href="#/test-rfai">
-                           Hacer test
-                        </a>
-                     </div>
-
-                     <div className="home-rfai-grid">
-                        <article className="home-rfai-card">
-                           <h3>Diagnóstico</h3>
-                           <p>
-                              Una lectura inicial que permite observar la lógica general de tu forma de funcionamiento actual.
-                           </p>
-                        </article>
-
-                        <article className="home-rfai-card">
-                           <h3>Reprogramación</h3>
-                           <p>
-                              Un trabajo terapéutico focalizado sobre respuestas emocionales aprendidas y patrones profundos.
-                           </p>
-                        </article>
-
-                        <article className="home-rfai-card">
-                           <h3>Integración</h3>
-                           <p>
-                              Un proceso diseñado para consolidar nuevas formas de regulación, comprensión y acción.
-                           </p>
-                        </article>
-                     </div>
-                  </div>
-
-                  <div className="home-photo">
-                     <img src={rfai1Img} alt="Modelo RFAI" />
-                  </div>
-               </div>
-            </section>
-
-            <section className="home-section" id="podcast">
-               <div className="home-container">
-                  <div className="home-podcast-box">
-                     <div className="home-podcast-embed">
-                        <iframe
-                           src="https://open.spotify.com/embed/show/5qVcMLQ7yffuS7VA3jA6Sh?utm_source=generator"
-                           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                           loading="lazy"
-                           title="Podcast de Claudio Reyes en Spotify">
-                        </iframe>
-                     </div>
-
-                     <div className="home-podcast-copy">
-                        <h2>Escucha el podcast de Claudio Reyes</h2>
-                        <p>
-                           Un espacio donde se presenta el modelo de trabajo del Centro Clínico Equilibrar
-                           y se profundiza en una manera más integral de comprender el malestar, los patrones emocionales y los procesos terapéuticos.
-                        </p>
-
-                        <div className="home-bullet-list">
-                           <div className="home-bullet">Comprende mejor el enfoque clínico del Centro.</div>
-                           <div className="home-bullet">Conoce la lógica del modelo RFAI.</div>
-                           <div className="home-bullet">Escucha el podcast sin salir del sitio.</div>
-                        </div>
-
-                        <div className="home-hero-actions" style={{ marginTop: 0 }}>
-                           <a
-                              className="home-btn home-btn-primary"
-                              href="https://open.spotify.com/show/5qVcMLQ7yffuS7VA3jA6Sh"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                           >
-                              Abrir en Spotify
-                           </a>
-
-                           <a className="home-btn home-btn-secondary" style={{ backgroundColor: '#0f97b9', color: '#fff', border: '1px solid transparent', backdropFilter: 'none' }} href="#/test-rfai">
-                              Hacer test
-                           </a>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </section>
-
-            <section className="home-section" id="equipo">
-               <div className="home-container">
-                  <div className="home-section-head">
-                     <h2>Un equipo que sostiene el proceso</h2>
-                     <p>
-                        El trabajo del Centro Clínico Equilibrar se apoya en una mirada transdisciplinaria
-                        que integra psicología clínica, neurociencia, trabajo somático y asesoría médica especializada.
-                     </p>
-                  </div>
-
-                  <div className="home-team-grid">
-                     <article className="home-team-card">
-                        <div className="home-team-photo">
-                           <img src={claudioImg} alt="Claudio Reyes" />
-                        </div>
-                        <div className="home-team-body">
-                           <h3>Claudio Reyes</h3>
-                           <span className="home-team-role">Psicólogo · Director Ejecutivo</span>
-                           <p>
-                              Psicólogo clínico y referente principal del enfoque del Centro. Lidera el desarrollo clínico del modelo RFAI.
-                           </p>
-                           <details>
-                              <summary>Ver trayectoria</summary>
-                              <div className="home-team-more">
-                                 <p>
-                                    Ha desarrollado una trayectoria centrada en el acompañamiento terapéutico profundo y el diseño de modelos de intervención orientados a la transformación emocional.
-                                 </p>
-                                 <p>
-                                    Su trabajo busca ir más allá del síntoma inmediato, ayudando a comprender la lógica interna de los patrones que organizan la experiencia emocional.
-                                 </p>
-                              </div>
-                           </details>
-                        </div>
-                     </article>
-
-                     <article className="home-team-card">
-                        <div className="home-team-photo">
-                           <img src={carlosImg} alt="Carlos Carrasco" />
-                        </div>
-                        <div className="home-team-body">
-                           <h3>Carlos Carrasco</h3>
-                           <span className="home-team-role">Neurocientífico · Director de Investigación</span>
-                           <p>
-                              Aporta una mirada científica al modelo terapéutico y al desarrollo conceptual del trabajo clínico.
-                           </p>
-                           <details>
-                              <summary>Ver trayectoria</summary>
-                              <div className="home-team-more">
-                                 <p>
-                                    Participa en el fortalecimiento del enfoque desde la neurociencia, contribuyendo a una comprensión más rigurosa de los procesos de aprendizaje, adaptación y regulación emocional.
-                                 </p>
-                              </div>
-                           </details>
-                        </div>
-                     </article>
-
-                     <article className="home-team-card">
-                        <div className="home-team-photo">
-                           <img src={valentinImg} alt="Valentín Keller" />
-                        </div>
-                        <div className="home-team-body">
-                           <h3>Valentín Keller</h3>
-                           <span className="home-team-role">Terapeuta oriental · Director del área somática</span>
-                           <p>
-                              Integra la dimensión corporal al trabajo clínico, aportando una mirada centrada en regulación, movimiento y presencia.
-                           </p>
-                           <details>
-                              <summary>Ver trayectoria</summary>
-                              <div className="home-team-more">
-                                 <p>
-                                    Su enfoque incorpora herramientas de conciencia somática y autorregulación corporal, permitiendo integrar la dimensión física al proceso terapéutico.
-                                 </p>
-                              </div>
-                           </details>
-                        </div>
-                     </article>
-
-                     <article className="home-team-card">
-                        <div className="home-team-photo">
-                           <img src={alanImg} alt="Alan Lama" />
-                        </div>
-                        <div className="home-team-body">
-                           <h3>Alan Lama</h3>
-                           <span className="home-team-role">Psiquiatra · Asesor en medicina y psiquiatría</span>
-                           <p>
-                              Apoya el modelo clínico con una mirada médica especializada sobre salud mental y evaluación.
-                           </p>
-                           <details>
-                              <summary>Ver trayectoria</summary>
-                              <div className="home-team-more">
-                                 <p>
-                                    Su rol permite fortalecer la comprensión integral de los procesos de salud mental, aportando criterios clínicos y evaluación psiquiátrica cuando es necesario.
-                                 </p>
-                              </div>
-                           </details>
-                        </div>
-                     </article>
-                  </div>
-               </div>
-            </section>
-
-            <section className="home-section">
-               <div className="home-container">
-                  <div className="home-section-head">
-                     <h2>Cuando una persona entiende su patrón, algo empieza a ordenarse</h2>
-                     <p>
-                        A veces el alivio comienza cuando deja de pelear solo con los síntomas y logra ver la lógica interna de lo que le pasa.
-                     </p>
-                  </div>
-
-                  <div className="home-testimonials">
-                     <article className="home-quote">
-                        <p>“Por primera vez sentí que alguien entendía cómo funciono por dentro.”</p>
-                        <span>Paciente • Test RFAI</span>
-                     </article>
-
-                     <article className="home-quote">
-                        <p>“No era solo ansiedad. Había una forma completa de reaccionar que yo no lograba ver.”</p>
-                        <span>Paciente • Proceso clínico</span>
-                     </article>
-
-                     <article className="home-quote">
-                        <p>“Ponerle nombre al patrón cambió completamente mi punto de partida.”</p>
-                        <span>Paciente • Resultado por perfil</span>
-                     </article>
-                  </div>
-               </div>
-            </section>
-
-            <section className="home-cta" id="contacto">
-               <div className="home-container">
-                  <div className="home-cta-box">
-                     <div className="home-cta-grid">
-                        <div className="home-cta-copy">
-                           <h2>Haz el test y descubre tu patrón emocional</h2>
-                           <p>
-                              Un primer paso para comprender con mayor claridad lo que está ocurriendo en tu vida emocional y abrir un camino más orientado de transformación.
-                           </p>
-
-                           <div className="home-cta-actions">
-                              <a className="home-btn home-btn-primary" href="#/test-rfai">Hacer test</a>
-                              <a
-                                 className="home-btn home-btn-secondary"
-                                 href="https://wa.me/56930179724?text=Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20Test%20RFAI%20y%20el%20modelo%20de%20trabajo%20de%20Equilibrar."
-                                 target="_blank"
-                                 rel="noopener noreferrer"
-                              >
-                                 Hablar por WhatsApp
-                              </a>
-                           </div>
-                        </div>
-
-                        <div className="home-cta-image">
-                           <img src={rfai2Img} alt="Invitación a realizar el Test RFAI" />
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </section>
-         </main>
-
-         <footer className="home-footer">
-            <div className="home-container home-footer-row">
-               <p>© 2026 Centro Clínico Equilibrar</p>
-               <div className="home-footer-links">
-                  <a href="#test" onClick={(e) => handleScrollTo(e, 'test')}>Test</a>
-                  <a href="#rfai" onClick={(e) => handleScrollTo(e, 'rfai')}>RFAI</a>
-                  <a href="#podcast" onClick={(e) => handleScrollTo(e, 'podcast')}>Podcast</a>
-                  <a href="#equipo" onClick={(e) => handleScrollTo(e, 'equipo')}>Equipo</a>
-                  <a href="#contacto" onClick={(e) => handleScrollTo(e, 'contacto')}>Contacto</a>
-               </div>
+            {/* MOBILE MENU */}
+            <div className={`px-mobile-menu-overlay ${isMenuOpen ? 'px-active' : ''}`}>
+                <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')}>Evaluación</a>
+                <a href="#equipo" onClick={(e) => handleLinkClick(e, 'equipo')}>Equipo Clínico</a>
+                <a href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Propuesta</a>
+                <a href="equilibrar_blog.html">Blog</a>
+                <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} className="px-btn px-btn-primary mt-4" style={{ fontSize: '18px', padding: '0 40px' }}>Agendar ahora</a>
             </div>
-         </footer>
-      </div>
-   );
+
+            <main id="top">
+                {/* HERO SECTION */}
+                <section className="px-hero">
+                    <div className="px-hero-video">
+                        <video autoPlay muted loop playsInline>
+                            <source src="https://www.origamis.cl/wp-content/uploads/2026/04/video-home-equilibrar.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div className="px-hero-bg"></div>
+                    
+                    <div className="px-container">
+                        <div className="px-hero-inner px-reveal">
+                            <span className="px-eyebrow" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', boxShadow: '0 0 0 1px rgba(255,255,255,0.1)', marginBottom: '24px' }}>
+                                Enfoque de Alto Impacto
+                            </span>
+                            <h1>Tratamientos y terapias para cambiar tu vida</h1>
+                            <p>Evaluación inicial estructurada para entender con precisión cómo estás funcionando hoy y definir la intervención clínica más pertinente.</p>
+                            <div className="px-hero-actions">
+                                <a className="px-btn px-btn-primary" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} style={{ backgroundColor: 'var(--brand-accent)' }}>Diagnóstico y Evaluación</a>
+                                <a className="px-btn px-btn-glass" href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Conocer la propuesta</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* INTRO SPLIT CARD */}
+                <div className="px-intro-wrap px-reveal px-delay-100">
+                    <article className="px-split-card">
+                        <div className="px-split-content">
+                            <span className="px-eyebrow">Primer Paso Clínico</span>
+                            <h3>Define con claridad qué necesitas hoy</h3>
+                            <p>Haz la evaluación para precisar el funcionamiento actual, ordenar el caso clínico y definir la estrategia de intervención más pertinente y eficaz para tu bienestar.</p>
+                            <div>
+                                <a className="px-btn px-btn-primary" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')}>Comenzar Evaluación Inicial</a>
+                            </div>
+                        </div>
+                        <div className="px-split-image" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/2.png')" }}></div>
+                    </article>
+                </div>
+
+                {/* EVALUATION GRID */}
+                <section id="evaluacion" className="px-section">
+                    <div className="px-container">
+                        <div className="px-section-head px-reveal">
+                            <span className="px-eyebrow">Evaluación Clínica</span>
+                            <h2>Lecturas precisas para resultados efectivos</h2>
+                            <p>Nuestra primera evaluación estructural permite ordenar el caso, precisar el malestar y estructurar de inmediato la indicación terapéutica correcta.</p>
+                        </div>
+
+                        <div className="px-eval-grid">
+                            <article className="px-eval-card px-highlight-card px-reveal">
+                                <div className="px-eval-icon">01</div>
+                                <h3>Evaluación Ejecutiva</h3>
+                                <p>Sesión clínica inicial de alta precisión para ordenar tus síntomas y plantear una hoja de ruta.</p>
+                                <ul className="px-mini-list">
+                                    <li>Lectura del funcionamiento actual</li>
+                                    <li>Hipótesis clínica inicial</li>
+                                    <li>Definición de plan estratégico</li>
+                                </ul>
+                                <Link to="/test-rfai" className="px-btn px-btn-primary">Agendar Sesión Ahora</Link>
+                            </article>
+
+                            <article className="px-eval-card px-reveal px-delay-100">
+                                <div className="px-eval-icon">02</div>
+                                <h3>Foco en Síntomas</h3>
+                                <p>Comprensión clínica profunda del malestar actual para abordar la raíz real del problema.</p>
+                                <ul className="px-mini-list">
+                                    <li>Ansiedad persistente y desregulada</li>
+                                    <li>Sobrecarga emocional sostenida</li>
+                                    <li>Desregulación o bloqueos diarios</li>
+                                </ul>
+                                <a className="px-btn px-btn-secondary" href="#">Entender el foco</a>
+                            </article>
+
+                            <article className="px-eval-card px-reveal px-delay-200">
+                                <div className="px-eval-icon">03</div>
+                                <h3>Acción Terapéutica</h3>
+                                <p>Implementación de la indicación clínica con acceso directo a tus recursos.</p>
+                                <ul className="px-mini-list">
+                                    <li>Módulos semanales guiados</li>
+                                    <li>Biofeedback y neurociencia</li>
+                                    <li>Cuestionarios y seguimiento</li>
+                                </ul>
+                                <a className="px-btn px-btn-secondary" href="https://login.clinicaequilibrar.cl">Ingresar a Portal PAC</a>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+                {/* TEAM SQUAD */}
+                <section id="equipo" className="px-section px-bg-soft">
+                    <div className="px-container">
+                        <div className="px-section-head px-reveal">
+                            <span className="px-eyebrow">Equipo Clínico Multi-disciplinario</span>
+                            <h2>Dirección articulada por Especialidades</h2>
+                            <p>El equipo se organiza desde una filosofía clínica común, articulando distintas especialidades para sostener la evaluación y la intervención integral.</p>
+                        </div>
+
+                        <div className="px-team-grid">
+                            <article className="px-team-card px-reveal">
+                                <div className="px-team-photo-wrap">
+                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5750.jpg" alt="Claudio Reyes" />
+                                </div>
+                                <div className="px-team-copy">
+                                    <div className="px-team-role">Psicología clínica</div>
+                                    <h3>Claudio Reyes</h3>
+                                    <p>Evaluación clínica y definición de estrategia terapéutica.</p>
+                                </div>
+                            </article>
+
+                            <article className="px-team-card px-reveal px-delay-100">
+                                <div className="px-team-photo-wrap">
+                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5728.jpg" alt="Carlos Carrasco" />
+                                </div>
+                                <div className="px-team-copy">
+                                    <div className="px-team-role">Neurociencia</div>
+                                    <h3>Carlos Carrasco</h3>
+                                    <p>Aplicación de neurociencia al bienestar y regulación.</p>
+                                </div>
+                            </article>
+
+                            <article className="px-team-card px-reveal px-delay-200">
+                                <div className="px-team-photo-wrap">
+                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5664.jpg" alt="Valentín Keller" />
+                                </div>
+                                <div className="px-team-copy">
+                                    <div className="px-team-role">Trabajo Corporal</div>
+                                    <h3>Valentín Keller</h3>
+                                    <p>Intervención somática y regulación fisiológica aplicada.</p>
+                                </div>
+                            </article>
+
+                            <article className="px-team-card px-reveal px-delay-300">
+                                <div className="px-team-photo-wrap">
+                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/alan-v2.png" alt="Alan Lama" />
+                                </div>
+                                <div className="px-team-copy">
+                                    <div className="px-team-role">Psiquiatría</div>
+                                    <h3>Alan Lama</h3>
+                                    <p>Evaluación psiquiátrica y apoyo médico integrado.</p>
+                                </div>
+                            </article>
+
+                            <article className="px-team-card px-reveal px-delay-100">
+                                <div className="px-team-photo-wrap">
+                                    <img className="px-team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/Captura-de-Pantalla-2026-04-19-a-las-08.15.09.png" alt="Daniela Baeza" />
+                                </div>
+                                <div className="px-team-copy">
+                                    <div className="px-team-role">Análisis Sistémico</div>
+                                    <h3>Daniela Baeza</h3>
+                                    <p>Lectura de patrones relacionales y reorganización de dinámicas.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+                {/* SOMATIC DUO STRIP */}
+                <section className="px-section">
+                    <div className="px-container">
+                        <article className="px-duo-card px-reveal" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/valentin-taichi.png')" }}>
+                            <div className="px-duo-overlay"></div>
+                            <div className="px-duo-copy">
+                                <span className="px-eyebrow" style={{ background: 'rgba(255,255,255,0.15)', color: 'white', marginBottom: '24px' }}>
+                                    Enfoque Fisiológico
+                                </span>
+                                <h3>El cuerpo también es parte estructural del tratamiento</h3>
+                                <p>Nuestra regulación fisiológica permite intervenir allí donde el síntoma puro se expresa como tensión crónica, hiperactivación y pérdida de base somática.</p>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                {/* KNOWLEDGE & PODCAST (DARK SECTION) */}
+                <section id="pensamiento" className="px-section px-dark-section">
+                    <div className="px-container">
+                        <div className="px-section-head px-reveal">
+                            <span className="px-eyebrow">Pensamiento Clínico del Centro</span>
+                            <h2>Línea teórica que orienta la práctica</h2>
+                            <p style={{ color: 'rgba(255,255,255,0.6)' }}>El podcast y nuestro blog desarrollan ideas, modelos e hipótesis que amplían tu comprensión clínica.</p>
+                        </div>
+
+                        <div className="px-knowledge-grid">
+                            <article className="px-knowledge-card px-reveal">
+                                <div className="px-knowledge-media" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/9.png')" }}></div>
+                                <div className="px-knowledge-content">
+                                    <span className="px-eyebrow">Podcast Oficial</span>
+                                    <h3>Arquitectura Evolutiva de la Consciencia</h3>
+                                    <p>Un espacio inmersivo de elaboración clínica sobre regulación nerviosa, experiencia subjetiva, dinámicas de cambio y funcionamiento integral.</p>
+                                    <a className="px-btn px-btn-glass" href="https://open.spotify.com/show/5qVcMLQ7yffuS7VA3jA6Sh" target="_blank" rel="noopener noreferrer">Escuchar en Spotify</a>
+                                </div>
+                            </article>
+
+                            <article className="px-knowledge-card px-reveal px-delay-100">
+                                <div className="px-knowledge-media" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/10.png')" }}></div>
+                                <div className="px-knowledge-content">
+                                    <span className="px-eyebrow">Blog y Artículos</span>
+                                    <h3>Una clínica que piensa constantemente su práctica</h3>
+                                    <p>Explora contenidos escritos de alto impacto para abordar el malestar, el dolor emocional y estructurar formas de recuperar tu equilibrio.</p>
+                                    <Link className="px-btn px-btn-glass" to="#">Visitar el Blog de Estudio</Link>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer className="px-footer">
+                <div className="px-container">
+                    <img src="https://www.origamis.cl/wp-content/uploads/2026/03/logo-clinica-equilibrar.png" alt="Clínica Equilibrar" className="px-footer-logo" />
+                    <p>Clínica Equilibrar © 2026<br />Evaluación clínica inicial · Intervenciones precisas de alto impacto · Regulación transdisciplinaria</p>
+                </div>
+            </footer>
+        </div>
+    );
 };
 
 export default Home;
