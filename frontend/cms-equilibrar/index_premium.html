@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clínica Equilibrar — Salud Mental Transdisciplinaria</title>
+  
+  <!-- Preconnect and Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* =========================================================================
+       CSS VARIABLES - PREMIUM PALETTE & TOKENS
+       ========================================================================= */
+    :root {
+      /* Brand Colors */
+      --brand-900: #0a1c1a;
+      --brand-800: #102e29;
+      --brand-700: #173f38;
+      --brand-accent: #00A89C; /* The unmistakable Equilibrar Cyan */
+      --brand-light: #e0f6f4;
+      
+      /* Neutrals */
+      --bg-page: #f9fcfb;
+      --surface-white: #ffffff;
+      --surface-muted: #f1f5f4;
+      
+      /* Text */
+      --text-main: #14211f;
+      --text-muted: #5e706c;
+      --text-light: #94a3a0;
+      
+      /* Structural */
+      --border-thin: rgba(0, 168, 156, 0.15);
+      --container-max: 1240px;
+      
+      /* Radii */
+      --radius-2xl: 32px;
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-full: 999px;
+      
+      /* Shadows */
+      --shadow-sm: 0 4px 14px rgba(0, 168, 156, 0.05);
+      --shadow-md: 0 12px 32px rgba(20, 33, 31, 0.08);
+      --shadow-lg: 0 24px 56px rgba(0, 168, 156, 0.12);
+      --shadow-hover: 0 32px 64px rgba(0, 168, 156, 0.18);
+    }
+
+    /* =========================================================================
+       RESET & BASE
+       ========================================================================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Typography Hierarchy */
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Outfit', sans-serif;
+      color: var(--brand-900);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    img, video { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* =========================================================================
+       COMPONENTS
+       ========================================================================= */
+    
+    .container {
+      width: min(calc(100% - 40px), var(--container-max));
+      margin: 0 auto;
+    }
+    
+    .section { padding: 120px 0; }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 52px; padding: 0 36px; border-radius: var(--radius-full);
+      font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer; border: 1px solid transparent; white-space: nowrap;
+    }
+    
+    .btn-primary {
+      background: var(--brand-900); color: white;
+      box-shadow: 0 12px 24px rgba(10, 28, 26, 0.15);
+    }
+    .btn-primary:hover {
+      background: var(--brand-accent);
+      box-shadow: 0 16px 32px rgba(0, 168, 156, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    .btn-secondary {
+      background: var(--surface-white); color: var(--text-main);
+      border-color: var(--border-thin);
+    }
+    .btn-secondary:hover {
+      color: var(--brand-accent); border-color: var(--brand-accent);
+      box-shadow: var(--shadow-sm); transform: translateY(-2px);
+    }
+    
+    .btn-glass {
+      background: rgba(255, 255, 255, 0.08); color: white;
+      backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-glass:hover {
+      background: rgba(255, 255, 255, 0.16); transform: translateY(-2px);
+    }
+    
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: var(--radius-full);
+      background: var(--brand-light); color: var(--brand-accent);
+      font-size: 12px; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 20px;
+    }
+
+    /* Section Headers */
+    .section-head { text-align: center; max-width: 720px; margin: 0 auto 72px; }
+    .section-head h2 { font-size: clamp(36px, 5vw, 64px); margin-bottom: 20px; text-wrap: balance; }
+    .section-head p { font-size: 18px; color: var(--text-muted); font-weight: 400; text-wrap: balance; }
+
+    /* =========================================================================
+       ANIMATIONS (SCROLL REVEAL)
+       ========================================================================= */
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+
+    /* =========================================================================
+       HEADER 
+       ========================================================================= */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(249, 252, 251, 0.6);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid transparent; transition: all 0.4s ease;
+    }
+    header.scrolled {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid var(--border-thin);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.03);
+    }
+    .nav { height: 88px; display: flex; align-items: center; justify-content: space-between; }
+    
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand img { width: 48px; height: 48px; border-radius: 12px; object-fit: contain; }
+    .brand-text { display: flex; flex-direction: column; justify-content: center; }
+    .brand-text strong { font-size: 20px; font-weight: 800; line-height: 1.1; }
+    .brand-text span { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--brand-accent); }
+    
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a { font-size: 14px; font-weight: 600; color: var(--text-muted); position: relative; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--brand-accent); }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -6px; left: 0; width: 0; height: 2px;
+      background: var(--brand-accent); transition: width 0.3s ease; border-radius: 2px;
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    .menu-toggle { display: none; background: none; border: none; font-size: 24px; color: var(--brand-900); cursor: pointer; }
+
+    /* =========================================================================
+       HERO
+       ========================================================================= */
+    .hero {
+      position: relative; min-height: 100vh; padding-top: 88px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transform: scale(1.05); animation: kenburns 25s infinite alternate ease-in-out; }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(145deg, rgba(10,28,26,0.95) 0%, rgba(10,28,26,0.7) 40%, rgba(0,168,156,0.2) 100%);
+    }
+    .hero-inner { position: relative; z-index: 1; text-align: center; color: white; max-width: 860px; padding: 40px 0; }
+    .hero-inner h1 { color: white; font-size: clamp(48px, 6vw, 92px); font-weight: 800; letter-spacing: -0.04em; margin-bottom: 24px; text-wrap: balance; }
+    .hero-inner p { font-size: clamp(16px, 2vw, 20px); color: rgba(255,255,255,0.85); margin-bottom: 48px; max-width: 640px; margin-inline: auto; font-weight: 300; }
+    .hero-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+    @keyframes kenburns { 0% { transform: scale(1.05); } 100% { transform: scale(1.15) translate(-1%, -1%); } }
+
+    /* =========================================================================
+       SPLIT CARD INTRO
+       ========================================================================= */
+    .intro-wrap { margin-top: -80px; position: relative; z-index: 10; padding: 0 20px; }
+    .split-card {
+      background: var(--surface-white); border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-lg); border: 1px solid var(--border-thin);
+      display: grid; grid-template-columns: 1.1fr 1fr; overflow: hidden;
+      max-width: var(--container-max); margin: 0 auto;
+    }
+    .split-content { padding: 80px 60px; display: flex; flex-direction: column; justify-content: center; }
+    .split-content h3 { font-size: clamp(32px, 3.5vw, 48px); margin-bottom: 20px; text-wrap: balance; }
+    .split-content p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; }
+    .split-image { background-size: cover; background-position: center; min-height: 480px; clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%); }
+
+    /* =========================================================================
+       EVALUATION (RUTA CLÍNICA)
+       ========================================================================= */
+    .eval-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .eval-card {
+      background: var(--surface-white); border-radius: var(--radius-xl);
+      padding: 48px 40px; border: 1px solid var(--border-thin);
+      box-shadow: var(--shadow-sm); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .eval-card::before {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(circle at top right, rgba(0, 168, 156, 0.05) 0%, transparent 70%);
+      opacity: 0; transition: opacity 0.5s;
+    }
+    .eval-card:hover { transform: translateY(-12px); box-shadow: var(--shadow-hover); border-color: rgba(0, 168, 156, 0.3); }
+    .eval-card:hover::before { opacity: 1; }
+    
+    .eval-icon {
+      width: 72px; height: 72px; border-radius: 20px;
+      background: var(--brand-light); color: var(--brand-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800;
+      margin-bottom: 32px; transition: all 0.5s; position: relative; z-index: 1;
+    }
+    .eval-card:hover .eval-icon {
+      background: var(--brand-accent); color: white; transform: rotate(-8deg) scale(1.1);
+      box-shadow: 0 12px 24px rgba(0, 168, 156, 0.3);
+    }
+    
+    .eval-card h3 { font-size: 28px; margin-bottom: 16px; position: relative; z-index: 1; }
+    .eval-card p { color: var(--text-muted); margin-bottom: 32px; flex-grow: 1; font-size: 15px; position: relative; z-index: 1; }
+    
+    .mini-list { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; position: relative; z-index: 1; }
+    .mini-list li { display: flex; align-items: center; gap: 14px; font-size: 15px; font-weight: 600; color: var(--brand-900); }
+    .mini-list li::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--brand-accent); flex-shrink: 0;
+    }
+    .eval-card .btn { width: 100%; position: relative; z-index: 1; }
+    
+    .highlight-card { border: 2px solid var(--brand-accent); }
+    .highlight-card .eval-icon { background: var(--brand-900); color: white; }
+
+    /* =========================================================================
+       TEAM
+       ========================================================================= */
+    .bg-soft { background-color: var(--surface-muted); }
+    .team-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+    .team-card {
+      background: var(--surface-white); border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: var(--shadow-sm); transition: all 0.5s; border: 1px solid var(--border-thin);
+    }
+    .team-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); }
+    .team-photo-wrap { aspect-ratio: 4/5; overflow: hidden; }
+    .team-photo { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.8s; }
+    .team-card:hover .team-photo { transform: scale(1.08); }
+    .team-copy { padding: 24px; }
+    .team-role { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brand-accent); margin-bottom: 8px; }
+    .team-copy h3 { font-size: 20px; margin-bottom: 12px; }
+    .team-copy p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+    /* =========================================================================
+       DUO STRIP (SOMATIC)
+       ========================================================================= */
+    .duo-card {
+      border-radius: var(--radius-2xl); overflow: hidden; min-height: 540px;
+      display: flex; align-items: flex-end; position: relative;
+      background-size: cover; background-position: center; box-shadow: var(--shadow-lg);
+    }
+    .duo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(0deg, rgba(10,28,26,0.95) 0%, rgba(10,28,26,0.4) 50%, transparent 100%);
+    }
+    .duo-copy { position: relative; z-index: 1; padding: 60px; max-width: 600px; color: white; }
+    .duo-copy h3 { color: white; font-size: clamp(36px, 4vw, 56px); margin-bottom: 20px; }
+    .duo-copy p { font-size: 18px; color: rgba(255,255,255,0.8); }
+
+    /* =========================================================================
+       PENSAMIENTO CLÍNICO (DARK)
+       ========================================================================= */
+    .dark-section { background: var(--brand-900); color: white; position: relative; overflow: hidden; }
+    .dark-section .section-head h2 { color: white; }
+    .dark-section .eyebrow { background: rgba(0, 168, 156, 0.15); }
+    
+    .knowledge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+    .knowledge-card {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-2xl); overflow: hidden; transition: all 0.4s;
+    }
+    .knowledge-card:hover { background: rgba(255, 255, 255, 0.06); transform: translateY(-8px); border-color: rgba(0, 168, 156, 0.3); }
+    .knowledge-media { width: 100%; aspect-ratio: 16/10; background-size: cover; background-position: center; }
+    .knowledge-content { padding: 48px; }
+    .knowledge-content h3 { color: white; font-size: 32px; margin-bottom: 16px; }
+    .knowledge-content p { font-size: 16px; color: rgba(255, 255, 255, 0.6); margin-bottom: 32px; max-width: 440px; }
+
+    /* =========================================================================
+       FOOTER
+       ========================================================================= */
+    footer {
+      background: #050e0d; padding: 80px 0 60px; text-align: center;
+      color: rgba(255,255,255,0.4); font-size: 14px;
+    }
+    .footer-logo { filter: grayscale(1) brightness(2); opacity: 0.3; margin: 0 auto 32px; width: 56px; }
+
+    /* =========================================================================
+       MOBILE MENU
+       ========================================================================= */
+    .mobile-menu-overlay {
+      position: fixed; inset: 0; background: rgba(249, 252, 251, 0.98);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      z-index: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 32px;
+      opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+    }
+    .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+    .mobile-menu-overlay a { font-family: 'Outfit', sans-serif; font-size: 36px; font-weight: 800; color: var(--brand-900); }
+    
+    /* =========================================================================
+       RESPONSIVE RULES
+       ========================================================================= */
+    @media (max-width: 1024px) {
+      .team-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .eval-grid { grid-template-columns: 1fr; gap: 24px; }
+      .knowledge-grid { grid-template-columns: 1fr; gap: 24px; }
+      .split-card { grid-template-columns: 1fr; }
+      .split-image { clip-path: none; min-height: 320px; }
+      .duo-copy { padding: 40px; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .menu-toggle { display: block; z-index: 100; position: relative; }
+      .section { padding: 80px 0; }
+      .hero-inner h1 { font-size: 44px; }
+      .team-grid { grid-template-columns: 1fr; }
+      .split-content { padding: 40px 24px; }
+      .intro-wrap { padding: 0 16px; margin-top: -40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="container nav">
+      <a href="#top" class="brand">
+        <img src="https://www.origamis.cl/wp-content/uploads/2026/03/logo-clinica-equilibrar.png" alt="Logo Clínica Equilibrar">
+        <div class="brand-text">
+          <strong>Clínica Equilibrar</strong>
+          <span>Salud mental transdisciplinaria</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#evaluacion">Evaluación</a>
+        <a href="#equipo">Equipo</a>
+        <a href="#pensamiento">Propuesta</a>
+        <a href="equilibrar_blog.html">Blog</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a class="btn btn-primary" href="#evaluacion">Agendar evaluación</a>
+      </div>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU FULLSCREEN -->
+  <div class="mobile-menu-overlay" id="mobileMenu">
+    <a href="#evaluacion" class="mobile-link">Evaluación</a>
+    <a href="#equipo" class="mobile-link">Equipo Clínico</a>
+    <a href="#pensamiento" class="mobile-link">Propuesta</a>
+    <a href="equilibrar_blog.html" class="mobile-link">Blog</a>
+    <a href="#evaluacion" class="btn btn-primary mt-4 mobile-link" style="font-size: 18px; padding: 0 40px;">Agendar ahora</a>
+  </div>
+
+  <main id="top">
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div class="hero-video">
+        <video autoplay muted loop playsinline>
+          <source src="https://www.origamis.cl/wp-content/uploads/2026/04/video-home-equilibrar.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="hero-bg"></div>
+      
+      <div class="container">
+        <div class="hero-inner reveal">
+          <span class="eyebrow" style="background: rgba(255,255,255,0.1); color: #fff; box-shadow: 0 0 0 1px rgba(255,255,255,0.1); margin-bottom: 24px;">Enfoque de Alto Impacto</span>
+          <h1>Tratamientos y terapias para cambiar tu vida</h1>
+          <p>Evaluación inicial estructurada para entender con precisión cómo estás funcionando hoy y definir la intervención clínica más pertinente.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#evaluacion" style="background-color: var(--brand-accent);">Diagnóstico y Evaluación</a>
+            <a class="btn btn-glass" href="#pensamiento">Conocer la propuesta</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRO SPLIT CARD -->
+    <div class="intro-wrap reveal delay-100">
+      <article class="split-card">
+        <div class="split-content">
+          <span class="eyebrow">Primer Paso Clínico</span>
+          <h3>Define con claridad qué necesitas hoy</h3>
+          <p>Haz la evaluación para precisar el funcionamiento actual, ordenar el caso clínico y definir la estrategia de intervención más pertinente y eficaz para tu bienestar.</p>
+          <div>
+            <a class="btn btn-primary" href="#evaluacion">Comenzar Evaluación Inicial</a>
+          </div>
+        </div>
+        <div class="split-image" style="background-image:url('https://www.origamis.cl/wp-content/uploads/2026/04/2.png');"></div>
+      </article>
+    </div>
+
+    <!-- EVALUATION GRID -->
+    <section id="evaluacion" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Evaluación Clínica</span>
+          <h2>Lecturas precisas para resultados efectivos</h2>
+          <p>Nuestra primera evaluación estructural permite ordenar el caso, precisar el malestar y estructurar de inmediato la indicación terapéutica correcta.</p>
+        </div>
+
+        <div class="eval-grid">
+          <!-- Card 1 -->
+          <article class="eval-card highlight-card reveal">
+            <div class="eval-icon">01</div>
+            <h3>Evaluación Ejecutiva</h3>
+            <p>Sesión clínica inicial de alta precisión para ordenar tus síntomas y plantear una hoja de ruta.</p>
+            <ul class="mini-list">
+              <li>Lectura del funcionamiento actual</li>
+              <li>Hipótesis clínica inicial</li>
+              <li>Definición de plan estratégico</li>
+            </ul>
+            <a class="btn btn-primary" href="#">Agendar Sesión Ahora</a>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="eval-card reveal delay-100">
+            <div class="eval-icon">02</div>
+            <h3>Foco en Síntomas</h3>
+            <p>Comprensión clínica profunda del malestar actual para abordar la raíz real del problema.</p>
+            <ul class="mini-list">
+              <li>Ansiedad persistente y desregulada</li>
+              <li>Sobrecarga emocional sostenida</li>
+              <li>Desregulación o bloqueos diarios</li>
+            </ul>
+            <a class="btn btn-secondary" href="#">Entender el foco</a>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="eval-card reveal delay-200">
+            <div class="eval-icon">03</div>
+            <h3>Acción Terapéutica</h3>
+            <p>Implementación de la indicación clínica con acceso directo a tus recursos.</p>
+            <ul class="mini-list">
+              <li>Módulos semanales guiados</li>
+              <li>Biofeedback y neurociencia</li>
+              <li>Cuestionarios y seguimiento</li>
+            </ul>
+            <a class="btn btn-secondary" href="https://login.clinicaequilibrar.cl">Ingresar a Portal PAC</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM SQUAD -->
+    <section id="equipo" class="section bg-soft">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Equipo Clínico Multi-disciplinario</span>
+          <h2>Dirección articulada por Especialidades</h2>
+          <p>El equipo se organiza desde una filosofía clínica común, articulando distintas especialidades para sostener la evaluación y la intervención integral.</p>
+        </div>
+
+        <div class="team-grid">
+          <article class="team-card reveal">
+            <div class="team-photo-wrap">
+              <img class="team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5750.jpg" alt="Claudio Reyes">
+            </div>
+            <div class="team-copy">
+              <div class="team-role">Psicología clínica</div>
+              <h3>Claudio Reyes</h3>
+              <p>Evaluación clínica y definición de estrategia terapéutica.</p>
+            </div>
+          </article>
+
+          <article class="team-card reveal delay-100">
+            <div class="team-photo-wrap">
+              <img class="team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5728.jpg" alt="Carlos Carrasco">
+            </div>
+            <div class="team-copy">
+              <div class="team-role">Neurociencia</div>
+              <h3>Carlos Carrasco</h3>
+              <p>Aplicación de neurociencia al bienestar y regulación.</p>
+            </div>
+          </article>
+
+          <article class="team-card reveal delay-200">
+            <div class="team-photo-wrap">
+              <img class="team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5664.jpg" alt="Valentín Keller">
+            </div>
+            <div class="team-copy">
+              <div class="team-role">Trabajo Corporal</div>
+              <h3>Valentín Keller</h3>
+              <p>Intervención somática y regulación fisiológica aplicada.</p>
+            </div>
+          </article>
+
+          <article class="team-card reveal delay-300">
+            <div class="team-photo-wrap">
+              <img class="team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/alan-v2.png" alt="Alan Lama">
+            </div>
+            <div class="team-copy">
+              <div class="team-role">Psiquiatría</div>
+              <h3>Alan Lama</h3>
+              <p>Evaluación psiquiátrica y apoyo médico integrado.</p>
+            </div>
+          </article>
+
+          <article class="team-card reveal delay-100">
+            <div class="team-photo-wrap">
+              <img class="team-photo" src="https://www.origamis.cl/wp-content/uploads/2026/04/Captura-de-Pantalla-2026-04-19-a-las-08.15.09.png" alt="Daniela Baeza">
+            </div>
+            <div class="team-copy">
+              <div class="team-role">Análisis Sistémico</div>
+              <h3>Daniela Baeza</h3>
+              <p>Lectura de patrones relacionales y reorganización de dinámicas.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOMATIC DUO STRIP -->
+    <section class="section">
+      <div class="container">
+        <article class="duo-card reveal" style="background-image:url('https://www.origamis.cl/wp-content/uploads/2026/04/valentin-taichi.png');">
+          <div class="duo-overlay"></div>
+          <div class="duo-copy">
+            <span class="eyebrow" style="background: rgba(255,255,255,0.15); color: white; margin-bottom: 24px;">Enfoque Fisiológico</span>
+            <h3>El cuerpo también es parte estructural del tratamiento</h3>
+            <p>Nuestra regulación fisiológica permite intervenir allí donde el síntoma puro se expresa como tensión crónica, hiperactivación y pérdida de base somática.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- KNOWLEDGE & PODCAST (DARK SECTION) -->
+    <section id="pensamiento" class="section dark-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Pensamiento Clínico del Centro</span>
+          <h2>Línea teórica que orienta la práctica</h2>
+          <p style="color: rgba(255,255,255,0.6);">El podcast y nuestro blog desarrollan ideas, modelos e hipótesis que amplían tu comprensión clínica.</p>
+        </div>
+
+        <div class="knowledge-grid">
+          <article class="knowledge-card reveal">
+            <div class="knowledge-media" style="background-image:url('https://www.origamis.cl/wp-content/uploads/2026/04/9.png');"></div>
+            <div class="knowledge-content">
+              <span class="eyebrow">Podcast Oficial</span>
+              <h3>Arquitectura Evolutiva de la Consciencia</h3>
+              <p>Un espacio inmersivo de elaboración clínica sobre regulación nerviosa, experiencia subjetiva, dinámicas de cambio y funcionamiento integral.</p>
+              <a class="btn btn-glass" href="https://open.spotify.com/show/5qVcMLQ7yffuS7VA3jA6Sh" target="_blank" rel="noopener noreferrer">Escuchar en Spotify</a>
+            </div>
+          </article>
+
+          <article class="knowledge-card reveal delay-100">
+            <div class="knowledge-media" style="background-image:url('https://www.origamis.cl/wp-content/uploads/2026/04/10.png');"></div>
+            <div class="knowledge-content">
+              <span class="eyebrow">Blog y Artículos</span>
+              <h3>Una clínica que piensa constantemente su práctica</h3>
+              <p>Explora contenidos escritos de alto impacto para abordar el malestar, el dolor emocional y estructurar formas de recuperar tu equilibrio.</p>
+              <a class="btn btn-glass" href="equilibrar_blog.html">Visitar el Blog de Estudio</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <img src="https://www.origamis.cl/wp-content/uploads/2026/03/logo-clinica-equilibrar.png" alt="Clínica Equilibrar" class="footer-logo">
+      <p>Clínica Equilibrar © 2026<br>Evaluación clínica inicial · Intervenciones precisas de alto impacto · Regulación transdisciplinaria</p>
+    </div>
+  </footer>
+
+  <script>
+    // ----------------------------------------------------------------------
+    // 1. Header Blur & Shrink on Scroll
+    // ----------------------------------------------------------------------
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 40) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // ----------------------------------------------------------------------
+    // 2. Mobile Menu (Fullscreen Blur)
+    // ----------------------------------------------------------------------
+    const menuBtn = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+    let menuOpen = false;
+
+    function toggleMenu() {
+      menuOpen = !menuOpen;
+      if (menuOpen) {
+        mobileMenu.classList.add('active');
+        menuBtn.textContent = '✕';
+        document.body.style.overflow = 'hidden';
+      } else {
+        mobileMenu.classList.remove('active');
+        menuBtn.textContent = '☰';
+        document.body.style.overflow = '';
+      }
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (menuOpen) toggleMenu();
+      });
+    });
+
+    // ----------------------------------------------------------------------
+    // 3. Scroll Reveal Animations (Intersection Observer)
+    // ----------------------------------------------------------------------
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -80px 0px',
+      threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
