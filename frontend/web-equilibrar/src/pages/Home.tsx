@@ -40,18 +40,8 @@ const Home: React.FC = () => {
         };
     }, []);
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-        if (!isMenuOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    };
-
     const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
         e.preventDefault();
-        if (isMenuOpen) toggleMenu();
         const element = document.getElementById(targetId);
         if (element) {
             const yOffset = -80; 
