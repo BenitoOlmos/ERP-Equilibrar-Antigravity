@@ -384,7 +384,7 @@ const Home: React.FC = () => {
                             <h1>Tratamientos y terapias para personas que quieren cambiar su vida</h1>
                             <p>Evaluación inicial para entender cómo estás funcionando hoy y definir la intervención más pertinente.</p>
                             <div className="px-hero-actions">
-                                <a className="px-btn px-btn-primary" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} style={{ backgroundColor: 'var(--brand-accent)' }}>Agendar evaluación</a>
+                                <a className="px-btn px-btn-primary" href="https://wa.me/56930179724?text=Hola,%20quisiera%20solicitar%20un%20agendamiento." target="_blank" rel="noopener noreferrer" style={{ backgroundColor: 'var(--brand-accent)' }}>Agendar evaluación</a>
                                 <Link className="px-btn px-btn-glass" to="/propuesta">Propuesta</Link>
                             </div>
                         </div>
@@ -425,7 +425,7 @@ const Home: React.FC = () => {
                                     <li>Hipótesis clínica inicial</li>
                                     <li>Definición de plan estratégico</li>
                                 </ul>
-                                <Link to="/test-rfai" className="px-btn px-btn-primary">Agendar Sesión Ahora</Link>
+                                <a href="https://wa.me/56930179724?text=Hola,%20quisiera%20solicitar%20un%20agendamiento." target="_blank" rel="noopener noreferrer" className="px-btn px-btn-primary">Agendar Sesión Ahora</a>
                             </article>
 
                             <article className="px-eval-card px-reveal px-delay-100">

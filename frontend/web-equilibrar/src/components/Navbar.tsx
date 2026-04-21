@@ -123,7 +123,7 @@ const Navbar: React.FC = () => {
                         <button className="menu-toggle" aria-label="Abrir menú" onClick={toggleMenu}>
                             {isMenuOpen ? '✕' : '☰'}
                         </button>
-                        <a className="btn btn-primary desktop-only" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')}>Agendar evaluación ejecutiva</a>
+                        <a className="btn btn-primary desktop-only" href="https://wa.me/56930179724?text=Hola,%20quisiera%20solicitar%20un%20agendamiento." target="_blank" rel="noopener noreferrer">Agendar evaluación ejecutiva</a>
                     </div>
 
                     <div className={`mobile-menu ${isMenuOpen ? 'active' : ''}`}>
@@ -131,7 +131,7 @@ const Navbar: React.FC = () => {
                         <a href="#equipo" onClick={(e) => handleLinkClick(e, 'equipo')}>Equipo clínico</a>
                         <Link to="/propuesta" onClick={() => setIsMenuOpen(false)}>Propuesta</Link>
                         <Link to="/blog" onClick={() => setIsMenuOpen(false)}>Blog</Link>
-                        <a href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} className="btn btn-primary mt-4" style={{ fontSize: '18px', padding: '0 40px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '52px', borderRadius: '9999px', background: '#0a1c1a', color: 'white' }}>Agendar ahora</a>
+                        <a href="https://wa.me/56930179724?text=Hola,%20quisiera%20solicitar%20un%20agendamiento." target="_blank" rel="noopener noreferrer" className="btn btn-primary mt-4" style={{ fontSize: '18px', padding: '0 40px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '52px', borderRadius: '9999px', background: '#0a1c1a', color: 'white' }}>Agendar ahora</a>
                     </div>
                 </div>
             </header>
