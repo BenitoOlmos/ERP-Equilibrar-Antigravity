@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import videoBg from '../assets/videos/video-home-equilibrar.mp4';
+import claudioReyesImg from '../assets/images/claudio-reyes.jpg';
 
 const Home: React.FC = () => {
     const [scrolled, setScrolled] = useState(false);
+    const [spotifyOpen, setSpotifyOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -545,12 +547,17 @@ const Home: React.FC = () => {
 
                         <div className="px-knowledge-grid">
                             <article className="px-knowledge-card px-reveal">
-                                <div className="px-knowledge-media" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/9.png')" }}></div>
+                                <div className="px-knowledge-media" style={{ backgroundImage: `url(${claudioReyesImg})` }}></div>
                                 <div className="px-knowledge-content">
                                     <span className="px-eyebrow">Podcast Oficial</span>
                                     <h3>Arquitectura Evolutiva de la Consciencia</h3>
                                     <p>Un espacio inmersivo de elaboración clínica sobre regulación nerviosa, experiencia subjetiva, dinámicas de cambio y funcionamiento integral.</p>
-                                    <a className="px-btn px-btn-glass" href="https://open.spotify.com/show/5qVcMLQ7yffuS7VA3jA6Sh" target="_blank" rel="noopener noreferrer">Escuchar en Spotify</a>
+                                    <button className="px-btn px-btn-glass" onClick={() => setSpotifyOpen(!spotifyOpen)}>{spotifyOpen ? 'Ocultar reproductor' : 'Escuchar en Spotify'}</button>
+                                    {spotifyOpen && (
+                                        <div style={{ marginTop: '16px', animation: 'fadeIn 0.3s ease', width: '100%' }}>
+                                            <iframe data-testid="embed-iframe" style={{ borderRadius: '12px' }} src="https://open.spotify.com/embed/episode/0DNZWF86LeMsYVHxzwc83i?utm_source=generator" width="100%" height="152" frameBorder="0" allowFullScreen={true} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                                        </div>
+                                    )}
                                 </div>
                             </article>
 
@@ -560,7 +567,7 @@ const Home: React.FC = () => {
                                     <span className="px-eyebrow">Blog y Artículos</span>
                                     <h3>Una clínica que piensa constantemente su práctica</h3>
                                     <p>Explora contenidos escritos de alto impacto para abordar el malestar, el dolor emocional y estructurar formas de recuperar tu equilibrio.</p>
-                                    <Link className="px-btn px-btn-glass" to="#">Visitar el Blog de Estudio</Link>
+                                    <Link className="px-btn px-btn-glass" to="/blog">Visitar el Blog de Estudio</Link>
                                 </div>
                             </article>
                         </div>
