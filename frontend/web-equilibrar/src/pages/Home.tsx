@@ -395,7 +395,7 @@ const Home: React.FC = () => {
                             <p>Evaluación inicial para entender cómo estás funcionando hoy y definir la intervención más pertinente.</p>
                             <div className="px-hero-actions">
                                 <a className="px-btn px-btn-primary" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')} style={{ backgroundColor: 'var(--brand-accent)' }}>Agendar evaluación</a>
-                                <a className="px-btn px-btn-glass" href="#pensamiento" onClick={(e) => handleLinkClick(e, 'pensamiento')}>Propuesta</a>
+                                <Link className="px-btn px-btn-glass" to="/propuesta">Propuesta</Link>
                             </div>
                         </div>
                     </div>

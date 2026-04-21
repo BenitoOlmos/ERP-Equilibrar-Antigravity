@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
+import Propuesta from './pages/Propuesta';
 import LandingRFAI from './pages/LandingRFAI';
 import ServiceDetail from './pages/ServiceDetail';
 import ProgramDetail from './pages/ProgramDetail';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Layout><Home /></Layout>} />
         <Route path="/blog" element={<Layout><Blog /></Layout>} />
         <Route path="/rfai" element={<LandingRFAI />} />
+        <Route path="/propuesta" element={<Propuesta />} />
 
         {/* SERVICES - Hydrated via API */}
         <Route
