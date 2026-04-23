@@ -401,7 +401,7 @@ const Home: React.FC = () => {
                             <h3>Define con claridad qué necesitas hoy</h3>
                             <p>Haz la evaluación para precisar el funcionamiento actual, ordenar el caso clínico y definir la estrategia de intervención más pertinente y eficaz para tu bienestar.</p>
                             <div>
-                                <a className="px-btn px-btn-primary" href="#evaluacion" onClick={(e) => handleLinkClick(e, 'evaluacion')}>Comenzar Evaluación Inicial</a>
+                                <Link className="px-btn px-btn-primary" to="/test-rfai">Comenzar Evaluación Inicial</Link>
                             </div>
                         </div>
                         <div className="px-split-image" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/2.png')" }}></div>
