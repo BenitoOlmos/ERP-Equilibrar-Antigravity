@@ -512,7 +512,7 @@ const Home: React.FC = () => {
                                 <div className="px-team-copy">
                                     <div className="px-team-role">Análisis sistémico</div>
                                     <h3>Daniela Baeza</h3>
-                                    <p className="mb-4">Lectura de patrones relacionales profundos y reorganización de dinámicas que sostienen el malestar.</p>
+                                    <p className="mb-4">Identificación de patrones relacionales profundos y reorganización de dinámicas que favorecen el equilibrio emocional</p>
                                     <Link className="px-btn px-btn-secondary mt-auto" to="/equipo/daniela-baeza" style={{ height: '40px', fontSize: '13px', width: '100%' }}>Saber más</Link>
                                 </div>
                             </article>

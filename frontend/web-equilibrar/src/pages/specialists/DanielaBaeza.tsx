@@ -14,12 +14,12 @@ const DanielaBaeza: React.FC = () => {
             <div className="sp-hero-copy">
               <span className="sp-eyebrow">Análisis sistémico</span>
               <h1>Daniela Baeza</h1>
-              <p>Profesional orientada a la lectura de patrones relacionales profundos. Su trabajo permite identificar dinámicas que no son evidentes, pero que sostienen el malestar en el presente.</p>
+              <p>Profesional orientada al análisis de dinámicas vinculares y procesos relacionales. Su trabajo permite comprender movimientos no visibles que influyen en el presente y favorecen el bienestar y el equilibrio emocional.</p>
               <div className="sp-hero-actions">
                 <a className="sp-btn sp-btn-primary" href="https://wa.me/56930179724" target="_blank" rel="noreferrer">Agendar con Daniela</a>
                 <Link className="sp-btn sp-btn-secondary" to="/#evaluacion">Ir a evaluación ejecutiva</Link>
               </div>
-              <div className="sp-hero-note">El análisis sistémico permite ver lo que a veces no aparece en la superficie del síntoma.</div>
+              <div className="sp-hero-note">El análisis sistémico permite observar aquello que no siempre aparece a simple vista y que influye en nuestra forma de vincularnos.</div>
             </div>
             <div className="sp-hero-media" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/Captura-de-Pantalla-2026-04-19-a-las-08.15.09.png')" }}></div>
           </div>
