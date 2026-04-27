@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import img1 from '../assets/images/blog/1-2.png';
+import img2 from '../assets/images/blog/2-2.png';
+import img3 from '../assets/images/blog/3-2.png';
+import img4 from '../assets/images/blog/4-1.png';
+import img5 from '../assets/images/blog/5-1.png';
 
 const Blog: React.FC = () => {
     useEffect(() => {
@@ -71,7 +76,7 @@ const Blog: React.FC = () => {
                     <div className="bl-container">
                         <div className="bl-posts">
                             <article className="bl-post">
-                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/10.png')" }}></div>
+                                <div className="bl-post-img" style={{ backgroundImage: `url(${img1})` }}></div>
                                 <div className="bl-post-body">
                                     <span className="bl-tag">Claudio Reyes</span>
                                     <h2>Cuando el problema no es lo que sientes</h2>
@@ -86,7 +91,7 @@ const Blog: React.FC = () => {
                             </article>
 
                             <article className="bl-post">
-                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/valentin-taichi.png')" }}></div>
+                                <div className="bl-post-img" style={{ backgroundImage: `url(${img2})` }}></div>
                                 <div className="bl-post-body">
                                     <span className="bl-tag">Valentín Keller</span>
                                     <h2>El cuerpo vuelve a vivir las cosas como reales</h2>
@@ -100,7 +105,7 @@ const Blog: React.FC = () => {
                             </article>
 
                             <article className="bl-post">
-                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/mujer-5.png')" }}></div>
+                                <div className="bl-post-img" style={{ backgroundImage: `url(${img3})` }}></div>
                                 <div className="bl-post-body">
                                     <span className="bl-tag">Daniela Baeza</span>
                                     <h2>Cuando siempre te pasa lo mismo</h2>
@@ -115,7 +120,7 @@ const Blog: React.FC = () => {
                             </article>
 
                             <article className="bl-post">
-                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5656.jpg')" }}></div>
+                                <div className="bl-post-img" style={{ backgroundImage: `url(${img4})` }}></div>
                                 <div className="bl-post-body">
                                     <span className="bl-tag">Carlos Carrasco</span>
                                     <h2>Antes de pensar, ya estás decidiendo</h2>
@@ -129,7 +134,7 @@ const Blog: React.FC = () => {
                             </article>
 
                             <article className="bl-post">
-                                <div className="bl-post-img" style={{ backgroundImage: "url('https://www.origamis.cl/wp-content/uploads/2026/04/10.png')" }}></div>
+                                <div className="bl-post-img" style={{ backgroundImage: `url(${img5})` }}></div>
                                 <div className="bl-post-body">
                                     <span className="bl-tag">Alan Lama</span>
                                     <h2>Cuando sostener deja de ser suficiente</h2>
