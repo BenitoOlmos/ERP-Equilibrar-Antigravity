@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Users, Activity, DollarSign, Calendar, Target, Shield, Stethoscope, 
-  UserCircle 
+  UserCircle, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 interface Stats {
@@ -30,6 +30,7 @@ export function Resumen() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [revenueFilter, setRevenueFilter] = useState<'month' | 'week' | 'day' | 'total'>('month');
+  const [showHistory, setShowHistory] = useState(false);
 
   if (user?.role === 'CLIENT' || user?.role === 'USER') {
      return <Navigate to="/mi-cuenta" replace />;
@@ -77,16 +78,60 @@ export function Resumen() {
               </div>
             </div>
             {typeof stats.revenue !== 'number' && (
-              <select 
-                value={revenueFilter}
-                onChange={(e) => setRevenueFilter(e.target.value as any)}
-                className="bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md appearance-none cursor-pointer"
-              >
-                <option value="month" className="text-slate-800">Mes Actual</option>
-                <option value="week" className="text-slate-800">Semana Actual</option>
-                <option value="day" className="text-slate-800">Día Actual</option>
-                <option value="total" className="text-slate-800">Total Histórico</option>
-              </select>
+              <div className="relative z-50">
+                <button 
+                  onClick={() => setShowHistory(!showHistory)}
+                  className="bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl px-4 py-2.5 flex items-center justify-between shadow-sm transition-all group outline-none ring-2 ring-white/10"
+                >
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4 transition-colors text-white/70 group-hover:text-white" />
+                    <span className="text-sm font-bold text-white capitalize">Histórico Completo</span>
+                  </div>
+                </button>
+                
+                {showHistory && (
+                  <div className="absolute top-full right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl flex flex-col sm:flex-row overflow-hidden min-w-[320px] sm:min-w-[480px]">
+                    <div className="bg-slate-50 dark:bg-slate-950/50 p-4 w-full sm:w-40 border-b sm:border-b-0 sm:border-r border-slate-100 dark:border-slate-800 flex flex-col gap-1">
+                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-2 mb-2">Atajos</span>
+                        <button onClick={() => {setRevenueFilter('day'); setShowHistory(false);}} className="text-left text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-[#00A89C] hover:bg-[#00A89C]/10 px-3 py-2 rounded-lg transition-colors">Hoy</button>
+                        <button onClick={() => {setRevenueFilter('week'); setShowHistory(false);}} className="text-left text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-[#00A89C] hover:bg-[#00A89C]/10 px-3 py-2 rounded-lg transition-colors">Esta Semana</button>
+                        <button onClick={() => {setRevenueFilter('month'); setShowHistory(false);}} className="text-left text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-[#00A89C] hover:bg-[#00A89C]/10 px-3 py-2 rounded-lg transition-colors">Este Mes</button>
+                        <button onClick={() => {setRevenueFilter('total'); setShowHistory(false);}} className="text-left text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-[#00A89C] hover:bg-[#00A89C]/10 px-3 py-2 rounded-lg transition-colors">Todo el Histórico</button>
+                    </div>
+                    <div className="p-4 flex-1 select-none">
+                        <div className="flex items-center justify-between mb-4">
+                            <button className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                                <ChevronLeft className="w-4 h-4 text-slate-500" />
+                            </button>
+                            <div className="font-bold text-sm text-slate-700 dark:text-slate-200 capitalize">abril 2026</div>
+                            <button className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                                <ChevronRight className="w-4 h-4 text-slate-500" />
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-7 mb-2">
+                            <div className="text-center text-[10px] font-black text-slate-400 uppercase">Lu</div>
+                            <div className="text-center text-[10px] font-black text-slate-400 uppercase">Ma</div>
+                            <div className="text-center text-[10px] font-black text-slate-400 uppercase">Mi</div>
+                            <div className="text-center text-[10px] font-black text-slate-400 uppercase">Ju</div>
+                            <div className="text-center text-[10px] font-black text-slate-400 uppercase">Vi</div>
+                            <div className="text-center text-[10px] font-black text-slate-400 uppercase">Sá</div>
+                            <div className="text-center text-[10px] font-black text-slate-400 uppercase">Do</div>
+                        </div>
+                        <div className="grid grid-cols-7 gap-y-1">
+                            <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 dark:text-slate-700 cursor-not-allowed opacity-50 rounded-lg">30</button>
+                            <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 dark:text-slate-700 cursor-not-allowed opacity-50 rounded-lg">31</button>
+                            {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30].map(day => (
+                                <button key={day} className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">{day}</button>
+                            ))}
+                            <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 dark:text-slate-700 cursor-not-allowed opacity-50 rounded-lg">1</button>
+                            <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 dark:text-slate-700 cursor-not-allowed opacity-50 rounded-lg">2</button>
+                            <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 dark:text-slate-700 cursor-not-allowed opacity-50 rounded-lg">3</button>
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest shrink-0">Selecciona inicio</div>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
           <div className="relative z-10 mt-6 flex items-center gap-2 text-sm font-bold bg-white/20 w-max px-4 py-2 rounded-full">
