@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import prisma from '../utils/db';
 import { processWhatsAppMessage } from '../services/whatsappAi.service';
 import { PrismaClient } from "@prisma/client";
 import axios from 'axios';

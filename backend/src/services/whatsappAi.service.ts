@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { PrismaClient } from "@prisma/client";
+import prisma from '../utils/db';
 
 
 // Initialize the Google Vertex AI client using the service account context
