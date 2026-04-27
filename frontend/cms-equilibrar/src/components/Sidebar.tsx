@@ -48,7 +48,8 @@ const navGroups = [
     title: 'Chat',
     icon: MessageCircle,
     items: [
-      { path: '/whatsapp', label: 'WhatsApp', icon: MessageCircle }
+      { path: '/whatsapp', label: 'WhatsApp', icon: MessageCircle },
+      { path: '/consultas', label: 'Consultas WhatsApp', icon: Briefcase }
     ]
   },
   {
@@ -212,7 +213,7 @@ export default function Sidebar() {
         '/productos', '/bodega',
         '/ventas', '/correos-masivos', '/pagos', '/cuentas-cobrar', '/facturacion', 
         '/usuarios', '/sucursales', 
-        '/test-rfai', '/editor-web', '/noticias-web', '/servicios-web'
+        '/test-rfai', '/editor-web', '/noticias-web', '/servicios-web', '/whatsapp', '/consultas'
       ].includes(item.path || '');
       if (user.role === 'Especialista') return ['/agenda', '/directorio', '/fichas-clinicas', '/pacientes', '/bitacoras', '/chat', '/test-rfai'].includes(item.path || '');
       if (user.role === 'Cliente') return ['/mi-cuenta'].includes(item.path || '');
