@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../api';
-import { ShoppingCart, Search, Plus, Edit3, Trash2, X, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Search, Plus, Edit3, Trash2, X, ChevronDown, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Ventas() {
   const [sales, setSales] = useState<any[]>([]);
@@ -11,6 +11,8 @@ export default function Ventas() {
   const [searchTerm, setSearchTerm] = useState('');
   const [clientSearch, setClientSearch] = useState('');
   const [showClientDrop, setShowClientDrop] = useState(false);
+  const [revenueFilter, setRevenueFilter] = useState<'month' | 'week' | 'day' | 'total'>('month');
+  const [showHistory, setShowHistory] = useState(false);
   
   // Modal State
   const [showModal, setShowModal] = useState(false);
@@ -217,18 +219,43 @@ export default function Ventas() {
     }
   };
 
-  const filteredSales = sales.filter(s => {
+  const dateFilteredSales = sales.filter(s => {
+    if (revenueFilter === 'total') return true;
+    
+    const nowLocal = new Date();
+    const saleTime = new Date(s.createdAt).getTime();
+
+    if (revenueFilter === 'month') {
+      const startOfMonth = new Date(nowLocal.getFullYear(), nowLocal.getMonth(), 1).getTime();
+      return saleTime >= startOfMonth;
+    }
+    if (revenueFilter === 'week') {
+      const dayOfWeek = nowLocal.getDay();
+      const diffToMonday = nowLocal.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+      const startOfWeek = new Date(nowLocal.setDate(diffToMonday));
+      startOfWeek.setHours(0, 0, 0, 0);
+      return saleTime >= startOfWeek.getTime();
+    }
+    if (revenueFilter === 'day') {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      return saleTime >= startOfDay.getTime();
+    }
+    return true;
+  });
+
+  const filteredSales = dateFilteredSales.filter(s => {
     const text = searchTerm.toLowerCase();
     const searchStr = `${s.concept || ''} ${s.user?.name || ''} ${s.user?.profile?.firstName || ''} ${s.user?.email || ''}`.toLowerCase();
     return searchStr.includes(text);
   });
 
-  const totalIngresos = sales.filter(s => s.status === 'COMPLETED').reduce((acc, curr) => acc + curr.amount, 0);
-  const totalPendientes = sales.filter(s => s.status === 'PENDING').reduce((acc, curr) => acc + curr.amount, 0);
+  const totalIngresos = dateFilteredSales.filter(s => s.status === 'COMPLETED').reduce((acc, curr) => acc + curr.amount, 0);
+  const totalPendientes = dateFilteredSales.filter(s => s.status === 'PENDING').reduce((acc, curr) => acc + curr.amount, 0);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 min-h-[calc(100vh-6rem)] flex flex-col relative animate-fade-in">
-      <header className="flex items-center justify-between shrink-0">
+      <header className="flex items-center justify-between shrink-0 mb-6 relative z-50">
         <div>
           <h1 className="text-3xl font-black text-slate-800 flex items-center">
             <ShoppingCart className="w-8 h-8 mr-3 text-[#00A89C]" />
@@ -236,17 +263,76 @@ export default function Ventas() {
           </h1>
           <p className="text-slate-500 mt-2">Punto de gestión manual para ventas de servicios, programas y productos.</p>
         </div>
-        <button 
-          onClick={openNewSale}
-          className="bg-[#00A89C] text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:bg-[#00968b] hover:shadow-lg transition-all flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" />
-          Nueva Venta
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <button 
+              onClick={() => setShowHistory(!showHistory)}
+              className="bg-white border rounded-xl px-4 py-2.5 flex items-center justify-between shadow-sm transition-all group outline-none border-slate-200 hover:border-slate-300 w-56"
+            >
+              <div className="flex items-center gap-3">
+                <Calendar className="w-4 h-4 transition-colors text-slate-400 group-hover:text-[#00A89C]" />
+                <span className="text-sm font-bold text-slate-700 capitalize">
+                  {revenueFilter === 'month' ? 'Este Mes' : revenueFilter === 'week' ? 'Esta Semana' : revenueFilter === 'day' ? 'Hoy' : 'Histórico Completo'}
+                </span>
+              </div>
+            </button>
+            
+            {showHistory && (
+              <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 shadow-2xl rounded-2xl flex flex-col sm:flex-row overflow-hidden min-w-[320px] sm:min-w-[480px]">
+                <div className="bg-slate-50 p-4 w-full sm:w-40 border-b sm:border-b-0 sm:border-r border-slate-100 flex flex-col gap-1">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-2 mb-2">Atajos</span>
+                    <button onClick={() => {setRevenueFilter('day'); setShowHistory(false);}} className={`text-left text-xs font-bold px-3 py-2 rounded-lg transition-colors ${revenueFilter === 'day' ? 'text-[#00A89C] bg-[#00A89C]/10' : 'text-slate-600 hover:text-[#00A89C] hover:bg-[#00A89C]/10'}`}>Hoy</button>
+                    <button onClick={() => {setRevenueFilter('week'); setShowHistory(false);}} className={`text-left text-xs font-bold px-3 py-2 rounded-lg transition-colors ${revenueFilter === 'week' ? 'text-[#00A89C] bg-[#00A89C]/10' : 'text-slate-600 hover:text-[#00A89C] hover:bg-[#00A89C]/10'}`}>Esta Semana</button>
+                    <button onClick={() => {setRevenueFilter('month'); setShowHistory(false);}} className={`text-left text-xs font-bold px-3 py-2 rounded-lg transition-colors ${revenueFilter === 'month' ? 'text-[#00A89C] bg-[#00A89C]/10' : 'text-slate-600 hover:text-[#00A89C] hover:bg-[#00A89C]/10'}`}>Este Mes</button>
+                    <button onClick={() => {setRevenueFilter('total'); setShowHistory(false);}} className={`text-left text-xs font-bold px-3 py-2 rounded-lg transition-colors ${revenueFilter === 'total' ? 'text-[#00A89C] bg-[#00A89C]/10' : 'text-slate-600 hover:text-[#00A89C] hover:bg-[#00A89C]/10'}`}>Todo el Histórico</button>
+                </div>
+                <div className="p-4 flex-1 select-none">
+                    <div className="flex items-center justify-between mb-4">
+                        <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+                            <ChevronLeft className="w-4 h-4 text-slate-500" />
+                        </button>
+                        <div className="font-bold text-sm text-slate-700 capitalize">abril 2026</div>
+                        <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+                            <ChevronRight className="w-4 h-4 text-slate-500" />
+                        </button>
+                    </div>
+                    <div className="grid grid-cols-7 mb-2">
+                        <div className="text-center text-[10px] font-black text-slate-400 uppercase">Lu</div>
+                        <div className="text-center text-[10px] font-black text-slate-400 uppercase">Ma</div>
+                        <div className="text-center text-[10px] font-black text-slate-400 uppercase">Mi</div>
+                        <div className="text-center text-[10px] font-black text-slate-400 uppercase">Ju</div>
+                        <div className="text-center text-[10px] font-black text-slate-400 uppercase">Vi</div>
+                        <div className="text-center text-[10px] font-black text-slate-400 uppercase">Sá</div>
+                        <div className="text-center text-[10px] font-black text-slate-400 uppercase">Do</div>
+                    </div>
+                    <div className="grid grid-cols-7 gap-y-1">
+                        <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 cursor-not-allowed opacity-50 rounded-lg">30</button>
+                        <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 cursor-not-allowed opacity-50 rounded-lg">31</button>
+                        {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30].map(day => (
+                            <button key={day} className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-700 hover:bg-slate-100 rounded-lg">{day}</button>
+                        ))}
+                        <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 cursor-not-allowed opacity-50 rounded-lg">1</button>
+                        <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 cursor-not-allowed opacity-50 rounded-lg">2</button>
+                        <button disabled className="h-8 text-xs font-bold transition-all mx-0.5 relative z-10 text-slate-300 cursor-not-allowed opacity-50 rounded-lg">3</button>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-slate-100 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest shrink-0">Selecciona inicio</div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button 
+            onClick={openNewSale}
+            className="bg-[#00A89C] text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:bg-[#00968b] hover:shadow-lg transition-all flex items-center gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            Nueva Venta
+          </button>
+        </div>
       </header>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-6 shrink-0">
+      <div className="grid grid-cols-3 gap-6 shrink-0 relative z-10">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
           <span className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">Total Ingresos Confirmados</span>
           <span className="text-4xl font-black text-emerald-600">${totalIngresos.toLocaleString()}</span>
@@ -257,7 +343,7 @@ export default function Ventas() {
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
           <span className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">Volumen de Transacciones</span>
-          <span className="text-4xl font-black text-slate-800">{sales.length}</span>
+          <span className="text-4xl font-black text-slate-800">{dateFilteredSales.length}</span>
         </div>
       </div>
 
