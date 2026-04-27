@@ -144,6 +144,7 @@ const navGroups = [
     icon: Settings,
     items: [
       { path: '/ajustes', label: 'Ajustes Generales', icon: Settings },
+      { path: '/auditoria', label: 'Auditoría DB', icon: ClipboardList },
       { path: '/db', label: 'Respaldos DB', icon: Server },
       { path: '/test-ia', label: 'Test IA', icon: Activity },
       { path: '/test-whatsapp', label: 'Test Whatsapp', icon: Activity }

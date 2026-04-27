@@ -5,7 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { 
   Resumen, Agenda, Servicios, Programas, Tratamientos, 
-  Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Login, ClientDashboard, ClientProgress,
+  Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Auditoria, Login, ClientDashboard, ClientProgress,
   CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat,
   CuentasCobrar, CuentasPagar, Tesoreria, TrabajadoresPlanta, Honorarios, AgenteVirtual, TestIA, Whatsapp, TestWhatsapp
 } from './pages';
@@ -43,6 +43,7 @@ function App() {
               <Route path="web-agente-virtual" element={<AgenteVirtual />} />
               <Route path="db" element={<DB />} />
               <Route path="ajustes" element={<Ajustes />} />
+              <Route path="auditoria" element={<Auditoria />} />
               <Route path="test-ia" element={<TestIA />} />
               <Route path="test-whatsapp" element={<TestWhatsapp />} />
               <Route path="whatsapp" element={<Whatsapp />} />

@@ -12,6 +12,7 @@ export { Sucursales } from './Sucursales';
 export { TestRFAI } from './TestRFAI';
 export { DB } from './DB';
 export { Ajustes } from './Ajustes';
+export { Auditoria } from './Auditoria';
 export { Login } from './Login';
 export { default as CRM } from './CRM';
 export { default as Whatsapp } from './Whatsapp';
