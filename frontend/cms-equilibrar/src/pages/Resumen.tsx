@@ -67,8 +67,11 @@ export function Resumen() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="seccion-kpis" data-seccion="2: TODA LA FILA DE TARJETAS (KPIs)">
         
         {/* TARJETA 2.1: INGRESOS TOTALES (Destacada) */}
-        <div id="tarjeta-ingresos" data-seccion="2.1: TARJETA DE INGRESOS" className="lg:col-span-2 bg-gradient-to-br from-[#00A89C] to-emerald-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10 flex justify-between items-start">
+        <div id="tarjeta-ingresos" data-seccion="2.1: TARJETA DE INGRESOS" className="lg:col-span-4 bg-gradient-to-br from-[#00A89C] to-emerald-600 rounded-3xl p-8 text-white shadow-xl relative flex flex-col justify-between z-20">
+          <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+            <DollarSign className="w-48 h-48 absolute -right-8 -bottom-16 text-white opacity-10 transform -rotate-12" />
+          </div>
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-4">
             <div>
               <h3 className="text-emerald-100 font-bold uppercase tracking-wider text-xs mb-2">
                 {typeof stats.revenue === 'number' ? 'Ingresos Consolidados' : revenueFilter === 'month' ? 'Ingresos del Mes' : revenueFilter === 'week' ? 'Ingresos de la Semana' : revenueFilter === 'day' ? 'Ingresos de Hoy' : 'Ingresos Históricos'}
@@ -137,26 +140,25 @@ export function Resumen() {
           <div className="relative z-10 mt-6 flex items-center gap-2 text-sm font-bold bg-white/20 w-max px-4 py-2 rounded-full">
             <DollarSign className="w-4 h-4" /> {revenueFilter === 'total' ? 'Flujo Total' : 'Flujo Filtrado'}
           </div>
-          <DollarSign className="w-48 h-48 absolute -right-8 -bottom-16 text-white opacity-10 transform -rotate-12" />
         </div>
 
         {/* TARJETA 2.2: VOLUMEN GLOBAL DE USUARIOS */}
-        <div id="tarjeta-usuarios" data-seccion="2.2: TARJETA VOLUMEN DE USUARIOS" className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div id="tarjeta-usuarios" data-seccion="2.2: TARJETA VOLUMEN DE USUARIOS" className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex items-center gap-6">
+          <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0">
+            <Users className="w-8 h-8 text-indigo-500" />
+          </div>
           <div>
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center mb-4">
-              <Users className="w-6 h-6 text-indigo-500" />
-            </div>
             <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider mb-1">Volumen de Usuarios</h3>
             <div className="text-4xl font-black text-slate-800">{stats.users.total}</div>
           </div>
         </div>
 
         {/* TARJETA 2.3: CANTIDAD MÁXIMA DE CONSULTAS GLOBALES */}
-        <div id="tarjeta-consultas" data-seccion="2.3: TARJETA DE CONSULTAS GLOBALES" className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div id="tarjeta-consultas" data-seccion="2.3: TARJETA DE CONSULTAS GLOBALES" className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex items-center gap-6">
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 flex items-center justify-center shrink-0">
+            <Calendar className="w-8 h-8 text-rose-500" />
+          </div>
           <div>
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center mb-4">
-              <Calendar className="w-6 h-6 text-rose-500" />
-            </div>
             <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider mb-1">Consultas Globales</h3>
             <div className="text-4xl font-black text-slate-800">{stats.appointments}</div>
           </div>
