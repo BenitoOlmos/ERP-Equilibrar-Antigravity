@@ -160,7 +160,7 @@ const Blog: React.FC = () => {
                                 una intervención adecuada para el caso.
                             </p>
                             <div style={{ marginTop: '20px' }}>
-                                <Link className="bl-btn bl-btn-primary" style={{ background: '#ffffff', color: '#17322d' }} to="/#evaluacion">Agendar evaluación ejecutiva</Link>
+                                <Link className="bl-btn" style={{ border: 'none' }} to="/#evaluacion">Agendar evaluación ejecutiva</Link>
                             </div>
                         </div>
                     </div>
