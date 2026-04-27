@@ -1,5 +1,6 @@
 import React from 'react';
 import BlogArticleLayout from './BlogArticleLayout';
+import heroImg from '../../assets/images/blog/4-1.png';
 
 const AntesDePensar: React.FC = () => {
     const content = (
@@ -51,7 +52,7 @@ const AntesDePensar: React.FC = () => {
             author="Carlos Carrasco"
             authorRole="Neurocientífico - Director de Formación"
             date="23 abril 2026"
-            heroImage="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5656.jpg"
+            heroImage={heroImg}
             authorImage="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5656.jpg"
             content={content}
             quote="Las personas toman decisiones antes de que la mente logre explicarlo."

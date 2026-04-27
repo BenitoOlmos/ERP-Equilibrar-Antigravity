@@ -1,5 +1,6 @@
 import React from 'react';
 import BlogArticleLayout from './BlogArticleLayout';
+import heroImg from '../../assets/images/blog/3-2.png';
 
 const SiemprePasaLoMismo: React.FC = () => {
     const content = (
@@ -48,7 +49,7 @@ const SiemprePasaLoMismo: React.FC = () => {
             author="Daniela Baeza"
             authorRole="Análisis sistémico y dinámicas relacionales"
             date="21 abril 2026"
-            heroImage="https://www.origamis.cl/wp-content/uploads/2026/04/mujer-5.png"
+            heroImage={heroImg}
             authorImage="https://www.origamis.cl/wp-content/uploads/2026/04/mujer-5.png"
             content={content}
             quote="Lo que se repite no siempre se elige… pero puede empezar a verse."

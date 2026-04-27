@@ -1,5 +1,6 @@
 import React from 'react';
 import BlogArticleLayout from './BlogArticleLayout';
+import heroImg from '../../assets/images/blog/2-2.png';
 
 const ElCuerpoVuelve: React.FC = () => {
     const content = (
@@ -54,7 +55,7 @@ const ElCuerpoVuelve: React.FC = () => {
             author="Valentín Keller"
             authorRole="Terapeuta somático e Instructor de Taichi"
             date="20 abril 2026"
-            heroImage="https://www.origamis.cl/wp-content/uploads/2026/04/valentin-taichi.png"
+            heroImage={heroImg}
             authorImage="https://www.origamis.cl/wp-content/uploads/2026/04/valentin-taichi.png"
             content={content}
             quote="Hay cosas que no cambian cuando uno las entiende. Cambian cuando el cuerpo, de a poco, comienza a funcionar distinto a su forma automática."

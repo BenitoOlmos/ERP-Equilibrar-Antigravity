@@ -1,5 +1,6 @@
 import React from 'react';
 import BlogArticleLayout from './BlogArticleLayout';
+import heroImg from '../../assets/images/blog/5-1.png';
 
 const SostenerInsuficiente: React.FC = () => {
     const content = (
@@ -48,7 +49,7 @@ const SostenerInsuficiente: React.FC = () => {
             author="Alan Lama"
             authorRole="Psiquiatría — Evaluación e intervención farmacológica"
             date="25 abril 2026"
-            heroImage="https://www.origamis.cl/wp-content/uploads/2026/04/10.png"
+            heroImage={heroImg}
             authorImage="https://www.origamis.cl/wp-content/uploads/2026/04/10.png"
             content={content}
             quote="La indicación de un fármaco no marca el inicio de un tratamiento, sino un momento dentro de él."

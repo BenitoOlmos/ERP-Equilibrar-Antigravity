@@ -1,5 +1,6 @@
 import React from 'react';
 import BlogArticleLayout from './BlogArticleLayout';
+import heroImg from '../../assets/images/blog/1-2.png';
 
 const ProblemaNoEsSientas: React.FC = () => {
     const content = (
@@ -58,7 +59,7 @@ const ProblemaNoEsSientas: React.FC = () => {
             author="Claudio Reyes"
             authorRole="Psicólogo y Director Clínico"
             date="19 abril 2026"
-            heroImage="https://www.origamis.cl/wp-content/uploads/2026/04/10.png"
+            heroImage={heroImg}
             authorImage="https://www.origamis.cl/wp-content/uploads/2026/04/DSC_5750.jpg"
             content={content}
             quote="El problema no es solo el síntoma que aparece, sino la forma en que ese síntoma logra instalarse, repetirse y, en algunos casos, organizar la experiencia de la persona."
