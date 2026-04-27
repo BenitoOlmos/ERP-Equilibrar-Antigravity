@@ -33,3 +33,4 @@ export { default as AgenteVirtual } from './AgenteVirtual';
 export { default as TestIA } from './TestIA';
 export { default as TestWhatsapp } from './TestWhatsapp';
 export { default as Consultas } from './Consultas';
+export { default as Postventa } from './Postventa';

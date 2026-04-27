@@ -7,7 +7,7 @@ import {
   Resumen, Agenda, Servicios, Programas, Tratamientos, 
   Cursos, Usuarios, Pagos, TestRFAI, DB, Ajustes, Auditoria, Login, ClientDashboard, ClientProgress,
   CRM, Ventas, Productos, Sucursales, Pacientes, FichasClinicas, Bitacoras, Chat,
-  CuentasCobrar, CuentasPagar, Tesoreria, TrabajadoresPlanta, Honorarios, AgenteVirtual, TestIA, Whatsapp, TestWhatsapp, Consultas
+  CuentasCobrar, CuentasPagar, Tesoreria, TrabajadoresPlanta, Honorarios, AgenteVirtual, TestIA, Whatsapp, TestWhatsapp, Consultas, Postventa
 } from './pages';
 import Directorio from './pages/Directorio';
 import { MassMailing } from './pages/MassMailing';
@@ -48,6 +48,7 @@ function App() {
               <Route path="test-whatsapp" element={<TestWhatsapp />} />
               <Route path="whatsapp" element={<Whatsapp />} />
               <Route path="consultas" element={<Consultas />} />
+              <Route path="postventa" element={<Postventa />} />
               <Route path="crm" element={<CRM />} />
               <Route path="ventas" element={<Ventas />} />
               <Route path="correos-masivos" element={<MassMailing />} />

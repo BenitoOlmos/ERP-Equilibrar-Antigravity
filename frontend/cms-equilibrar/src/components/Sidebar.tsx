@@ -31,7 +31,8 @@ import {
   Contact,
   FolderOpen,
   FileSignature,
-  Bot
+  Bot,
+  Wrench
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -49,7 +50,8 @@ const navGroups = [
     icon: MessageCircle,
     items: [
       { path: '/whatsapp', label: 'WhatsApp', icon: MessageCircle },
-      { path: '/consultas', label: 'Consultas WhatsApp', icon: Briefcase }
+      { path: '/consultas', label: 'Consultas WhatsApp', icon: Briefcase },
+      { path: '/postventa', label: 'Postventa', icon: Wrench }
     ]
   },
   {
@@ -213,7 +215,7 @@ export default function Sidebar() {
         '/productos', '/bodega',
         '/ventas', '/correos-masivos', '/pagos', '/cuentas-cobrar', '/facturacion', 
         '/usuarios', '/sucursales', 
-        '/test-rfai', '/editor-web', '/noticias-web', '/servicios-web', '/whatsapp', '/consultas'
+        '/test-rfai', '/editor-web', '/noticias-web', '/servicios-web', '/whatsapp', '/consultas', '/postventa'
       ].includes(item.path || '');
       if (user.role === 'Especialista') return ['/agenda', '/directorio', '/fichas-clinicas', '/pacientes', '/bitacoras', '/chat', '/test-rfai'].includes(item.path || '');
       if (user.role === 'Cliente') return ['/mi-cuenta'].includes(item.path || '');
