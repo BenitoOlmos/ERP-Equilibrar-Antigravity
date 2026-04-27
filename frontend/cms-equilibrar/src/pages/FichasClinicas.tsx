@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Users, Search, FolderOpen, Plus, UserCircle, Phone, Mail, Clock, FileText, ChevronRight, Edit3, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 

@@ -1,8 +1,7 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // GET /api/data/messages/conversation/:user1Id/:user2Id
 router.get('/conversation/:user1Id/:user2Id', async (req, res) => {

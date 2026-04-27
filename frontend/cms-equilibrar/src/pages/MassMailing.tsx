@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { 

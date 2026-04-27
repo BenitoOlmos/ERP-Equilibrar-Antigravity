@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { useAuth } from '../context/AuthContext';
 import { BookOpen, User as UserIcon, Calendar, CheckCircle, Search, ChevronRight, ChevronDown, PenLine, Send, Info } from 'lucide-react';
 import ReactQuill from 'react-quill-new';

@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { transporter } from '../utils/mailer';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
-const prisma = new PrismaClient();
 
 // Envío de prueba a un solo correo
 export const sendTestEmail = async (req: Request, res: Response): Promise<void> => {

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { authenticateToken } from './utils/authMiddleware';
 
 // Import DDD Core Domains
 import authRoutes from './routes/auth.routes';
@@ -38,11 +39,16 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const apiRouter = express.Router();
 
-// 1. Auth & CRM
+// 1. Auth & Webhooks (Public)
 apiRouter.use('/auth', authRoutes);
+apiRouter.use('/whatsapp', whatsappRoutes);
+
+// Protect all other API routes
+apiRouter.use(authenticateToken);
+
+// CRM & Mailing
 apiRouter.use('/crm', crmRoutes);
 apiRouter.use('/mailing', mailingRoutes);
-apiRouter.use('/whatsapp', whatsappRoutes);
 
 // 2. Student Platform Endpoints (Courses UI)
 apiRouter.use('/', studentRoutes);

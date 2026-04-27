@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Network, Search, AlertCircle, CheckCircle2, RefreshCw, Key, Link as LinkIcon, ShieldAlert, Cpu } from 'lucide-react';
 
 export default function TestWhatsapp() {

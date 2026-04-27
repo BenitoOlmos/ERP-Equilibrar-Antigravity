@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Wallet, Search, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 
 export function CuentasCobrar() {

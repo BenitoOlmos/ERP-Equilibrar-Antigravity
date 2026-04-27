@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Obtener todas las sucursales
 router.get('/', async (req, res) => {

@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client";
 import axios from 'axios';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 /**
  * Endpoint GET para la Verificación (Suscripción) obligatoria del Webhook de Meta.

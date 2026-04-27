@@ -1,9 +1,8 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 import { GoogleGenAI } from '@google/genai'; // Assuming this imports correctly
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Initialize SDK using Vertex AI credentials or regular API Key fallback
 const ai = new GoogleGenAI({

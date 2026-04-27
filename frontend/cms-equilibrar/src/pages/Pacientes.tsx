@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Users, Search, Activity, BookOpen, MessageCircle, UserCircle, Phone, Mail, Headphones, Video } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 export default function Pacientes() {

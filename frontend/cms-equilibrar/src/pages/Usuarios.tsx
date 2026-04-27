@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Users, Search, Mail, Edit2, Trash2, Plus, ShieldAlert, Smartphone, UserCircle, BriefcaseMedical } from 'lucide-react';
 
 const COLOR_OPTIONS = [

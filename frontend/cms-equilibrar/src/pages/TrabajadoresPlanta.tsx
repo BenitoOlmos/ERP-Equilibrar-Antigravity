@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Users, FileText, CheckCircle2, DollarSign, Briefcase } from 'lucide-react';
 
 export function TrabajadoresPlanta() {

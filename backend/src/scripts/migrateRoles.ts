@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
-const prisma = new PrismaClient();
 
 async function main() {
   console.log('Iniciando migración de roles de Inglés a Español...');

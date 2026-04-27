@@ -1,8 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Get all programs, courses, and rfai services with their virtual agents
 router.get('/', async (req: Request, res: Response) => {

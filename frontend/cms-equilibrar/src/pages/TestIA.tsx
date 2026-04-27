@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { BrainCircuit, Database, Key, CheckCircle, XCircle, Send, Loader2 } from 'lucide-react';
 
 interface Diagnostics {

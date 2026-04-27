@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Get all clinical records for a specific client
 router.get('/client/:clientId', async (req, res) => {

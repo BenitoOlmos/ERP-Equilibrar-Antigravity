@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 import fs from 'fs';
 import path from 'path';
 
-const prisma = new PrismaClient();
 
 async function importDeepData() {
     console.log("Iniciando reconstrucción de Base de Datos Productiva...");

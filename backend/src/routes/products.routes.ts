@@ -1,8 +1,7 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // Get all products
 router.get('/', async (req, res) => {

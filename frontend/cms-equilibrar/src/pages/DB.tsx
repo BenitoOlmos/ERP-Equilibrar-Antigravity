@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Database, Download, Upload, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export function DB() {

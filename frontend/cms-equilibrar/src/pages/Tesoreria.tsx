@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Banknote, TrendingUp, TrendingDown, RefreshCcw, Activity } from 'lucide-react';
 
 export function Tesoreria() {

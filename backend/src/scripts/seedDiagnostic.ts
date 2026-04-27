@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 import bcrypt from 'bcrypt';
 
-const prisma = new PrismaClient();
 
 const seedData = [
   { date: '20/02/2026 21:28:19', name: 'Jenny Elizabeth Jara Canales', email: 'jnn.jaracanales@gmail.com', af: 12, am: 22, ae: 20, r: 10, ita: 54, re: 30, idsE: 24, interpretation: 'Desbalance moderado. Consumo excesivo de recursos por sobre-activación de las bases biológicas.', profile: 'Reactivo', status: 'INICIA RFAI' },

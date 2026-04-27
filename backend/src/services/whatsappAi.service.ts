@@ -1,7 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
 
 // Initialize the Google Vertex AI client using the service account context
 const ai = new GoogleGenAI({

@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 import bcrypt from 'bcrypt';
 import { generateSecurePassword } from '../utils/auth';
 import { sendRFAIResultsMail } from '../utils/mailer';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // ==================
 // CRM: LEADS AGGREGATOR

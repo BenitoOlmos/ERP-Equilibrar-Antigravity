@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // GET /api/notifications/:userId
 // Devuelve el conteo de no leídos para la barra lateral

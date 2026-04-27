@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../utils/db';
 import { EconomicIndicatorsService } from '../services/mindicador.service';
 
-const prisma = new PrismaClient();
 
 // Impuesto Unico Segunda Categoria factor for 2024 (simplified generic logic for the engine)
 function calculateImpuestoUnico(imponible: number, utm: number) {

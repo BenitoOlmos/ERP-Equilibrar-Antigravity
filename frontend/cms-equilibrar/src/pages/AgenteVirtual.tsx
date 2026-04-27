@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Bot, Save, Sparkles, Activity, FileText, LayoutDashboard, BrainCircuit, RefreshCw, MessageCircle } from 'lucide-react';
 
 interface ConfiguredAgent {

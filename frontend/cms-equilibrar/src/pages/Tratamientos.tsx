@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Plus, Edit2, Trash2, Search, HeartPulse, Save, ArrowLeft, Layers, ChevronDown, ChevronUp } from 'lucide-react';
 import { UniversalContentBuilder } from '../components/UniversalContentBuilder';
 

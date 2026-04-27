@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../api';
 import { useAuth } from '../context/AuthContext';
 import { ChevronLeft, Calendar, ChevronUp, ChevronDown, CheckCircle, FileText, Headphones, Lock, Video, ArrowRight, ArrowUpRight, AlignLeft, CheckSquare, Image as ImageIcon, BookOpen, Download, PenLine, MessageCircle, Send, CircleCheck, Play, Pause, Repeat } from 'lucide-react';
 import ChatWidget from '../components/ChatWidget';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Package, Plus, Edit3, Trash2, X, Archive } from 'lucide-react';
 
 export default function Productos() {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { Target, Search, Phone, Mail, FileText, CheckCircle2, Clock, CalendarDays, ExternalLink, X, Save } from 'lucide-react';
 
 export default function CRM() {

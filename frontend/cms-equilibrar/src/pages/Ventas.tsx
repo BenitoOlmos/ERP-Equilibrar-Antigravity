@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { ShoppingCart, Search, Plus, Edit3, Trash2, X, ChevronDown } from 'lucide-react';
 
 export default function Ventas() {

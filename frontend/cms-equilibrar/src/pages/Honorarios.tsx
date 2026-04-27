@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api';
 import { UserPlus, FileSignature, Receipt, CheckCircle } from 'lucide-react';
 
 export function Honorarios() {
