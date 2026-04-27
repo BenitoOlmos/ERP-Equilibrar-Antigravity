@@ -7,6 +7,7 @@ export function Auditoria() {
   const [isLoadingLogs, setIsLoadingLogs] = useState(true);
   const [selectedUser, setSelectedUser] = useState('');
   const [uniqueUsers, setUniqueUsers] = useState<any[]>([]);
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -83,6 +84,7 @@ export function Auditoria() {
                      <th className="py-4 px-5 text-xs font-bold uppercase tracking-wider text-slate-500">Acción</th>
                      <th className="py-4 px-5 text-xs font-bold uppercase tracking-wider text-slate-500">Módulo</th>
                      <th className="py-4 px-5 text-xs font-bold uppercase tracking-wider text-slate-500">Registro</th>
+                     <th className="py-4 px-5 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Detalles</th>
                   </tr>
                </thead>
                <tbody className="divide-y divide-slate-100">
@@ -101,7 +103,8 @@ export function Auditoria() {
                      </tr>
                   ) : (
                      logs.map((log) => (
-                        <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
+                        <React.Fragment key={log.id}>
+                        <tr className="hover:bg-slate-50/50 transition-colors">
                            <td className="py-4 px-5">
                               <div className="flex items-center text-sm text-slate-600 font-medium">
                                  <Calendar className="w-4 h-4 mr-2 text-slate-400" />
@@ -134,8 +137,27 @@ export function Auditoria() {
                            <td className="py-4 px-5 text-sm font-mono text-slate-500 max-w-[150px] truncate">
                               {log.recordId}
                            </td>
+                           <td className="py-4 px-5 text-center">
+                              <button 
+                                 onClick={() => setExpandedRow(expandedRow === log.id ? null : log.id)}
+                                 className="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                              >
+                                 {expandedRow === log.id ? 'Ocultar' : 'Ver Detalles'}
+                              </button>
+                           </td>
                         </tr>
-                     ))
+                        {expandedRow === log.id && log.details && (
+                           <tr className="bg-slate-50/50 border-b border-slate-100">
+                              <td colSpan={6} className="p-0">
+                                 <div className="px-8 py-4 bg-slate-800 text-emerald-400 font-mono text-xs overflow-x-auto shadow-inner">
+                                    <div className="text-slate-400 mb-2 font-sans font-bold uppercase tracking-widest text-[10px]">Carga de Datos Modificada:</div>
+                                    <pre>{JSON.stringify(log.details, null, 2)}</pre>
+                                 </div>
+                              </td>
+                           </tr>
+                        )}
+                     </React.Fragment>
+                  ))
                   )}
                </tbody>
             </table>
