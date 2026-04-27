@@ -161,12 +161,6 @@ const BlogArticleLayout: React.FC<BlogArticleProps> = ({
             `}} />
 
             <main>
-                <div style={{ background: 'rgba(246,248,247,.82)', padding: '16px 0', borderBottom: '1px solid rgba(23,50,45,.06)' }}>
-                    <div className="ba-container" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                        <Link className="ba-btn ba-btn-secondary" to="/blog">Volver al blog</Link>
-                        <Link className="ba-btn ba-btn-primary" to="/#evaluacion">Agendar evaluación</Link>
-                    </div>
-                </div>
 
                 <section className="ba-hero">
                     <div className="ba-container">
