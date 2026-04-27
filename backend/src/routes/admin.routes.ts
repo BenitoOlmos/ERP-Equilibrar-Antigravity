@@ -15,12 +15,35 @@ router.get('/resumen', async (req, res) => {
     // Stats
     const totalAppointments = await prisma.appointment.count();
     const totalPayments = await prisma.payment.aggregate({ _sum: { amount: true }, where: { status: 'COMPLETED' } });
+    
+    // Date filters for revenue
+    const now = new Date();
+    
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    const dayOfWeek = now.getDay();
+    const diffToMonday = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    const startOfWeek = new Date(now.setDate(diffToMonday));
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const monthPayments = await prisma.payment.aggregate({ _sum: { amount: true }, where: { status: 'COMPLETED', createdAt: { gte: startOfMonth } } });
+    const weekPayments = await prisma.payment.aggregate({ _sum: { amount: true }, where: { status: 'COMPLETED', createdAt: { gte: startOfWeek } } });
+    const dayPayments = await prisma.payment.aggregate({ _sum: { amount: true }, where: { status: 'COMPLETED', createdAt: { gte: startOfDay } } });
+
     const totalDiagnostics = await prisma.diagnosticResult.count();
 
     res.json({
       users: { total: totalUsers, clients, specialists, coordinators, admins },
       appointments: totalAppointments,
-      revenue: totalPayments._sum?.amount || 0,
+      revenue: {
+        total: totalPayments._sum?.amount || 0,
+        month: monthPayments._sum?.amount || 0,
+        week: weekPayments._sum?.amount || 0,
+        day: dayPayments._sum?.amount || 0
+      },
       diagnostics: totalDiagnostics
     });
   } catch (error) {

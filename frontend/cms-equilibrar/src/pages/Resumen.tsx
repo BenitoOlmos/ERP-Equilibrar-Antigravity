@@ -16,7 +16,12 @@ interface Stats {
     admins: number;
   };
   appointments: number;
-  revenue: number;
+  revenue: {
+    total: number;
+    month: number;
+    week: number;
+    day: number;
+  };
   diagnostics: number;
 }
 
@@ -24,6 +29,7 @@ export function Resumen() {
   const { user } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [revenueFilter, setRevenueFilter] = useState<'month' | 'week' | 'day' | 'total'>('month');
 
   if (user?.role === 'CLIENT' || user?.role === 'USER') {
      return <Navigate to="/mi-cuenta" replace />;
@@ -61,14 +67,28 @@ export function Resumen() {
         
         {/* TARJETA 2.1: INGRESOS TOTALES (Destacada) */}
         <div id="tarjeta-ingresos" data-seccion="2.1: TARJETA DE INGRESOS" className="lg:col-span-2 bg-gradient-to-br from-[#00A89C] to-emerald-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10">
-            <h3 className="text-emerald-100 font-bold uppercase tracking-wider text-xs mb-2">Ingresos Consolidados</h3>
-            <div className="text-5xl lg:text-6xl font-black tracking-tighter">
-              ${stats.revenue.toLocaleString()}
+          <div className="relative z-10 flex justify-between items-start">
+            <div>
+              <h3 className="text-emerald-100 font-bold uppercase tracking-wider text-xs mb-2">
+                {revenueFilter === 'month' ? 'Ingresos del Mes' : revenueFilter === 'week' ? 'Ingresos de la Semana' : revenueFilter === 'day' ? 'Ingresos de Hoy' : 'Ingresos Históricos'}
+              </h3>
+              <div className="text-5xl lg:text-6xl font-black tracking-tighter">
+                ${stats.revenue[revenueFilter].toLocaleString()}
+              </div>
             </div>
+            <select 
+              value={revenueFilter}
+              onChange={(e) => setRevenueFilter(e.target.value as any)}
+              className="bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md appearance-none cursor-pointer"
+            >
+              <option value="month" className="text-slate-800">Mes Actual</option>
+              <option value="week" className="text-slate-800">Semana Actual</option>
+              <option value="day" className="text-slate-800">Día Actual</option>
+              <option value="total" className="text-slate-800">Total Histórico</option>
+            </select>
           </div>
           <div className="relative z-10 mt-6 flex items-center gap-2 text-sm font-bold bg-white/20 w-max px-4 py-2 rounded-full">
-            <DollarSign className="w-4 h-4" /> Flujo Total
+            <DollarSign className="w-4 h-4" /> {revenueFilter === 'total' ? 'Flujo Total' : 'Flujo Filtrado'}
           </div>
           <DollarSign className="w-48 h-48 absolute -right-8 -bottom-16 text-white opacity-10 transform -rotate-12" />
         </div>
