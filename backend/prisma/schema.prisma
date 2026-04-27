@@ -46,6 +46,7 @@ model User {
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
+  auditLogs        AuditLog[]
 
   // Cursos Relations
   progress UserProgress[]
@@ -759,3 +760,25 @@ model WhatsAppConfig {
   isActive         Boolean  @default(true)
   updatedAt        DateTime @updatedAt
 }
+
+// =======================
+// SYSTEM AUDIT
+// =======================
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?  
+  action      String   
+  model       String   
+  recordId    String   
+  details     Json?    
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([model])
+  @@index([action])
+  @@index([createdAt])
+}
+

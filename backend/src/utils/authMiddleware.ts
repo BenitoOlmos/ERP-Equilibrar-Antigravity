@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { requestContext } from './asyncLocalStorage';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_jwt_key_for_development';
 
@@ -16,9 +17,12 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
         req.user = decoded;
-        next();
+        
+        requestContext.run({ userId: decoded.userId, role: decoded.role }, () => {
+            next();
+        });
     } catch (error) {
         return res.status(403).json({ message: 'Acceso denegado: Token inválido o expirado' });
     }

@@ -53,6 +53,33 @@ router.get('/backup', async (req, res) => {
   }
 });
 
+// GET /api/master/audit - Get system audit logs
+router.get('/audit', async (req, res) => {
+    try {
+        const { userId, model, limit = '100' } = req.query;
+        
+        const whereClause: any = {};
+        if (userId) whereClause.userId = userId;
+        if (model) whereClause.model = model;
+
+        const logs = await prisma.auditLog.findMany({
+            where: whereClause,
+            orderBy: { createdAt: 'desc' },
+            take: parseInt(limit as string),
+            include: {
+                user: {
+                    select: { name: true, email: true, role: true }
+                }
+            }
+        });
+
+        res.json(logs);
+    } catch (error) {
+        console.error('Error fetching audit logs:', error);
+        res.status(500).json({ error: 'Database error fetching audit logs' });
+    }
+});
+
 // Full DB Restore
 router.post('/restore', async (req, res) => {
   try {
